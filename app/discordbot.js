@@ -72,6 +72,7 @@ client.on('message', message => {
 			var pst = timezone(str)
 			var ireland = timezone(str)
 			var germany = timezone(str)
+			var japan = timezone(str)			
 
 			est = est.add(-5, 'hours').format('h:mm')
 			cst = cst.add(-6, 'hours').format('h:mm')
@@ -88,7 +89,7 @@ client.on('message', message => {
 				'\nPST: ' + pst +
 				'\nIreland: ' + ireland +
 				'\nGermany: ' + germany +
-				'\njapan: ' + japan				
+				'\nJapan: ' + japan
 			)
 		}
 	}
