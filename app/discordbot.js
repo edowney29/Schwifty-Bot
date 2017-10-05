@@ -79,6 +79,7 @@ client.on('message', message => {
 				pst = pst.add(-8, 'hours').format('h:mm');
 				ireland = ireland.add(1, 'hours').format('h:mm');
 				germany = germany.add(2, 'hours').format('h:mm');
+				
 				message.reply(
 					'\nEST: ' + est +
 					'\nCST: ' + cst +
