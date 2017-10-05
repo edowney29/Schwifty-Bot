@@ -59,8 +59,9 @@ client.on('message', message => {
 	if (_.includes(msg, 'tz')) {
 		msg = msg.toUpperCase();
 		var split = msg.split(' ');
-		if (split.length == 3) {
-			var time = '2001-09-11 ' + split[1] + ' ' + split[2];
+		var index = _.findIndex(split, 'tz')
+		var time = '2001-09-11 ' + split[inedx + 1] + ' ' + split[index + 2];		
+		if (time) {
 			var str = timezone(time);
 			if (str.isValid) {
 				var offset = str.utcOffset();
