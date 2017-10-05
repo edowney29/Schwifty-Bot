@@ -1,7 +1,7 @@
 {
   "name": "overwatchserver",
   "version": "1.0.0",
-  "description": "testing",
+  "description": "yoloswag420",
   "main": "index.html",
   "engines": {
     "node": "6.11.3"
@@ -22,7 +22,6 @@
     "path": "^0.12.7",
     "random-js": "^1.0.8",
     "socket.io": "^2.0.3",
-    "timezonecomplete": "^5.4.4",
     "uuid": "^3.1.0"
   }
 }

@@ -60,23 +60,30 @@ client.on('message', message => {
 		msg = msg.toUpperCase();
 		var split = msg.split(' ');
 		if (split.length == 3) {
-			console.log(new Date())
 			var time = '2001-09-11 ' + split[1] + ' ' + split[2];
 			var str = timezone(time);
 			if (str.isValid) {
 				var offset = str.utcOffset();
 				str.add(offset, 'hours');
-				var est = str.add(-5, 'hours').format('h:mm');
-				var cdt = str.add(-6, 'hours').format('h:mm');
-				var mdt = str.add(-7, 'hours').format('h:mm');
-				var pdt = str.add(-8, 'hours').format('h:mm');
-				var ireland = str.add(1, 'hours').format('h:mm');	
-				var germany = str.add(2, 'hours').format('h:mm');							
+
+				var est = str;
+				var cst = str;
+				var mst = str;
+				var pst = str;
+				var ireland = str;
+				var germany = str;
+
+				est = est.add(-5, 'hours').format('h:mm');
+				cst = cst.add(-6, 'hours').format('h:mm');
+				mst = mst.add(-7, 'hours').format('h:mm');
+				pst = pst.add(-8, 'hours').format('h:mm');
+				ireland = ireland.add(1, 'hours').format('h:mm');
+				germany = germany.add(2, 'hours').format('h:mm');
 				message.reply(
 					'\nEST: ' + est +
-					'\nCDT: ' + cdt +
-					'\nMDT: ' + mdt +
-					'\nPDT: ' + pdt +
+					'\nCST: ' + cst +
+					'\nMST: ' + mst +
+					'\nPST: ' + pst +
 					'\nIreland: ' + ireland +
 					'\nGermany: ' + germany
 				);
