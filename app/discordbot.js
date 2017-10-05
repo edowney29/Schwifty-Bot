@@ -61,17 +61,17 @@ client.on('message', message => {
 		var split = msg.split(' ');
 		if (split.length == 3) {
 			var time = '2001-09-11 ' + split[1] + ' ' + split[2];
-			var str = timezone(time);
+			var str = new timezone(time);
 			if (str.isValid) {
 				var offset = str.utcOffset();
 				str.add(offset, 'hours');
 
-				var est = str;
-				var cst = str;
-				var mst = str;
-				var pst = str;
-				var ireland = str;
-				var germany = str;
+				var est = new timezone(str);
+				var cst = new timezone(str);;
+				var mst = new timezone(str);;
+				var pst = new timezone(str);;
+				var ireland = new timezone(str);;
+				var germany = new timezone(str);;
 
 				est = est.add(-5, 'hours').format('h:mm');
 				cst = cst.add(-6, 'hours').format('h:mm');
@@ -79,7 +79,7 @@ client.on('message', message => {
 				pst = pst.add(-8, 'hours').format('h:mm');
 				ireland = ireland.add(1, 'hours').format('h:mm');
 				germany = germany.add(2, 'hours').format('h:mm');
-				
+
 				message.reply(
 					'\nEST: ' + est +
 					'\nCST: ' + cst +
