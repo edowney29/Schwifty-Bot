@@ -60,7 +60,7 @@ client.on('message', message => {
 		msg = msg.toUpperCase();
 		var split = msg.split(' ');
 		var index = _.findIndex(split, 'tz')
-		var time = '2001-09-11 ' + split[inedx + 1] + ' ' + split[index + 2];		
+		var time = '2001-09-11 ' + split[index + 1] + ' ' + split[index + 2];		
 		if (time) {
 			var str = timezone(time);
 			if (str.isValid) {
