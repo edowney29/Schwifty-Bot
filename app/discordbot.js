@@ -23,11 +23,11 @@ client.on('message', message => {
 
 	var msg = message.content.toLowerCase();
 
-	if (msg === 'ping') {
+	if (msg == 'ping') {
 		message.reply('pong');
 	}
 
-	if (msg === 'stat1') {
+	if (msg == 'stat1') {
 		getData()
 			.then(str => {
 				message.reply(str);
@@ -50,7 +50,7 @@ client.on('message', message => {
 		message.reply(answer);
 	}
 
-	if (msg === 'd20') {
+	if (msg == 'd20') {
 		var distribution = random.integer(1, 20);
 		var d20 = distribution(engine).toString();
 		message.reply(d20);
@@ -100,7 +100,7 @@ function getData() {
 				reject('[ERROR]: ' + err);
 			}
 			var rows = response.values;
-			if (rows.length === 0) {
+			if (rows.length == 0) {
 				reject('No data found');
 			} else {
 				for (var i = 0; i < rows.length; i++) {
