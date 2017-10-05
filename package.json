@@ -1,0 +1,27 @@
+{
+  "name": "overwatchserver",
+  "version": "1.0.0",
+  "description": "testing",
+  "main": "index.html",
+  "engines": {
+    "node": "6.11.3"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Slayerbeing",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^11.1.0",
+    "express": "^4.15.3",
+    "googleapis": "^21.3.0",
+    "lodash": "^4.17.4",
+    "mongodb": "^2.2.31",
+    "node-kmeans": "^1.1.0",
+    "path": "^0.12.7",
+    "random-js": "^1.0.8",
+    "socket.io": "^2.0.3",
+    "timezonecomplete": "^5.4.4",
+    "uuid": "^3.1.0"
+  }
+}
