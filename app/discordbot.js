@@ -2,7 +2,7 @@ const discord = require('discord.js');
 const random = require('random-js');
 const google = require('googleapis');
 const _ = require('lodash')
-const 
+const timezone = require('timezonecomplete');
 
 const client = new discord.Client();
 const GOOGLE_KEY = process.env.GOOGLE_KEY;
@@ -56,10 +56,6 @@ client.on('message', message => {
 		message.reply(d20);
 	}
 
-	if (msg === 'guid') {
-
-	}
-
 });
 
 client.login(DISCORD_KEY);
@@ -70,10 +66,10 @@ function getData() {
 		sheets.spreadsheets.values.get({
 			auth: API_KEY,
 			spreadsheetId: GOOGLE_KEY,
-			range: 'GameHistory!A2:V2', //Change Sheet1 if your worksheet's name is something else
+			range: 'GameHistory!A2:V2', // Example 
 		}, (err, response) => {
 			if (err) {
-				reject('The API returned an error: ' + err);
+				reject('[ERROR]: ' + err);
 			}
 			var rows = response.values;
 			if (rows.length === 0) {
