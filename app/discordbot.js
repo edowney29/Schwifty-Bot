@@ -67,12 +67,12 @@ client.on('message', message => {
 				var offset = str.utcOffset();
 				str.add(offset, 'hours');
 
-				var est = timezone(str);
-				var cst = timezone(str);;
-				var mst = timezone(str);;
-				var pst = timezone(str);;
-				var ireland = timezone(str);;
-				var germany = timezone(str);;
+				var est = new timezone(str);
+				var cst = new timezone(str);;
+				var mst = new timezone(str);;
+				var pst = new timezone(str);;
+				var ireland = new timezone(str);;
+				var germany = new timezone(str);;
 
 				est = est.add(-5, 'hours').format('h:mm');
 				cst = cst.add(-6, 'hours').format('h:mm');
