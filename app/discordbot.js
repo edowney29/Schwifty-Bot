@@ -59,10 +59,11 @@ client.on('message', message => {
 	if (_.includes(msg, 'tz')) {
 		msg = msg.toUpperCase();
 		var split = msg.split(' ');
-		var time = '2001-09-11 ' + split[1] + ' ' + split[2];
-		var str = new timezone.DateTime(time)
+		var split2 = split(':')
+		var naiveDate = new tc.DateTime(2001, 09, 11, split2[0], split[1], 00);		
+		var str = new timezone.DateTime(naiveDate)
 		if (str) {
-			message.reply(str)
+			message.reply(str.toString())
 			/*
 			var est = str.tz('US/Eastern').format('h:mm')
 			var cdt = str.tz('US/Central').format('h:mm')
