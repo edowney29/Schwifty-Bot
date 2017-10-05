@@ -73,6 +73,7 @@ client.on('message', message => {
 				var pst = new timezone(str);;
 				var ireland = new timezone(str);;
 				var germany = new timezone(str);;
+				var japan = new timezone(str);;				
 
 				est = est.add(-5, 'hours').format('h:mm');
 				cst = cst.add(-6, 'hours').format('h:mm');
@@ -80,6 +81,7 @@ client.on('message', message => {
 				pst = pst.add(-8, 'hours').format('h:mm');
 				ireland = ireland.add(1, 'hours').format('h:mm');
 				germany = germany.add(2, 'hours').format('h:mm');
+				japan = japan.add(9, 'hours').format('h:mm');				
 
 				message.reply(
 					'\nEST: ' + est +
@@ -87,7 +89,8 @@ client.on('message', message => {
 					'\nMST: ' + mst +
 					'\nPST: ' + pst +
 					'\nIreland: ' + ireland +
-					'\nGermany: ' + germany
+					'\nGermany: ' + germany +
+					'\nJapan: ' + japan					
 				);
 			}
 		}
