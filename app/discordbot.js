@@ -2,7 +2,7 @@ const discord = require('discord.js');
 const random = require('random-js');
 const google = require('googleapis');
 const _ = require('lodash')
-const timezone = require('timezonecomplete');
+const timezone = require('moment-timezone');
 
 const client = new discord.Client();
 const GOOGLE_KEY = process.env.GOOGLE_KEY;
@@ -59,27 +59,27 @@ client.on('message', message => {
 	if (_.includes(msg, 'tz')) {
 		msg = msg.toUpperCase();
 		var split = msg.split(' ');
-		var time = split[1].split(':')
-		var naiveDate = new timezone.DateTime(2001, 09, 11, time[0], time[1], 00);		
-		var str = new timezone.DateTime(naiveDate)
-		if (str) {
-			message.reply(str.toIsoString())
-			/*
-			var est = str.tz('US/Eastern').format('h:mm')
-			var cdt = str.tz('US/Central').format('h:mm')
-			var mdt = str.tz('US/Mountain').format('h:mm')
-			var pdt = str.tz('US/Pacific').format('h:mm')
-			var ireland = str.tz('Europe/Dublin').format('h:mm')
-			var germany = str.tz('Europe/Berlin').format('h:mm')
-			message.reply(
-				'\nEST: ' + est +
-				'\nCDT: ' + cdt +
-				'\nMDT: ' + mdt +
-				'\nPDT: ' + pdt +
-				'\nIreland: ' + ireland +
-				'\nGermany: ' + germany
-			);
-			*/
+		if (split[1] && split[2]) {
+			var time = '2001-09-11 ' + split[1] + ' ' + split[2];
+			var str = timezone(time);
+			if (str.isValid) {
+				var offset = str.utcOffset();
+				str.add(offset, 'hours');
+				var est = str.add(-5, 'hours').format('h:mm');
+				var cdt = str.add(-6, 'hours').format('h:mm');
+				var mdt = str.add(-7, 'hours').format('h:mm');
+				var pdt = str.add(-8, 'hours').format('h:mm');
+				var ireland = str.add(1, 'hours').format('h:mm');	
+				var germany = str.add(2, 'hours').format('h:mm');							
+				message.reply(
+					'\nEST: ' + est +
+					'\nCDT: ' + cdt +
+					'\nMDT: ' + mdt +
+					'\nPDT: ' + pdt +
+					'\nIreland: ' + ireland +
+					'\nGermany: ' + germany
+				);
+			}
 		}
 	}
 
