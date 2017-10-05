@@ -60,28 +60,36 @@ client.on('message', message => {
 		msg = msg.toUpperCase()
 		var split = msg.split(' ')
 		var index = _.findIndex(split, 'tz')
-		var time = '2010-09-11 ' + split[index + 1] + ' ' + split[index + 2]
+		var time = '2001-09-11 ' + split[index + 1] + ' ' + split[index + 2]
 		var str = timezone.tz(time)
 		if (str.isValid) {
 			var offset = str.utcOffset()
 			str.add(offset, 'hours')
 
-			var est = setUTC(str, -5)
-			var cst = setUTC(str, -6)
-			var mst = setUTC(str, -7)
-			var pst = setUTC(str, -8)
-			var ireland = setUTC(str, 1)
-			var germany = setUTC(str, 2)
-			var japan = setUTC(str, 9)
+			var est = timezone.tz(str)
+			var cst = timezone.tz(str)
+			var mst = timezone.tz(str)
+			var pst = timezone.tz(str)
+			var ireland = timezone.tz(str)
+			var germany = timezone.tz(str)
+			var japan = timezone.tz(str)			
+
+			est = est.add(-5, 'hours').format('h:mm')
+			cst = cst.add(-6, 'hours').format('h:mm')
+			mst = mst.add(-7, 'hours').format('h:mm')
+			pst = pst.add(-8, 'hours').format('h:mm')
+			ireland = ireland.add(1, 'hours').format('h:mm')
+			germany = germany.add(2, 'hours').format('h:mm')
+			japan = japan.add(9, 'hours').format('h:mm')
 
 			message.reply(
-				'\nEST: ' + est.format('h:mm') +
-				'\nCST: ' + cst.format('h:mm') +
-				'\nMST: ' + mst.format('h:mm') +
-				'\nPST: ' + pst.format('h:mm') +
-				'\nIreland: ' + ireland.format('h:mm') +
-				'\nGermany: ' + germany.format('h:mm') +
-				'\nJapan: ' + japan.format('h:mm')
+				'\nEST: ' + est +
+				'\nCST: ' + cst +
+				'\nMST: ' + mst +
+				'\nPST: ' + pst +
+				'\nIreland: ' + ireland +
+				'\nGermany: ' + germany +
+				'\nJapan: ' + japan
 			)
 		}
 	}
@@ -89,13 +97,6 @@ client.on('message', message => {
 })
 
 client.login(DISCORD_KEY)
-
-function setUTC(s, o) {
-	var t = s.add(o, 'hours')
-	var oo = o * -1
-	s.add(oo, 'hours')
-	return t
-}
 
 function getData() {
 	return new Promise((resolve, reject) => {
