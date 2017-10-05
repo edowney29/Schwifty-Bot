@@ -92,9 +92,9 @@ client.login(DISCORD_KEY)
 
 function setUTC(s, o) {
 	var t = s.add(o, 'hours')
-	var oo = o * -1;
+	var oo = o * -1
 	s.add(oo, 'hours')
-	return t;
+	return t
 }
 
 function getData() {
