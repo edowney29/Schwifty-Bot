@@ -9,8 +9,8 @@ const GOOGLE_KEY = process.env.GOOGLE_KEY;
 const DISCORD_KEY = process.env.DISCORD_KEY;
 
 const engine = random.engines.mt19937().autoSeed();
-``
-var users;
+
+const users;
 
 client.on('ready', () => {
 	var obj = client.users.map(u => `${u.username}#${u.discriminator};${u.id}`).join(';');
@@ -21,7 +21,7 @@ client.on('ready', () => {
 
 client.on('message', message => {
 
-	let msg = message.content.toLowerCase();
+	var msg = message.content.toLowerCase();
 
 	if (msg === 'ping') {
 		message.reply('pong');
@@ -34,7 +34,7 @@ client.on('message', message => {
 			})
 	}
 
-	if (msg.includes('magic conch')) {
+	if (_.includes(msg, 'magic conch')) {
 		var answers = [
 			'Maybe.', 'Certainly not.', 'Not in your wildest dreams.', 'Nah, fam.',
 			'There is a good chance.', 'Quite likely.', 'I hope not.', 'Without a doubt.',
@@ -54,6 +54,32 @@ client.on('message', message => {
 		var distribution = random.integer(1, 20);
 		var d20 = distribution(engine).toString();
 		message.reply(d20);
+	}
+
+	if (_.includes(msg, 'tz')) {
+		msg = msg.toUpperCase();
+		var split = msg.split(' ');
+		var time = '2020-09-11 ' + split[1] + ' ' + split[2];
+		var str = new timezone.DateTime(time)
+		if (str) {
+			console.log(str)
+			/*
+			var est = str.tz('US/Eastern').format('h:mm')
+			var cdt = str.tz('US/Central').format('h:mm')
+			var mdt = str.tz('US/Mountain').format('h:mm')
+			var pdt = str.tz('US/Pacific').format('h:mm')
+			var ireland = str.tz('Europe/Dublin').format('h:mm')
+			var germany = str.tz('Europe/Berlin').format('h:mm')
+			message.reply(
+				'\nEST: ' + est +
+				'\nCDT: ' + cdt +
+				'\nMDT: ' + mdt +
+				'\nPDT: ' + pdt +
+				'\nIreland: ' + ireland +
+				'\nGermany: ' + germany
+			);
+		}
+		*/
 	}
 
 });
