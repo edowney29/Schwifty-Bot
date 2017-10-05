@@ -1,36 +1,36 @@
-const discord = require('discord.js');
-const random = require('random-js');
-const google = require('googleapis');
+const discord = require('discord.js')
+const random = require('random-js')
+const google = require('googleapis')
 const _ = require('lodash')
-const timezone = require('moment-timezone');
+const timezone = require('moment-timezone')
 
-const client = new discord.Client();
-const GOOGLE_KEY = process.env.GOOGLE_KEY;
-const DISCORD_KEY = process.env.DISCORD_KEY;
+const client = new discord.Client()
+const GOOGLE_KEY = process.env.GOOGLE_KEY
+const DISCORD_KEY = process.env.DISCORD_KEY
 
-const engine = random.engines.mt19937().autoSeed();
+const engine = random.engines.mt19937().autoSeed()
 
-var users;
+var users
 
 client.on('ready', () => {
-	var obj = client.users.map(u => `${u.username}#${u.discriminator};${u.id}`).join(';');
-	var temp = _.toLower(obj);
-	users = _.split(temp, ';');
-	//console.log(users);
-});
+	//var obj = client.users.map(u => `${u.username}#${u.discriminator}${u.id}`).join('')
+	//var temp = _.toLower(obj)
+	//users = _.split(temp, '')
+	//console.log(users)
+})
 
 client.on('message', message => {
 
-	var msg = message.content.toLowerCase();
+	var msg = message.content.toLowerCase()
 
 	if (msg == 'ping') {
-		message.reply('pong');
+		message.reply('pong')
 	}
 
 	if (msg == 'stat1') {
 		getData()
 			.then(str => {
-				message.reply(str);
+				message.reply(str)
 			})
 	}
 
@@ -43,83 +43,80 @@ client.on('message', message => {
 			'The future is uncertain.', 'I would rather not say.', 'Who cares?',
 			'Possibly.', 'Never, ever, ever.', 'There is a small chance.', 'Yes!',
 			'Obviously.', 'No.', '42',
-		];
-		var length = answers.length - 1;
-		var distribution = random.integer(0, length);
-		var answer = answers[distribution(engine)].toString();
-		message.reply(answer);
+		]
+		var length = answers.length - 1
+		var distribution = random.integer(0, length)
+		var answer = answers[distribution(engine)].toString()
+		message.reply(answer)
 	}
 
 	if (msg == 'd20') {
-		var distribution = random.integer(1, 20);
-		var d20 = distribution(engine).toString();
-		message.reply(d20);
+		var distribution = random.integer(1, 20)
+		var d20 = distribution(engine).toString()
+		message.reply(d20)
 	}
 
 	if (_.includes(msg, 'tz')) {
-		msg = msg.toUpperCase();
-		var split = msg.split(' ');
+		msg = msg.toUpperCase()
+		var split = msg.split(' ')
 		var index = _.findIndex(split, 'tz')
-		var time = '2001-09-11 ' + split[index + 1] + ' ' + split[index + 2];		
-		if (time) {
-			var str = new timezone(time);
-			if (str.isValid) {
-				var offset = str.utcOffset();
-				str.add(offset, 'hours');
+		var time = '2001-09-11 ' + split[index + 1] + ' ' + split[index + 2]
+		var str = timezone(time)
+		if (str.isValid) {
+			var offset = str.utcOffset()
+			str.add(offset, 'hours')
 
-				var est = new timezone(str);
-				var cst = new timezone(str);;
-				var mst = new timezone(str);;
-				var pst = new timezone(str);;
-				var ireland = new timezone(str);;
-				var germany = new timezone(str);;
-				var japan = new timezone(str);;				
+			var est = timezone(str)
+			var cst = timezone(str)
+			var mst = timezone(str)
+			var pst = timezone(str)
+			var ireland = timezone(str)
+			var germany = timezone(str)
 
-				est = est.add(-5, 'hours').format('h:mm');
-				cst = cst.add(-6, 'hours').format('h:mm');
-				mst = mst.add(-7, 'hours').format('h:mm');
-				pst = pst.add(-8, 'hours').format('h:mm');
-				ireland = ireland.add(1, 'hours').format('h:mm');
-				germany = germany.add(2, 'hours').format('h:mm');
-				japan = japan.add(9, 'hours').format('h:mm');				
+			est = est.add(-5, 'hours').format('h:mm')
+			cst = cst.add(-6, 'hours').format('h:mm')
+			mst = mst.add(-7, 'hours').format('h:mm')
+			pst = pst.add(-8, 'hours').format('h:mm')
+			ireland = ireland.add(1, 'hours').format('h:mm')
+			germany = germany.add(2, 'hours').format('h:mm')
+			japan = japan.add(9, 'hours').format('h:mm')
 
-				message.reply(
-					'\nEST: ' + est +
-					'\nCST: ' + cst +
-					'\nMST: ' + mst +
-					'\nPST: ' + pst +
-					'\nIreland: ' + ireland +
-					'\nGermany: ' + germany +
-					'\nJapan: ' + japan					
-				);
-			}
+			message.reply(
+				'\nEST: ' + est +
+				'\nCST: ' + cst +
+				'\nMST: ' + mst +
+				'\nPST: ' + pst +
+				'\nIreland: ' + ireland +
+				'\nGermany: ' + germany +
+				'\njapan: ' + japan				
+			)
 		}
 	}
 
-});
+})
 
-client.login(DISCORD_KEY);
+client.login(DISCORD_KEY)
 
 function getData() {
 	return new Promise((resolve, reject) => {
-		var sheets = google.sheets('v4');
+		var sheets = google.sheets('v4')
 		sheets.spreadsheets.values.get({
 			auth: API_KEY,
 			spreadsheetId: GOOGLE_KEY,
 			range: 'GameHistory!A2:V2', // Example 
 		}, (err, response) => {
 			if (err) {
-				reject('[ERROR]: ' + err);
+				reject('[ERROR]: ' + err)
 			}
-			var rows = response.values;
+			var rows = response.values
 			if (rows.length == 0) {
-				reject('No data found');
+				reject('No data found')
 			} else {
 				for (var i = 0; i < rows.length; i++) {
-					var row = rows[i];
-					resolve(row.join(", "));
+					var row = rows[i]
+					resolve(row.join(", "))
 				}
 			}
-		});
+		})
 	})
 }
