@@ -59,7 +59,7 @@ client.on('message', message => {
 	if (_.includes(msg, 'tz')) {
 		msg = msg.toUpperCase();
 		var split = msg.split(' ');
-		if (split[1] && split[2]) {
+		if (split.length == 3) {
 			console.log(new Date())
 			var time = '2001-09-11 ' + split[1] + ' ' + split[2];
 			var str = timezone(time);
