@@ -10,7 +10,7 @@ const DISCORD_KEY = process.env.DISCORD_KEY;
 
 const engine = random.engines.mt19937().autoSeed();
 
-const users;
+var users;
 
 client.on('ready', () => {
 	var obj = client.users.map(u => `${u.username}#${u.discriminator};${u.id}`).join(';');
@@ -59,10 +59,10 @@ client.on('message', message => {
 	if (_.includes(msg, 'tz')) {
 		msg = msg.toUpperCase();
 		var split = msg.split(' ');
-		var time = '2020-09-11 ' + split[1] + ' ' + split[2];
+		var time = '2001-09-11 ' + split[1] + ' ' + split[2];
 		var str = new timezone.DateTime(time)
 		if (str) {
-			console.log(str)
+			message.reply(str)
 			/*
 			var est = str.tz('US/Eastern').format('h:mm')
 			var cdt = str.tz('US/Central').format('h:mm')
@@ -78,8 +78,8 @@ client.on('message', message => {
 				'\nIreland: ' + ireland +
 				'\nGermany: ' + germany
 			);
+			*/
 		}
-		*/
 	}
 
 });
