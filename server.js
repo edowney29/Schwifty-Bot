@@ -161,7 +161,7 @@ io.on('connection', (socket) => {
      */
   // SPAWN THE PLAYER (Starting position)
   socket.on('start-up', (name) => {
-    //if (name == playerName) {
+      //if (name == playerName) {
       console.log('[RECV] Spawn player: ' + playerName);
       var movements = database.collection('movements');
       movements.findOne({
@@ -169,7 +169,7 @@ io.on('connection', (socket) => {
       }, (err, doc) => {
         if (err) {
           console.log('[ERROR] ' + err)
-        //} else {
+        } else {
           var client = {
             name: playerName,
             positionx: doc.positionx,
@@ -199,7 +199,7 @@ io.on('connection', (socket) => {
 
           socket.join('start');
           clients.push(client);
-        //}
+        }
       })
     }
 
@@ -217,24 +217,24 @@ io.on('connection', (socket) => {
     */
   });
 
-  socket.on('player-move', (name, positionx, positiony, positionz, rotationx, rotationy, rotationz, rotationw) => {
-    console.log('[RECV] Player move: ' + name);
+socket.on('player-move', (name, positionx, positiony, positionz, rotationx, rotationy, rotationz, rotationw) => {
+  console.log('[RECV] Player move: ' + name);
 
-    // Update clients array of move
-    var index = _.findIndex(clients, {
-      name: playerName
-    });
+  // Update clients array of move
+  var index = _.findIndex(clients, {
+    name: playerName
+  });
 
-    if (index) {
-      clients[index].positionx = positionx;
-      clients[index].positiony = positiony;
-      clients[index].positionz = positionz;
-      clients[index].rotationx = rotationx;
-      clients[index].rotationy = rotationy;
-      clients[index].rotationz = rotationz;
-      clients[index].rotationw = rotationw;
+  if (index) {
+    clients[index].positionx = positionx;
+    clients[index].positiony = positiony;
+    clients[index].positionz = positionz;
+    clients[index].rotationx = rotationx;
+    clients[index].rotationy = rotationy;
+    clients[index].rotationz = rotationz;
+    clients[index].rotationw = rotationw;
 
-      /*
+    /*
           var movements = db.collection('movements');
           movements.updateOne({
             name: name,
@@ -257,45 +257,45 @@ io.on('connection', (socket) => {
           });
           */
 
-      io.in(clients[index].room).emit('player-move',
-        playerName,
-        positionx,
-        positiony,
-        positionz,
-        rotationx,
-        rotationy,
-        rotationz,
-        rotationw
-      );
-    }
-    /*
-    socket.broadcast.emit('player-move',
-      currentPlayer.name,
-      currentPlayer.positionx,
-      currentPlayer.positiony,
-      currentPlayer.positionz,
-      currentPlayer.rotationx,
-      currentPlayer.rotationy,
-      currentPlayer.rotationz
+    io.in(clients[index].room).emit('player-move',
+      playerName,
+      positionx,
+      positiony,
+      positionz,
+      rotationx,
+      rotationy,
+      rotationz,
+      rotationw
     );
-    */
-  });
+  }
+  /*
+  socket.broadcast.emit('player-move',
+    currentPlayer.name,
+    currentPlayer.positionx,
+    currentPlayer.positiony,
+    currentPlayer.positionz,
+    currentPlayer.rotationx,
+    currentPlayer.rotationy,
+    currentPlayer.rotationz
+  );
+  */
+});
 
-  socket.on('player-message', (name, message) => {
-    console.log('[RECV] Message: ' + playerName + message);
-    socket.broadcast.emit('player-message', playerName, message)
-  });
+socket.on('player-message', (name, message) => {
+  console.log('[RECV] Message: ' + playerName + message);
+  socket.broadcast.emit('player-message', playerName, message)
+});
 
-  socket.on('disconnect', () => {
-    console.log('[RECV] Player disconnected: ' + playerName);
-    socket.broadcast.emit('other-player-disconnected', playerName)
-    //console.log(currentPlayer.name + ' bcst: other player disconnected ' + JSON.stringify(currentPlayer));
-    for (var i = 0; i < clients.length; i++) {
-      if (clients[i].name == playerName) {
-        clients.splice(i, 1);
-      }
+socket.on('disconnect', () => {
+  console.log('[RECV] Player disconnected: ' + playerName);
+  socket.broadcast.emit('other-player-disconnected', playerName)
+  //console.log(currentPlayer.name + ' bcst: other player disconnected ' + JSON.stringify(currentPlayer));
+  for (var i = 0; i < clients.length; i++) {
+    if (clients[i].name == playerName) {
+      clients.splice(i, 1);
     }
-  });
+  }
+});
 })
 
 var counter = 0;
