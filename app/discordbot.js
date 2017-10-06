@@ -4,8 +4,8 @@ const google = require('googleapis')
 const _ = require('lodash')
 
 const client = new discord.Client()
-const GOOGLE_KEY = 'MzMwNTM5ODQ0ODg5NDc3MTIx.DDijpw.McCPms6FKHgvjLW9fCl8NQacWfg'//process.env.GOOGLE_KEY
-const DISCORD_KEY = 'AIzaSyCu_jTK-L3GLefF337NJmmK4ksoI8YJxnc'//process.env.DISCORD_KEY
+const GOOGLE_KEY = 'AIzaSyCu_jTK-L3GLefF337NJmmK4ksoI8YJxnc' //process.env.GOOGLE_KEY
+const DISCORD_KEY = 'MzMwNTM5ODQ0ODg5NDc3MTIx.DDijpw.McCPms6FKHgvjLW9fCl8NQacWfg' //process.env.DISCORD_KEY
 
 const engine = random.engines.mt19937().autoSeed()
 
@@ -14,8 +14,8 @@ var users
 client.on('ready', () => {
 	var obj = client.users.map(u => `${u.username}#${u.discriminator}${u.id}`).join('')
 	var temp = _.toLower(obj)
-	users = _.split(temp, '')
-	console.log(users)
+	users = _.split(temp, ';')
+	//console.log(users)
 })
 
 client.on('message', message => {
@@ -56,7 +56,7 @@ client.on('message', message => {
 	}
 
 	if (_.includes(msg, 'tz')) {
-		_.toUpper(msg)
+		msg = _.toUpper(msg)
 		var split = msg.split(' ')
 		var index = split.indexOf('TZ')
 		var time = split[index + 1].split(":")
@@ -67,16 +67,20 @@ client.on('message', message => {
 
 		var est = (hour + getZone('EST')) % 12
 		var cst = (hour + getZone('CST')) % 12
-		var mdt = (hour + getZone('MST')) % 12
-		var pdt = (hour + getZone('PST')) % 12
+		var mst = (hour + getZone('MST')) % 12
+		var pst = (hour + getZone('PST')) % 12
 		var ist = (hour + getZone('IST')) % 12
 
+		console.log(time)
+		console.log(hour)
+		console.log(offset)
+
 		message.reply(
-			'EST: ' + est + ':' + time[1] +
-			'CST: ' + cst + ':' + time[1] +
-			'MST: ' + mst + ':' + time[1] +
-			'PST: ' + pst + ':' + time[1] +
-			'IST: ' + ist + ':' + time[1]
+			'\nEST ' + est + ':' + time[1] +
+			'\nCST ' + cst + ':' + time[1] +
+			'\nMST ' + mst + ':' + time[1] +
+			'\nPST ' + pst + ':' + time[1] +
+			'\nIST ' + ist + ':' + time[1]
 		)
 	}
 
