@@ -23,6 +23,7 @@ var clients = [];
 var updates = [];
 var clusters = [];
 var database;
+var ready = false;
 var knum = 1;
 
 for (var i = 0; i < knum; i++) {
@@ -46,7 +47,7 @@ MongoClient.connect(MONGO_URI, (err, db) => {
   assert.equal(null, err)
   console.log("Connected to mongo")
   database = db
-  getCluster()
+  ready = true
 });
 
 io.on('connection', (socket) => {
@@ -296,18 +297,21 @@ io.on('connection', (socket) => {
 
 var counter = 0;
 setInterval(() => {
-  io.emit('time', new Date().toTimeString());
+  if (ready) {
 
-  if (counter % 500 == 0) {
-    setDatabase();
+    io.emit('time', new Date().toTimeString());
+
+    if (counter % 500 == 0) {
+      setDatabase();
+    }
+    if (counter == 1000) {
+      getCluster();
+      counter = 0;
+      //var allRooms = _.map(clients, 'room');
+      //console.log(_.uniq(allRooms));
+    }
+    counter++;
   }
-  if (counter == 1000) {
-    getCluster();
-    counter = 0;
-    //var allRooms = _.map(clients, 'room');
-    //console.log(_.uniq(allRooms));
-  }
-  counter++;
 
 }, 10);
 
