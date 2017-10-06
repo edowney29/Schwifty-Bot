@@ -169,7 +169,7 @@ io.on('connection', (socket) => {
       }, (err, doc) => {
         if (err) {
           console.log('[ERROR] ' + err)
-        } else {
+        //} else {
           var client = {
             name: playerName,
             positionx: doc.positionx,
