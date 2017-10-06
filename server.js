@@ -297,7 +297,7 @@ var counter = 0;
 setInterval(() => {
   io.emit('time', new Date().toTimeString());
 
-  if (count % 500 == 0) {
+  if (counter % 500 == 0) {
     setDatabase();
   }
   if (counter == 1000) {
