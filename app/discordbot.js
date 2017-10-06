@@ -2,7 +2,6 @@ const discord = require('discord.js')
 const random = require('random-js')
 const google = require('googleapis')
 const _ = require('lodash')
-const moment = require('moment')
 
 const client = new discord.Client()
 const GOOGLE_KEY = process.env.GOOGLE_KEY
@@ -13,10 +12,10 @@ const engine = random.engines.mt19937().autoSeed()
 var users
 
 client.on('ready', () => {
-	//var obj = client.users.map(u => `${u.username}#${u.discriminator}${u.id}`).join('')
-	//var temp = _.toLower(obj)
-	//users = _.split(temp, '')
-	//console.log(users)
+	var obj = client.users.map(u => `${u.username}#${u.discriminator}${u.id}`).join('')
+	var temp = _.toLower(obj)
+	users = _.split(temp, '')
+	console.log(users)
 })
 
 client.on('message', message => {
@@ -54,44 +53,6 @@ client.on('message', message => {
 		var distribution = random.integer(1, 20)
 		var d20 = distribution(engine).toString()
 		message.reply(d20)
-	}
-
-	if (_.includes(msg, 'tz')) {
-		msg = msg.toUpperCase()
-		var split = msg.split(' ')
-		var index = _.findIndex(split, 'tz')
-		var time = '2020-09-11 ' + split[index + 1] + ' ' + split[index + 2]
-		var str = moment(time)
-		if (str.isValid) {
-			var offset = str.utcOffset()
-			str.add(offset, 'hours')
-
-			var est = moment(str)
-			var cst = moment(str)
-			var mst = moment(str)
-			var pst = moment(str)
-			var ireland = moment(str)
-			var germany = moment(str)
-			var japan = moment(str)			
-
-			est = est.add(-5, 'hours').format('h:mm')
-			cst = cst.add(-6, 'hours').format('h:mm')
-			mst = mst.add(-7, 'hours').format('h:mm')
-			pst = pst.add(-8, 'hours').format('h:mm')
-			ireland = ireland.add(1, 'hours').format('h:mm')
-			germany = germany.add(2, 'hours').format('h:mm')
-			japan = japan.add(9, 'hours').format('h:mm')
-
-			message.reply(
-				'\nEST: ' + est +
-				'\nCST: ' + cst +
-				'\nMST: ' + mst +
-				'\nPST: ' + pst +
-				'\nIreland: ' + ireland +
-				'\nGermany: ' + germany +
-				'\nJapan: ' + japan
-			)
-		}
 	}
 
 })
