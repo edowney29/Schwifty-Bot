@@ -162,41 +162,44 @@ io.on('connection', (socket) => {
   // SPAWN THE PLAYER (Starting position)
   socket.on('start-up', (name) => {
     if (name == playerName) {
-      console.log('[RECV]: Login player: ' + name);
+      console.log('[RECV] Login player: ' + name);
       var movements = database.collection('movements');
       movements.findOne({
         name: playerName,
       }, (err, doc) => {
+        if (err) {
+          console.log('[ERROR] ' + err)
+        } else {
+          var client = {
+            name: playerName,
+            positionx: doc.positionx,
+            positiony: doc.positiony,
+            positionz: doc.positionz,
+            rotationx: doc.rotationx,
+            rotationy: doc.rotationy,
+            rotationz: doc.rotationz,
+            rotationw: doc.rotationw,
+            health: 0,
+            socket: socket,
+            room: 'start'
+          };
 
-        var client = {
-          name: playerName,
-          positionx: doc.positionx,
-          positiony: doc.positiony,
-          positionz: doc.positionz,
-          rotationx: doc.rotationx,
-          rotationy: doc.rotationy,
-          rotationz: doc.rotationz,
-          rotationw: doc.rotationw,
-          health: 0,
-          socket: socket,
-          room: 'start'
-        };
+          // SETUP YOUR PLAYER
+          socket.emit('start-up',
+            playerName,
+            client.positionx,
+            client.positiony,
+            client.positionz,
+            client.rotationx,
+            client.rotationy,
+            client.rotationz,
+            client.rotationw,
+            client.health
+          );
 
-        // SETUP YOUR PLAYER
-        socket.emit('start-up',
-          playerName,
-          client.positionx,
-          client.positiony,
-          client.positionz,
-          client.rotationx,
-          client.rotationy,
-          client.rotationz,
-          client.rotationw,
-          client.health
-        );
-
-        socket.join('start');
-        clients.push(client);
+          socket.join('start');
+          clients.push(client);
+        }
       })
     }
 
@@ -215,7 +218,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('player-move', (name, positionx, positiony, positionz, rotationx, rotationy, rotationz, rotationw) => {
-    console.log('[RECV]: Player move: ' + name);
+    console.log('[RECV] Player move: ' + name);
 
     // Update clients array of move
     var index = _.findIndex(clients, {
@@ -279,7 +282,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('player-message', (name, message) => {
-    console.log('[RECV] - Message: ' + playerName + message);
+    console.log('[RECV] Message: ' + playerName + message);
     socket.broadcast.emit('player-message', playerName, message)
   });
 
@@ -358,7 +361,7 @@ function setDatabase() {
       rotationw: client.rotationw,
     }, (err, res) => {
       if (err) {
-        console.log('[SERVER] Error:' + client.name)
+        console.log('[ERROR]' + err)
       } else {
         console.log('[RECV] Update database:' + client.name)
       }
