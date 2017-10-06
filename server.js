@@ -161,8 +161,8 @@ io.on('connection', (socket) => {
      */
   // SPAWN THE PLAYER (Starting position)
   socket.on('start-up', (name) => {
-    if (name == playerName) {
-      console.log('[RECV] Login player: ' + name);
+    //if (name == playerName) {
+      console.log('[RECV] Spawn player: ' + playerName);
       var movements = database.collection('movements');
       movements.findOne({
         name: playerName,
@@ -199,7 +199,7 @@ io.on('connection', (socket) => {
 
           socket.join('start');
           clients.push(client);
-        }
+        //}
       })
     }
 
@@ -287,7 +287,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    console.log('[RECV] - Player disconnected: ' + playerName);
+    console.log('[RECV] Player disconnected: ' + playerName);
     socket.broadcast.emit('other-player-disconnected', playerName)
     //console.log(currentPlayer.name + ' bcst: other player disconnected ' + JSON.stringify(currentPlayer));
     for (var i = 0; i < clients.length; i++) {
@@ -363,7 +363,7 @@ function setDatabase() {
       if (err) {
         console.log('[ERROR]' + err)
       } else {
-        console.log('[RECV] Update database:' + client.name)
+        console.log('[RECV] Update database: ' + client.name)
       }
     });
   })
