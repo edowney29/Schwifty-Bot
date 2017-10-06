@@ -272,7 +272,7 @@ MongoClient.connect(MONGO_URI, (err, db) => {
       */
     });
 
-    socket.on('player-message', (name, meesage) => {
+    socket.on('player-message', (name, message) => {
       socket.broadcast.emit('player-message', name, message)
     });
 
