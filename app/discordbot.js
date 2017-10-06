@@ -2,7 +2,7 @@ const discord = require('discord.js')
 const random = require('random-js')
 const google = require('googleapis')
 const _ = require('lodash')
-const timezone = require('moment-timezone')
+const moment = require('moment')
 
 const client = new discord.Client()
 const GOOGLE_KEY = process.env.GOOGLE_KEY
@@ -61,18 +61,18 @@ client.on('message', message => {
 		var split = msg.split(' ')
 		var index = _.findIndex(split, 'tz')
 		var time = '2020-09-11 ' + split[index + 1] + ' ' + split[index + 2]
-		var str = timezone.tz(time)
+		var str = moment(time)
 		if (str.isValid) {
 			var offset = str.utcOffset()
 			str.add(offset, 'hours')
 
-			var est = timezone.tz(str)
-			var cst = timezone.tz(str)
-			var mst = timezone.tz(str)
-			var pst = timezone.tz(str)
-			var ireland = timezone.tz(str)
-			var germany = timezone.tz(str)
-			var japan = timezone.tz(str)			
+			var est = moment(str)
+			var cst = moment(str)
+			var mst = moment(str)
+			var pst = moment(str)
+			var ireland = moment(str)
+			var germany = moment(str)
+			var japan = moment(str)			
 
 			est = est.add(-5, 'hours').format('h:mm')
 			cst = cst.add(-6, 'hours').format('h:mm')
