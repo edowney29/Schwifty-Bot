@@ -161,11 +161,11 @@ MongoClient.connect(MONGO_URI, (err, db) => {
         console.log('[RECV]: Login player: ' + name);
         var movements = db.collection('movements');
         movements.findOne({
-          name: name,
+          name: playerName,
         }, (err, doc) => {
 
           var client = {
-            name: doc.name,
+            name: playerName,
             positionx: doc.positionx,
             positiony: doc.positiony,
             positionz: doc.positionz,
@@ -180,7 +180,7 @@ MongoClient.connect(MONGO_URI, (err, db) => {
 
           // SETUP YOUR PLAYER
           socket.emit('start-up',
-            client.name,
+            playerName,
             client.positionx,
             client.positiony,
             client.positionz,
@@ -215,7 +215,7 @@ MongoClient.connect(MONGO_URI, (err, db) => {
 
       // Update clients array of move
       var index = _.findIndex(clients, {
-        name: name
+        name: playerName
       });
 
       if (index) {
@@ -227,6 +227,7 @@ MongoClient.connect(MONGO_URI, (err, db) => {
         clients[index].rotationz = rotationz;
         clients[index].rotationw = rotationw;
 
+        /*
         var movements = db.collection('movements');
         movements.updateOne({
           name: name,
@@ -247,9 +248,10 @@ MongoClient.connect(MONGO_URI, (err, db) => {
             console.log('[RECV] Update database:' + name)
           }
         });
+        */
 
         io.in(clients[index].room).emit('player-move',
-          name,
+          playerName,
           positionx,
           positiony,
           positionz,
@@ -273,8 +275,8 @@ MongoClient.connect(MONGO_URI, (err, db) => {
     });
 
     socket.on('player-message', (name, message) => {
-      console.log('[RECV] - Message: ' + name + message);      
-      socket.broadcast.emit('player-message', name, message)
+      console.log('[RECV] - Message: ' + playerName + message);
+      socket.broadcast.emit('player-message', playerName, message)
     });
 
     socket.on('disconnect', () => {
@@ -295,11 +297,14 @@ var counter = 0;
 setInterval(() => {
   io.emit('time', new Date().toTimeString());
 
+  if (count % 500 == 0) {
+    setDatabase();
+  }
   if (counter == 1000) {
     getCluster();
     counter = 0;
-    var allRooms = _.map(clients, 'room');
-    console.log(_.uniq(allRooms));
+    //var allRooms = _.map(clients, 'room');
+    //console.log(_.uniq(allRooms));
   }
   counter++;
 
@@ -330,4 +335,29 @@ function getCluster() {
       }
     })
   });
+}
+
+function setDatabase() {
+  _.forEach(clients, client => {
+    var movements = db.collection('movements');
+    movements.update({
+      name: client.name,
+    }, {
+      name: client.name,
+      positionx: client.positionx,
+      positiony: client.positiony,
+      positionz: client.positionz,
+      rotationx: client.rotationx,
+      rotationy: client.rotationy,
+      rotationz: client.rotationz,
+      rotationw: client.rotationw,
+    }, (err, res) => {
+
+      if (err) {
+        console.log('[SERVER] Error:' + client.name)
+      } else {
+        console.log('[RECV] Update database:' + client.name)
+      }
+    });
+  })
 }
