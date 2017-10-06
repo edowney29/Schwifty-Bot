@@ -28,7 +28,7 @@ var knum = 1;
 
 for (var i = 0; i < knum; i++) {
   var fakes = {
-    name: uuid.v1(),
+    name: 'kmeans point' + 1,
     positionx: (Math.random() * 1000),
     positiony: (Math.random() * 1000),
     positionz: (Math.random() * 1000),
