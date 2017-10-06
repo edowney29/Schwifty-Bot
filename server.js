@@ -52,7 +52,7 @@ MongoClient.connect(MONGO_URI, (err, db) => {
 
 io.on('connection', (socket) => {
 
-  var playerName = null;
+  var playerName;
 
   socket.on('ping', () => {
     socket.emit('pong')
@@ -161,18 +161,17 @@ io.on('connection', (socket) => {
      */
   // SPAWN THE PLAYER (Starting position)
   socket.on('start-up', (name) => {
-    //if (name == playerName) {
-    console.log('[RECV] Spawn player: ' + playerName);
+    console.log('[RECV] Spawn player: ' + name);
     var movements = database.collection('movements');
     movements.findOne({
-      name: playerName,
+      name: name,
     }, (err, doc) => {
       if (err) {
         console.log('[ERROR] ' + err)
       } else {
 
         var client = {
-          name: playerName,
+          name: name,
           positionx: doc.positionx,
           positiony: doc.positiony,
           positionz: doc.positionz,
@@ -187,7 +186,7 @@ io.on('connection', (socket) => {
 
         // SETUP YOUR PLAYER
         socket.emit('start-up',
-          playerName,
+          name,
           client.positionx,
           client.positiony,
           client.positionz,
@@ -202,7 +201,6 @@ io.on('connection', (socket) => {
         clients.push(client);
       }
     })
-    //}
 
     /*
     socket.broadcast.emit('other-player-connected',
@@ -223,7 +221,7 @@ io.on('connection', (socket) => {
 
     // Update clients array of move
     var index = _.findIndex(clients, {
-      name: playerName
+      name: name
     });
 
     if (index) {
@@ -259,7 +257,7 @@ io.on('connection', (socket) => {
           */
 
       io.in(clients[index].room).emit('player-move',
-        playerName,
+        name,
         positionx,
         positiony,
         positionz,
@@ -284,7 +282,7 @@ io.on('connection', (socket) => {
 
   socket.on('player-message', (name, message) => {
     console.log('[RECV] Message: ' + playerName + message);
-    socket.broadcast.emit('player-message', playerName, message)
+    socket.broadcast.emit('player-message', name, message)
   });
 
   socket.on('disconnect', () => {
