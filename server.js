@@ -161,7 +161,7 @@ io.on('connection', (socket) => {
      */
   // SPAWN THE PLAYER (Starting position)
   socket.on('start-up', (name) => {
-    if (name) {
+    if (name == playerName) {
       console.log('[RECV]: Login player: ' + name);
       var movements = database.collection('movements');
       movements.findOne({
