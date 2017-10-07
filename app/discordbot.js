@@ -83,11 +83,11 @@ client.on('message', message => {
 			}
 		}
 
-		var est = getOffset(hour, getZone('EST'))
-		var cst = getOffset(hour, getZone('CST'))
-		var mst = getOffset(hour, getZone('MST'))
-		var pst = getOffset(hour, getZone('PST'))
-		var ist = getOffset(hour, getZone('IST'))
+		var est = getOffset(hour, getZone('EST')).toString()
+		var cst = getOffset(hour, getZone('CST')).toString()
+		var mst = getOffset(hour, getZone('MST')).toString()
+		var pst = getOffset(hour, getZone('PST')).toString()
+		var ist = getOffset(hour, getZone('IST')).toString()
 
 		message.reply(
 			'\nEST ' + est + ':' + time[1] +
@@ -138,6 +138,7 @@ function getOffset(hour, offset) {
 		}
 	}
 
+	return hour;
 }
 
 function getData() {
