@@ -20,6 +20,7 @@
     "node-kmeans": "^1.1.0",
     "path": "^0.12.7",
     "random-js": "^1.0.8",
-    "socket.io": "^2.0.3"
+    "socket.io": "^2.0.3",
+    "sqlite": "^2.8.0"
   }
 }

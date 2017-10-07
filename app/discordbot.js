@@ -21,18 +21,19 @@ client.on('ready', () => {
 client.on('message', message => {
 
 	var msg = message.content.toLowerCase()
+	msg = msg.split(' ')
 
-	if (msg == 'ping') {
+	if (_.includes(msg, 'ping')) {
 		message.reply('pong')
 	}
-
+	/*
 	if (msg == 'stat1') {
 		getData()
 			.then(str => {
 				message.reply(str)
 			})
 	}
-
+	*/
 	if (_.includes(msg, 'magic conch')) {
 		var answers = [
 			'Maybe.', 'Certainly not.', 'Not in your wildest dreams.', 'Nah, fam.',
@@ -49,7 +50,7 @@ client.on('message', message => {
 		message.reply(answer)
 	}
 
-	if (msg == 'd20') {
+	if (_.includes(msg, 'd20')) {
 		var distribution = random.integer(1, 20)
 		var d20 = distribution(engine).toString()
 		message.reply(d20)
@@ -63,17 +64,30 @@ client.on('message', message => {
 		var hour = parseInt(time[0])
 
 		var offset = getZone(split[index + 2])
-		hour = (hour + (offset * -1)) % 12
+		var counter = offset;
+		var isPosDir = false;
+		if (offset < 0) {
+			counter = offset * -1
+			isPosDir = true;
+		}
 
-		var est = (hour + getZone('EST')) % 12
-		var cst = (hour + getZone('CST')) % 12
-		var mst = (hour + getZone('MST')) % 12
-		var pst = (hour + getZone('PST')) % 12
-		var ist = (hour + getZone('IST')) % 12
+		for (var i = 0; i < counter; i++) {
+			if (isPosDir) {
+				hour = hour + 1;
+				if (hour > 12)
+					hour = 1
+			} else {
+				hour = hour - 1;
+				if (hour < 1)
+					hour = 12
+			}
+		}
 
-		console.log(time)
-		console.log(hour)
-		console.log(offset)
+		var est = getOffset(hour, getZone('EST'))
+		var cst = getOffset(hour, getZone('CST'))
+		var mst = getOffset(hour, getZone('MST'))
+		var pst = getOffset(hour, getZone('PST'))
+		var ist = getOffset(hour, getZone('IST'))
 
 		message.reply(
 			'\nEST ' + est + ':' + time[1] +
@@ -83,7 +97,6 @@ client.on('message', message => {
 			'\nIST ' + ist + ':' + time[1]
 		)
 	}
-
 
 })
 
@@ -102,6 +115,29 @@ function getZone(zone) {
 		return 1
 	if (zone == 'GMT')
 		return 0
+}
+
+function getOffset(hour, offset) {
+
+	var counter = offset;
+	var isPosDir = true;
+	if (offset < 0) {
+		counter = offset * -1
+		isPosDir = false;
+	}
+
+	for (var i = 0; i < counter; i++) {
+		if (isPosDir) {
+			hour = hour + 1;
+			if (hour > 12)
+				hour = 1
+		} else {
+			hour = hour - 1;
+			if (hour < 1)
+				hour = 12
+		}
+	}
+
 }
 
 function getData() {
