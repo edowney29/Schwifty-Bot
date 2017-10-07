@@ -95,7 +95,7 @@ client.on('message', message => {
 			'\nCST: ' + cst + ':' + time[1] +
 			'\nMST: ' + mst + ':' + time[1] +
 			'\nPST: ' + pst + ':' + time[1] +
-			'\nIST: ' + ist + ':' + time[1]
+			'\nIreland: ' + ist + ':' + time[1]
 		)
 	}
 
@@ -113,7 +113,7 @@ function getZone(zone) {
 	if (zone == 'PST')
 		return -8
 	if (zone == 'IST')
-		return 1
+		return 0
 	if (zone == 'GMT')
 		return 0
 }
