@@ -4,8 +4,8 @@ const google = require('googleapis')
 const _ = require('lodash')
 
 const client = new discord.Client()
-const GOOGLE_KEY = process.env.GOOGLE_KEY
-const DISCORD_KEY = process.env.DISCORD_KEY
+const DISCORD_KEY = 'MzMwNTM5ODQ0ODg5NDc3MTIx.DDijpw.McCPms6FKHgvjLW9fCl8NQacWfg' //process.env.DISCORD_KEY
+const GOOGLE_KEY = 'AIzaSyCu_jTK-L3GLefF337NJmmK4ksoI8YJxnc' //process.env.GOOGLE_KEY
 
 const engine = random.engines.mt19937().autoSeed()
 
@@ -19,7 +19,7 @@ client.on('ready', () => {
 })
 
 client.on('message', message => {
-
+	console.log(message)
 	var msg = message.content.toLowerCase()
 	msg = msg.split(' ')
 
@@ -58,11 +58,11 @@ client.on('message', message => {
 
 	if (_.includes(msg, 'tz')) {
 		msg = _.toUpper(msg)
-		var split = msg.split(' ')
+		var split = msg.split(',')
 		var index = split.indexOf('TZ')
 		var time = split[index + 1].split(":")
 		var hour = parseInt(time[0])
-
+		
 		var offset = getZone(split[index + 2])
 		var counter = offset;
 		var isPosDir = false;
@@ -89,12 +89,13 @@ client.on('message', message => {
 		var pst = getOffset(hour, getZone('PST')).toString()
 		var ist = getOffset(hour, getZone('IST')).toString()
 
+
 		message.reply(
-			'\nEST ' + est + ':' + time[1] +
-			'\nCST ' + cst + ':' + time[1] +
-			'\nMST ' + mst + ':' + time[1] +
-			'\nPST ' + pst + ':' + time[1] +
-			'\nIST ' + ist + ':' + time[1]
+			'\nEST: ' + est + ':' + time[1] +
+			'\nCST: ' + cst + ':' + time[1] +
+			'\nMST: ' + mst + ':' + time[1] +
+			'\nPST: ' + pst + ':' + time[1] +
+			'\nIST: ' + ist + ':' + time[1]
 		)
 	}
 
