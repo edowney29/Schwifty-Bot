@@ -4,8 +4,8 @@ const google = require('googleapis')
 const _ = require('lodash')
 
 const client = new discord.Client()
-const DISCORD_KEY = 'MzMwNTM5ODQ0ODg5NDc3MTIx.DDijpw.McCPms6FKHgvjLW9fCl8NQacWfg' //process.env.DISCORD_KEY
-const GOOGLE_KEY = 'AIzaSyCu_jTK-L3GLefF337NJmmK4ksoI8YJxnc' //process.env.GOOGLE_KEY
+const DISCORD_KEY = process.env.DISCORD_KEY
+const GOOGLE_KEY = process.env.GOOGLE_KEY
 
 const engine = random.engines.mt19937().autoSeed()
 
