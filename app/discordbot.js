@@ -63,7 +63,19 @@ client.on('message', message => {
 		var time = split[index + 1].split(":")
 		var hour = parseInt(time[0])
 
-		var offset = getZone(split[index + 2])
+		var tz = split[index + 2]
+		var dst = isDST();
+
+		var dstwarning = ''
+		if (!dst && (tz === 'EDT' || tz === 'CDT' || tz === 'MDT' || tz === 'PDT')) {
+			tz = tz.substr(0, 1) + 'S' + tz.substr(2)
+			dstwarning = 'Daylight savings is in effect, using ' + tz + '...'
+		} else if (dst && (tz === 'EST' || tz === 'CST' || tz === 'MST' || tz === 'PST')) {
+			tz = tz.substr(0, 1) + 'D' + tz.substr(2)
+			dstwarning = 'Daylight savings is not in effect, using ' + tz + '...'
+		}
+
+		var offset = getZone(tz)
 
 		if (offset === null) {
 			message.reply('Unknown Timezone');
@@ -89,8 +101,6 @@ client.on('message', message => {
 			}
 		}
 
-		var dst = isDST();
-
 		var est = getOffset(hour, getZone(dst ? 'EDT' : 'EST')).toString()
 		var cst = getOffset(hour, getZone(dst ? 'CDT' : 'CST')).toString()
 		var mst = getOffset(hour, getZone(dst ? 'MDT' : 'MST')).toString()
@@ -99,6 +109,7 @@ client.on('message', message => {
 
 
 		message.reply(
+			dstwarning +
 			'\n' + (dst ? 'EDT' : 'EST') + ': ' + est + ':' + time[1] +
 			'\n' + (dst ? 'CDT' : 'CST') + ': ' + cst + ':' + time[1] +
 			'\n' + (dst ? 'MDT' : 'MST') + ': ' + mst + ':' + time[1] +
