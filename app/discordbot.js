@@ -19,7 +19,7 @@ client.on('ready', () => {
 })
 
 client.on('message', message => {
-	console.log(message)
+	console.log(message.content)
 	var msg = message.content.toLowerCase()
 	msg = msg.split(' ')
 
