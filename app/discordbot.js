@@ -143,9 +143,11 @@ function getZone(zone) {
 		case 'PST':
 			return -8;
 			break;
-		case 'IST':
 		case 'GMT':
 			return 0;
+			break;
+		case 'IST':
+			return 1;
 			break;
 		default:
 			return null;
