@@ -69,10 +69,10 @@ client.on('message', message => {
 		var dstwarning = ''
 		if (!dst && (tz === 'EDT' || tz === 'CDT' || tz === 'MDT' || tz === 'PDT')) {
 			tz = tz.substr(0, 1) + 'S' + tz.substr(2)
-			dstwarning = 'Daylight savings is in effect, using ' + tz + '...'
+			dstwarning = 'Daylight savings is not in effect, using ' + tz + '...'
 		} else if (dst && (tz === 'EST' || tz === 'CST' || tz === 'MST' || tz === 'PST')) {
 			tz = tz.substr(0, 1) + 'D' + tz.substr(2)
-			dstwarning = 'Daylight savings is not in effect, using ' + tz + '...'
+			dstwarning = 'Daylight savings is in effect, using ' + tz + '...'
 		}
 
 		var offset = getZone(tz)
