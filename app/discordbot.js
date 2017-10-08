@@ -64,7 +64,7 @@ client.on('message', message => {
 		var hour = parseInt(time[0])
 
 		var tz = split[index + 2]
-		var dst = isDST();
+		var dst = new Date().dst()
 
 		var dstwarning = ''
 		if (!dst && (tz === 'EDT' || tz === 'CDT' || tz === 'MDT' || tz === 'PDT')) {
@@ -121,6 +121,16 @@ client.on('message', message => {
 })
 
 client.login(DISCORD_KEY)
+
+Date.prototype.stdTimezoneOffset = function() {
+	var jan = new Date(this.getFullYear(), 0, 1);
+	var jul = new Date(this.getFullYear(), 6, 1);
+	return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+}
+
+Date.prototype.dst = function() {
+	return this.getTimezoneOffset() < this.stdTimezoneOffset();
+}
 
 function isDST() {
 	var today = new Date();
