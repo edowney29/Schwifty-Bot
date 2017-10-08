@@ -15,7 +15,7 @@ client.on('ready', () => {
 	var obj = client.users.map(u => `${u.username}#${u.discriminator}${u.id}`).join('')
 	var temp = _.toLower(obj)
 	users = _.split(temp, ';')
-	//console.log(users)
+		//console.log(users)
 })
 
 client.on('message', message => {
@@ -83,18 +83,20 @@ client.on('message', message => {
 			}
 		}
 
-		var est = getOffset(hour, getZone('EST')).toString()
-		var cst = getOffset(hour, getZone('CST')).toString()
-		var mst = getOffset(hour, getZone('MST')).toString()
-		var pst = getOffset(hour, getZone('PST')).toString()
+		var dst = isDST();
+
+		var est = getOffset(hour, getZone(dst ? 'EDT' : 'EST')).toString()
+		var cst = getOffset(hour, getZone(dst ? 'CDT' : 'CST')).toString()
+		var mst = getOffset(hour, getZone(dst ? 'MDT' : 'MST')).toString()
+		var pst = getOffset(hour, getZone(dst ? 'PDT' : 'PST')).toString()
 		var ist = getOffset(hour, getZone('IST')).toString()
 
 
 		message.reply(
-			'\nEST: ' + est + ':' + time[1] +
-			'\nCST: ' + cst + ':' + time[1] +
-			'\nMST: ' + mst + ':' + time[1] +
-			'\nPST: ' + pst + ':' + time[1] +
+			'\n' + (dst ? 'EDT' : 'EST') + ': ' + est + ':' + time[1] +
+			'\n' + (dst ? 'CDT' : 'CST') + ': ' + cst + ':' + time[1] +
+			'\n' + (dst ? 'MDT' : 'MST') + ': ' + mst + ':' + time[1] +
+			'\n' + (dst ? 'PDT' : 'PST') + ': ' + pst + ':' + time[1] +
 			'\nIreland: ' + ist + ':' + time[1]
 		)
 	}
@@ -103,19 +105,41 @@ client.on('message', message => {
 
 client.login(DISCORD_KEY)
 
+function isDST() {
+	var today = new Date();
+	var jan = new Date(this.getFullYear(), 0, 1);
+
+	return today.getTimezoneOffset() < jan.getTimezoneOffset();
+}
+
 function getZone(zone) {
-	if (zone == 'EST')
-		return -5
-	if (zone == 'CST')
-		return -6
-	if (zone == 'MST')
-		return -7
-	if (zone == 'PST')
-		return -8
-	if (zone == 'IST')
-		return 0
-	if (zone == 'GMT')
-		return 0
+	switch (zone) {
+		case 'EDT':
+			return -4;
+			break;
+		case 'EST':
+		case 'CDT':
+			return -5;
+			break;
+		case 'CST':
+		case 'MDT':
+			return -6;
+			break;
+		case 'MST':
+		case 'PDT':
+			return -7;
+			break;
+		case 'PST':
+			return -8;
+			break;
+		case 'IST':
+		case 'GMT':
+			return 0;
+			break;
+		default:
+			return 0;
+			break;
+	}
 }
 
 function getOffset(hour, offset) {
