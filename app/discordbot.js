@@ -64,6 +64,12 @@ client.on('message', message => {
 		var hour = parseInt(time[0])
 
 		var offset = getZone(split[index + 2])
+
+		if (offset === null) {
+			message.reply('Unknown Timezone');
+			return
+		}
+
 		var counter = offset;
 		var isPosDir = false;
 		if (offset < 0) {
@@ -137,7 +143,7 @@ function getZone(zone) {
 			return 0;
 			break;
 		default:
-			return 0;
+			return null;
 			break;
 	}
 }
