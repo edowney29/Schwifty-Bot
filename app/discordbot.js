@@ -107,7 +107,7 @@ client.login(DISCORD_KEY)
 
 function isDST() {
 	var today = new Date();
-	var jan = new Date(this.getFullYear(), 0, 1);
+	var jan = new Date(today.getFullYear(), 0, 1);
 
 	return today.getTimezoneOffset() < jan.getTimezoneOffset();
 }
