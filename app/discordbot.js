@@ -176,7 +176,7 @@ function getOffset(hour, offset) {
 
 	return hour;
 }
-
+/*
 function getData() {
 	return new Promise((resolve, reject) => {
 		var sheets = google.sheets('v4')
@@ -200,3 +200,4 @@ function getData() {
 		})
 	})
 }
+*/
