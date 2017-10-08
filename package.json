@@ -17,6 +17,7 @@
     "googleapis": "^21.3.0",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
+    "moment-timezone": "^0.5.13",
     "mongodb": "^2.2.31",
     "node-kmeans": "^1.1.0",
     "path": "^0.12.7",

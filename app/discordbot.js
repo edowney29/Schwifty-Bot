@@ -1,7 +1,7 @@
 const discord = require('discord.js')
 const random = require('random-js')
 const google = require('googleapis')
-const moment = require('moment')
+const moment = require('moment-timezone');
 const _ = require('lodash')
 
 const client = new discord.Client()
@@ -66,7 +66,6 @@ client.on('message', message => {
 
 		var tz = split[index + 2]
 		var dst = moment(new Date()).tz('America/New_York').isDST();
-		message.reply('DST: ' + dst)
 
 		var dstwarning = ''
 		if (!dst && (tz === 'EDT' || tz === 'CDT' || tz === 'MDT' || tz === 'PDT')) {
