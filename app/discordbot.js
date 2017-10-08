@@ -66,6 +66,7 @@ client.on('message', message => {
 
 		var tz = split[index + 2]
 		var dst = moment(new Date()).tz('America/New_York').isDST();
+		message.reply('DST: ' + dst)
 
 		var dstwarning = ''
 		if (!dst && (tz === 'EDT' || tz === 'CDT' || tz === 'MDT' || tz === 'PDT')) {
