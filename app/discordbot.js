@@ -21,7 +21,7 @@ client.on('ready', () => {
 client.on('message', message => {
 	var msg = message.content.toLowerCase()
 	msg = msg.split(' ')
-	console.log(msg)	
+	console.log(msg)
 
 	if (_.includes(msg, 'ping')) {
 		message.reply('pong')
@@ -34,7 +34,7 @@ client.on('message', message => {
 			})
 	}
 	*/
-	if (_.includes(msg, 'magic conch')) {
+	if (_.includes(msg, 'magic') && _.includes(msg, 'conch')) {
 		var answers = [
 			'Maybe.', 'Certainly not.', 'Not in your wildest dreams.', 'Nah, fam.',
 			'There is a good chance.', 'Quite likely.', 'I hope not.', 'Without a doubt.',
@@ -62,7 +62,7 @@ client.on('message', message => {
 		var index = split.indexOf('TZ')
 		var time = split[index + 1].split(":")
 		var hour = parseInt(time[0])
-		
+
 		var offset = getZone(split[index + 2])
 		var counter = offset;
 		var isPosDir = false;
