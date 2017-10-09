@@ -54,6 +54,7 @@ MongoClient.connect(MONGO_URI, (err, db) => {
 io.on('connection', (socket) => {
 
   var playerName;
+  console.log(socket)
 
   socket.on('ping', () => {
     socket.emit('pong')
@@ -263,6 +264,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
+    console.log(socket)    
     console.log('[RECV] Player disconnected: ' + playerName);
     socket.broadcast.emit('other-player-disconnected', playerName)
     for (var i = 0; i < clients.length; i++) {
