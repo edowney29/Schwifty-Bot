@@ -221,7 +221,7 @@ io.on('connection', (socket) => {
       clients[index].rotationz = rotationz;
       clients[index].rotationw = rotationw;
 
-
+      /*
       var movements = db.collection('movements');
       movements.updateOne({
         name: name,
@@ -242,7 +242,7 @@ io.on('connection', (socket) => {
           console.log('[RECV] Update database:' + name)
         }
       });
-
+      */
 
       io.in(clients[index].room).emit('player-move',
         name,
@@ -265,7 +265,6 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('[RECV] Player disconnected: ' + playerName);
     socket.broadcast.emit('other-player-disconnected', playerName)
-    //console.log(currentPlayer.name + ' bcst: other player disconnected ' + JSON.stringify(currentPlayer));
     for (var i = 0; i < clients.length; i++) {
       if (clients[i].name == playerName) {
         clients.splice(i, 1);
