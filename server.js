@@ -57,7 +57,6 @@ io.on('connection', (socket) => {
 
   socket.on('ping', () => {
     socket.emit('pong')
-    console.log(playerName)
   });
 
   socket.on('player-reg', (name, email, pass) => {
@@ -78,7 +77,7 @@ io.on('connection', (socket) => {
       rotationw: 0.0
     }
 
-    console.log('[RECV] Regsiter: ' + newUser);
+    console.log('[RECV - Regsiter] : ' + newUser);
     var users = database.collection('users');
     var movements = database.collection('movements');
 
@@ -115,7 +114,7 @@ io.on('connection', (socket) => {
         socket.emit('player-menu', 'log');
       }
     })
-    console.log('[RECV] Login: ' + name);
+    console.log('[RECV - Login] : ' + name);
     if (pass) {
       var users = database.collection('users');
       users.findOne({
@@ -163,13 +162,13 @@ io.on('connection', (socket) => {
 
   // SPAWN THE PLAYER (Starting position)
   socket.on('start-up', (name) => {
-    console.log('[RECV] Spawn player: ' + name);
+    console.log('[RECV - Spawn player] : ' + name);
     var movements = database.collection('movements');
     movements.findOne({
       name: name,
     }, (err, doc) => {
       if (err) {
-        console.log('[ERROR] ' + err)
+        console.log('[ERROR - No login]:  ' + err)
       } else {
 
         var client = {
@@ -206,7 +205,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('player-move', (name, positionx, positiony, positionz, rotationx, rotationy, rotationz, rotationw) => {
-    console.log('[RECV] Player move: ' + name);
+    console.log('[RECV - Player move] : ' + name);
 
     // Update clients array of move
     var index = _.findIndex(clients, {
@@ -259,13 +258,12 @@ io.on('connection', (socket) => {
   });
 
   socket.on('player-message', (name, message) => {
-    console.log('[RECV] Message: ' + playerName + message);
+    console.log('[RECV - Message] ' + name + ': ' + message);
     socket.broadcast.emit('player-message', name, message)
   });
 
   socket.on('disconnect', () => {
-    console.log(socket)    
-    console.log('[RECV] Player disconnected: ' + playerName);
+    console.log('[RECV - Player disconnected] : ' + playerName);
     socket.broadcast.emit('other-player-disconnected', playerName)
     for (var i = 0; i < clients.length; i++) {
       if (clients[i].name == playerName) {
@@ -338,9 +336,9 @@ function setDatabase() {
       rotationw: client.rotationw,
     }, (err, res) => {
       if (err) {
-        console.log('[ERROR]' + err)
+        console.log('[ERROR - SERVER]: ' + err)
       } else {
-        //console.log('[RECV] Update database: ' + client.name)
+        //console.log('[RECV - Update database]: ' + client.name)
       }
     });
   })
