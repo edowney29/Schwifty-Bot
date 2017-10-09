@@ -54,10 +54,10 @@ MongoClient.connect(MONGO_URI, (err, db) => {
 io.on('connection', (socket) => {
 
   var playerName;
-  console.log(socket)
 
   socket.on('ping', () => {
     socket.emit('pong')
+    console.log(playerName)
   });
 
   socket.on('player-reg', (name, email, pass) => {
