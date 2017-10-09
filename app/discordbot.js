@@ -63,59 +63,32 @@ client.on('message', message => {
 		var index = split.indexOf('TZ')
 		var time = split[index + 1].split(":")
 		var hour = parseInt(time[0])
+		var minutes = parseInt(time[1])
 
 		var tz = split[index + 2]
-		var dst = moment(new Date()).tz('America/New_York').isDST();
+		var zone = getZone(tz)
 
-		var dstwarning = ''
-		if (!dst && (tz === 'EDT' || tz === 'CDT' || tz === 'MDT' || tz === 'PDT')) {
-			tz = tz.substr(0, 1) + 'S' + tz.substr(2)
-			dstwarning = 'Daylight savings is not in effect, using ' + tz + '...'
-		} else if (dst && (tz === 'EST' || tz === 'CST' || tz === 'MST' || tz === 'PST')) {
-			tz = tz.substr(0, 1) + 'D' + tz.substr(2)
-			dstwarning = 'Daylight savings is in effect, using ' + tz + '...'
-		}
+		var now = new Date()
+			// create date object with user inputted time in timezone
+		var date = moment.tz(now.getFullYear() + "-" +
+			(now.getMonth() < 10 ? '0' : '') + now.getMonth() + "-" +
+			(now.getDate() < 10 ? '0' : '') + now.getDate() + " " +
+			(hour < 10 ? '0' : '') + hour + ":" +
+			(minutes < 10 ? '0' : '') + minutes,
+			zone);
 
-		var offset = getZone(tz)
-
-		if (offset === null) {
+		if (zone === null) {
 			message.reply('Unknown Timezone');
 			return
 		}
 
-		var counter = offset;
-		var isPosDir = false;
-		if (offset < 0) {
-			counter = offset * -1
-			isPosDir = true;
-		}
-
-		for (var i = 0; i < counter; i++) {
-			if (isPosDir) {
-				hour = hour + 1;
-				if (hour > 12)
-					hour = 1
-			} else {
-				hour = hour - 1;
-				if (hour < 1)
-					hour = 12
-			}
-		}
-
-		var est = getOffset(hour, getZone(dst ? 'EDT' : 'EST')).toString()
-		var cst = getOffset(hour, getZone(dst ? 'CDT' : 'CST')).toString()
-		var mst = getOffset(hour, getZone(dst ? 'MDT' : 'MST')).toString()
-		var pst = getOffset(hour, getZone(dst ? 'PDT' : 'PST')).toString()
-		var ist = getOffset(hour, getZone('IST')).toString()
-
-
+		// tz mutates date, does not return new one
 		message.reply(
-			dstwarning +
-			'\n' + (dst ? 'EDT' : 'EST') + ': ' + est + ':' + time[1] +
-			'\n' + (dst ? 'CDT' : 'CST') + ': ' + cst + ':' + time[1] +
-			'\n' + (dst ? 'MDT' : 'MST') + ': ' + mst + ':' + time[1] +
-			'\n' + (dst ? 'PDT' : 'PST') + ': ' + pst + ':' + time[1] +
-			'\nIreland: ' + ist + ':' + time[1]
+			'\n' + date.tz('America/New_York').zoneAbbr() + ':\t' + date.format('h:mm') +
+			'\n' + date.tz('America/Chicago').zoneAbbr() + ':\t' + date.format('h:mm') +
+			'\n' + date.tz('America/Denver').zoneAbbr() + ':\t' + date.format('h:mm') +
+			'\n' + date.tz('America/Los_Angeles').zoneAbbr() + ':\t' + date.format('h:mm') +
+			'\n' + date.tz('Europe/Dublin').zoneAbbr() + ':\t' + date.format('h:mm')
 		)
 	}
 
@@ -126,28 +99,29 @@ client.login(DISCORD_KEY)
 function getZone(zone) {
 	switch (zone) {
 		case 'EDT':
-			return -4;
-			break;
 		case 'EST':
+		case 'EASTERN':
+			return 'America/New_York';
+			break;
 		case 'CDT':
-			return -5;
-			break;
 		case 'CST':
-		case 'MDT':
-			return -6;
+		case 'CENTRAL':
+			return 'America/Chicago';
 			break;
+		case 'MDT':
 		case 'MST':
-		case 'PDT':
-			return -7;
+		case 'MOUNTAIN':
+			return 'America/Denver';
 			break;
 		case 'PST':
-			return -8;
+		case 'PDT':
+		case 'PACIFIC':
+			return 'America/Los_Angeles';
 			break;
 		case 'GMT':
-			return 0;
-			break;
 		case 'IST':
-			return 1;
+		case 'IRELAND':
+			return 'Europe/Dublin';
 			break;
 		default:
 			return null;
