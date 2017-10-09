@@ -6,7 +6,8 @@ const path = require('path');
 const assert = require('assert');
 const _ = require('lodash');
 const kmeans = require('node-kmeans');
-const uuid = require("uuid");
+const uuid = require('uuid');
+const nodemailer = require('nodemailer');
 
 const discord = require('./app/discordbot.js');
 
@@ -45,7 +46,7 @@ for (var i = 0; i < knum; i++) {
 
 MongoClient.connect(MONGO_URI, (err, db) => {
   assert.equal(null, err)
-  console.log("Connected to mongo")
+  console.log('Connected to mongo')
   database = db
   ready = true
 });
@@ -130,35 +131,35 @@ io.on('connection', (socket) => {
       })
     }
   });
-  /*
-      // SPAWN OTHER PLAYER
-      socket.on('player-connect', () => {
-        console.log('[RECV]: Client connect');
-        for (var i = 0; i < clients.length; i++) {
-          var playerConnected = {
-            name: clients[i].name,
-            positionx: clients[i].positionx,
-            positiony: clients[i].positiony,
-            positionz: clients[i].positionz,
-            rotationx: clients[i].rotationx,
-            rotationy: clients[i].rotationy,
-            rotationz: clients[i].rotationz,
-            health: clients[i].health
-          };
-          // In your current game, server tells you about the other players
-          socket.emit('other-player-connected',
-            playerConnected.name,
-            playerConnected.positionx,
-            playerConnected.positiony,
-            playerConnected.positionz,
-            playerConnected.rotationx,
-            playerConnected.rotationy,
-            playerConnected.rotationz,
-            playerConnected.health
-          );
-        }
-      });
-     */
+
+  // SPAWN OTHER PLAYER
+  socket.on('player-connect', () => {
+    console.log('[RECV]: Client connect');
+    for (var i = 0; i < clients.length; i++) {
+      var playerConnected = {
+        name: clients[i].name,
+        positionx: clients[i].positionx,
+        positiony: clients[i].positiony,
+        positionz: clients[i].positionz,
+        rotationx: clients[i].rotationx,
+        rotationy: clients[i].rotationy,
+        rotationz: clients[i].rotationz,
+        health: clients[i].health
+      };
+      // In your current game, server tells you about the other players
+      socket.emit('other-player-connected',
+        playerConnected.name,
+        playerConnected.positionx,
+        playerConnected.positiony,
+        playerConnected.positionz,
+        playerConnected.rotationx,
+        playerConnected.rotationy,
+        playerConnected.rotationz,
+        playerConnected.health
+      );
+    }
+  });
+
   // SPAWN THE PLAYER (Starting position)
   socket.on('start-up', (name) => {
     console.log('[RECV] Spawn player: ' + name);
@@ -201,19 +202,6 @@ io.on('connection', (socket) => {
         clients.push(client);
       }
     })
-
-    /*
-    socket.broadcast.emit('other-player-connected',
-      currentPlayer.name,
-      currentPlayer.positionx,
-      currentPlayer.positiony,
-      currentPlayer.positionz,
-      currentPlayer.rotationx,
-      currentPlayer.rotationy,
-      currentPlayer.rotationz,
-      currentPlayer.health
-    );
-    */
   });
 
   socket.on('player-move', (name, positionx, positiony, positionz, rotationx, rotationy, rotationz, rotationw) => {
@@ -233,28 +221,28 @@ io.on('connection', (socket) => {
       clients[index].rotationz = rotationz;
       clients[index].rotationw = rotationw;
 
-      /*
-          var movements = db.collection('movements');
-          movements.updateOne({
-            name: name,
-          }, {
-            name: name,
-            positionx: positionx,
-            positiony: positiony,
-            positionz: positionz,
-            rotationx: rotationx,
-            rotationy: rotationy,
-            rotationz: rotationz,
-            rotationw: rotationw,
-          }, (err, res) => {
-  
-            if (err) {
-              console.log('[SERVER] Error:' + name)
-            } else {
-              console.log('[RECV] Update database:' + name)
-            }
-          });
-          */
+
+      var movements = db.collection('movements');
+      movements.updateOne({
+        name: name,
+      }, {
+        name: name,
+        positionx: positionx,
+        positiony: positiony,
+        positionz: positionz,
+        rotationx: rotationx,
+        rotationy: rotationy,
+        rotationz: rotationz,
+        rotationw: rotationw,
+      }, (err, res) => {
+
+        if (err) {
+          console.log('[SERVER] Error:' + name)
+        } else {
+          console.log('[RECV] Update database:' + name)
+        }
+      });
+
 
       io.in(clients[index].room).emit('player-move',
         name,
@@ -267,17 +255,6 @@ io.on('connection', (socket) => {
         rotationw
       );
     }
-    /*
-    socket.broadcast.emit('player-move',
-      currentPlayer.name,
-      currentPlayer.positionx,
-      currentPlayer.positiony,
-      currentPlayer.positionz,
-      currentPlayer.rotationx,
-      currentPlayer.rotationy,
-      currentPlayer.rotationz
-    );
-    */
   });
 
   socket.on('player-message', (name, message) => {

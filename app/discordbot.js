@@ -3,6 +3,7 @@ const random = require('random-js')
 const google = require('googleapis')
 const moment = require('moment-timezone');
 const _ = require('lodash')
+const sqlite = require('sqlite')
 
 const client = new discord.Client()
 const DISCORD_KEY = process.env.DISCORD_KEY
@@ -16,7 +17,7 @@ client.on('ready', () => {
 	var obj = client.users.map(u => `${u.username}#${u.discriminator}${u.id}`).join('')
 	var temp = _.toLower(obj)
 	users = _.split(temp, ';')
-		//console.log(users)
+	//console.log(users)
 })
 
 client.on('message', message => {
@@ -61,7 +62,7 @@ client.on('message', message => {
 		msg = _.toUpper(msg)
 		var split = msg.split(',')
 		var index = split.indexOf('TZ')
-		var time = split[index + 1].split(":")
+		var time = split[index + 1].split(':')
 		var hour = parseInt(time[0])
 		var minutes = parseInt(time[1])
 
@@ -69,11 +70,11 @@ client.on('message', message => {
 		var zone = getZone(tz)
 
 		var now = new Date()
-			// create date object with user inputted time in timezone
-		var date = moment.tz(now.getFullYear() + "-" +
-			(now.getMonth() < 10 ? '0' : '') + now.getMonth() + "-" +
-			(now.getDate() < 10 ? '0' : '') + now.getDate() + " " +
-			(hour < 10 ? '0' : '') + hour + ":" +
+		// create date object with user inputted time in timezone
+		var date = moment.tz(now.getFullYear() + '-' +
+			(now.getMonth() < 10 ? '0' : '') + now.getMonth() + '-' +
+			(now.getDate() < 10 ? '0' : '') + now.getDate() + ' ' +
+			(hour < 10 ? '0' : '') + hour + ':' +
 			(minutes < 10 ? '0' : '') + minutes,
 			zone);
 
@@ -170,7 +171,7 @@ function getData() {
 			} else {
 				for (var i = 0; i < rows.length; i++) {
 					var row = rows[i]
-					resolve(row.join(", "))
+					resolve(row.join(', '))
 				}
 			}
 		})
