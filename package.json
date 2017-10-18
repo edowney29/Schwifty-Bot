@@ -4,7 +4,7 @@
   "description": "yoloswag420",
   "main": "index.html",
   "engines": {
-    "node": "6.11.3"
+    "node": "8.7.0"
   },
   "scripts": {
     "start": "node server.js"

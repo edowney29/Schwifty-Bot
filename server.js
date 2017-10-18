@@ -1,33 +1,34 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const socketIO = require('socket.io');
-const MongoClient = require('mongodb').MongoClient;
-const path = require('path');
-const assert = require('assert');
-const _ = require('lodash');
-const kmeans = require('node-kmeans');
-const uuid = require('uuid');
-const nodemailer = require('nodemailer');
+const express = require('express')
+const bodyParser = require('body-parser')
+const socketIO = require('socket.io')
+const MongoClient = require('mongodb').MongoClient
+const path = require('path')
+const assert = require('assert')
+const _ = require('lodash')
+const kmeans = require('node-kmeans')
+const uuid = require('uuid')
+const nodemailer = require('nodemailer')
 
-const discord = require('./app/discordbot.js');
+const discord = require('./app/discordbot.js')
 
-const PORT = process.env.PORT || 5000;
-const INDEX = path.join(__dirname, 'index.html');
-const MONGO_URI = process.env.MONGODB_URI;
+const PORT = process.env.PORT || 5000
+const INDEX = path.join(__dirname, 'index.html')
+const MONGO_URI = process.env.MONGODB_URI
 
 const server = express()
   .use((req, res) => res.sendFile(INDEX))
-  .listen(PORT, () => console.log(`Listening on ${ PORT }`));
+  .listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
-const io = socketIO(server);
-var clients = [];
-var updates = [];
-var clusters = [];
-var database;
-var ready = false;
-var knum = 1;
+const io = socketIO(server)
+var clients = []
+var enemies = []
+var updates = []
+var clusters = []
+var database
+var ready = false
+var knum = 1
 
-for (var i = 0; i < knum; i++) {
+for (var i = 0 i < knum i++) {
   var fakes = {
     name: 'kmeans point: ' + (i + 1),
     positionx: (Math.random() * 1000),
@@ -41,7 +42,7 @@ for (var i = 0; i < knum; i++) {
     socket: null,
     room: 'start'
   }
-  clients.push(fakes);
+  clients.push(fakes)
 }
 
 MongoClient.connect(MONGO_URI, (err, db) => {
@@ -49,37 +50,37 @@ MongoClient.connect(MONGO_URI, (err, db) => {
   console.log('Connected to mongo')
   database = db
   ready = true
-});
+})
 
 io.on('connection', (socket) => {
 
-  var playerName;
+  var playerName
 
   socket.on('ping', () => {
     socket.emit('pong')
-  });
+  })
 
   socket.on('player-reg', (name, email, pass) => {
     var newUser = {
       name,
       email,
       pass,
-      reg: 0,
+      reg: false,
     }
     var newMovements = {
       name,
       positionx: 0.0,
       positiony: 0.0,
-      positionz: 0.0,
-      rotationx: 0.0,
-      rotationy: 0.0,
-      rotationz: 0.0,
-      rotationw: 0.0
+      //positionz: 0.0,
+      //rotationx: 0.0,
+      //rotationy: 0.0,
+      //rotationz: 0.0,
+      //rotationw: 0.0
     }
 
-    console.log('[RECV - Regsiter] : ' + newUser);
-    var users = database.collection('users');
-    var movements = database.collection('movements');
+    console.log('[RECV - Regsiter] : ' + newUser)
+    var users = database.collection('users')
+    var movements = database.collection('movements')
 
     users.findOne({
       $or: [{
@@ -89,53 +90,53 @@ io.on('connection', (socket) => {
       }]
     }, (err, doc) => {
       if (err) {
-        socket.emit('player-menu', 'err');
+        socket.emit('player-menu', 'err')
       } else if (doc) {
-        socket.emit('player-menu', 'dub');
+        socket.emit('player-menu', 'dub')
       } else {
         users.insertOne(newUser, (err, res) => {
           movements.insertOne(newMovements, (err, res) => {
             if (err) {
-              socket.emit('player-menu', 'err');
+              socket.emit('player-menu', 'err')
             } else {
-              socket.emit('player-menu', 'good');
+              socket.emit('player-menu', 'good')
             }
           })
-        });
+        })
       }
     })
-  });
+  })
 
   socket.on('player-login', (name) => {
-    var pass = true;
+    var pass = true
     _.forEach(clients, client => {
       if (name == client.name) {
-        pass = false;
-        socket.emit('player-menu', 'log');
+        pass = false
+        socket.emit('player-menu', 'log')
       }
     })
-    console.log('[RECV - Login] : ' + name);
+    console.log('[RECV - Login] : ' + name)
     if (pass) {
-      var users = database.collection('users');
+      var users = database.collection('users')
       users.findOne({
         name: name
       }, (err, doc) => {
         if (err) {
-          socket.emit('player-menu', 'err');
+          socket.emit('player-menu', 'err')
         } else if (doc) {
-          socket.emit('player-menu', doc.pass);
-          playerName = name;
+          socket.emit('player-menu', doc.pass)
+          playerName = name
         } else {
-          socket.emit('player-menu', 'not');
+          socket.emit('player-menu', 'not')
         }
       })
     }
-  });
+  })
 
   // SPAWN OTHER PLAYER
   socket.on('player-connect', () => {
-    console.log('[RECV]: Client connect');
-    for (var i = 0; i < clients.length; i++) {
+    console.log('[RECV]: Client connect')
+    for (var i = 0 i < clients.length i++) {
       var playerConnected = {
         name: clients[i].name,
         positionx: clients[i].positionx,
@@ -145,7 +146,7 @@ io.on('connection', (socket) => {
         rotationy: clients[i].rotationy,
         rotationz: clients[i].rotationz,
         health: clients[i].health
-      };
+      }
       // In your current game, server tells you about the other players
       socket.emit('other-player-connected',
         playerConnected.name,
@@ -156,14 +157,14 @@ io.on('connection', (socket) => {
         playerConnected.rotationy,
         playerConnected.rotationz,
         playerConnected.health
-      );
+      )
     }
-  });
+  })
 
   // SPAWN THE PLAYER (Starting position)
   socket.on('start-up', (name) => {
-    console.log('[RECV - Spawn player] : ' + name);
-    var movements = database.collection('movements');
+    console.log('[RECV - Spawn player] : ' + name)
+    var movements = database.collection('movements')
     movements.findOne({
       name: name,
     }, (err, doc) => {
@@ -183,7 +184,7 @@ io.on('connection', (socket) => {
           health: 0,
           socket: socket,
           room: 'start'
-        };
+        }
 
         // SETUP YOUR PLAYER
         socket.emit('start-up',
@@ -196,54 +197,16 @@ io.on('connection', (socket) => {
           client.rotationz,
           client.rotationw,
           client.health
-        );
+        )
 
-        socket.join('start');
-        clients.push(client);
+        socket.join('start')
+        clients.push(client)
       }
     })
-  });
+  })
 
   socket.on('player-move', (name, positionx, positiony, positionz, rotationx, rotationy, rotationz, rotationw) => {
-    console.log('[RECV - Player move] : ' + name);
-
-    // Update clients array of move
-    var index = _.findIndex(clients, {
-      name: name
-    });
-
-    if (index) {
-      clients[index].positionx = positionx;
-      clients[index].positiony = positiony;
-      clients[index].positionz = positionz;
-      clients[index].rotationx = rotationx;
-      clients[index].rotationy = rotationy;
-      clients[index].rotationz = rotationz;
-      clients[index].rotationw = rotationw;
-
-      /*
-      var movements = db.collection('movements');
-      movements.updateOne({
-        name: name,
-      }, {
-        name: name,
-        positionx: positionx,
-        positiony: positiony,
-        positionz: positionz,
-        rotationx: rotationx,
-        rotationy: rotationy,
-        rotationz: rotationz,
-        rotationw: rotationw,
-      }, (err, res) => {
-
-        if (err) {
-          console.log('[SERVER] Error:' + name)
-        } else {
-          console.log('[RECV] Update database:' + name)
-        }
-      });
-      */
-
+    console.log('[RECV - Player move] : ' + name)
       io.in(clients[index].room).emit('player-move',
         name,
         positionx,
@@ -253,75 +216,76 @@ io.on('connection', (socket) => {
         rotationy,
         rotationz,
         rotationw
-      );
+      )
     }
-  });
+  })
 
   socket.on('player-message', (name, message) => {
-    console.log('[RECV - Message] ' + name + ': ' + message);
+    console.log('[RECV - Message] ' + name + ': ' + message)
     socket.broadcast.emit('player-message', name, message)
-  });
+  })
 
   socket.on('disconnect', () => {
-    console.log('[RECV - Player disconnected] : ' + playerName);
+    console.log('[RECV - Player disconnected] : ' + playerName)
     socket.broadcast.emit('other-player-disconnected', playerName)
-    for (var i = 0; i < clients.length; i++) {
+    for (var i = 0 i < clients.length i++) {
       if (clients[i].name == playerName) {
-        clients.splice(i, 1);
+        clients.splice(i, 1)
       }
     }
-  });
+  })
 })
 
-var counter = 0;
+var counter = 0
 setInterval(() => {
   if (ready) {
 
-    io.emit('time', new Date().toTimeString());
+    io.emit('time', new Date().toTimeString())
 
-    if (counter % 500 == 0) {
-      setDatabase();
-    }
+    if (counter % 100 == 0)
+      enemyUpdate()
+    if (counter % 500 == 0)
+      setDatabase()
     if (counter == 1000) {
-      getCluster();
-      counter = 0;
-      //var allRooms = _.map(clients, 'room');
-      //console.log(_.uniq(allRooms));
+      counter = 0
+      //getCluster()
+      //var allRooms = _.map(clients, 'room')
+      //console.log(_.uniq(allRooms))
     }
-    counter++;
+    counter++
   }
 
-}, 10);
+}, 10)
 
 // K MEANS CLUSTER
 function getCluster() {
-  let vectors = new Array();
-  for (let i = 0; i < clients.length; i++) {
-    vectors[i] = [clients[i].positionx, clients[i].positiony];
+  let vectors = new Array()
+  for (let i = 0 i < clients.length i++) {
+    vectors[i] = [clients[i].positionx, clients[i].positiony]
   }
   kmeans.clusterize(vectors, {
     k: knum
   }, (err, res) => {
-    if (err) console.error(err);
-    //else console.log(res);
-    clusters = res;
+    if (err) console.error(err)
+    //else console.log(res)
+    clusters = res
     _.forEach(clusters, cluster => {
-      for (var i = 0; i < cluster.clusterInd.length; i++) {
+      for (var i = 0 i < cluster.clusterInd.length i++) {
         var client = _.find(clients, {
           name: clients[cluster.clusterInd[i]].name,
-        });
+        })
         if (client.socket) {
-          client.socket.leaveAll();
-          client.socket.join(cluster.centroid.toString());
-          client.room = cluster.centroid.toString();
+          client.socket.leaveAll()
+          client.socket.join(cluster.centroid.toString())
+          client.room = cluster.centroid.toString()
         }
       }
     })
-  });
+  })
 }
 
 function setDatabase() {
-  var movements = database.collection('movements');
+  var movements = database.collection('movements')
   _.forEach(clients, client => {
     movements.update({
       name: client.name,
@@ -340,6 +304,100 @@ function setDatabase() {
       } else {
         //console.log('[RECV - Update database]: ' + client.name)
       }
-    });
+    })
   })
+}
+
+function enemyUpdate(counter) {
+  if (enemies.length < 10) {
+    console.log('Enemies Alive: ' + enemies.length)
+    currentEnemy = {
+      name: guid(),
+      positionx: enemyspawnx,
+      positiony: enemyspawny,
+      health: 100,
+      xDir: 0,
+      yDir: 0
+    }
+    enemies.push(currentEnemy)
+    console.log("Spawn Enemy: " + currentEnemy.name)
+    io.emit('enemy spawn', currentEnemy.name,
+      currentEnemy.positionx,
+      currentEnemy.positiony,
+      currentEnemy.health
+    )
+  }
+
+  if (counter == 100) {
+    for (var i = 0 i < enemies.length i++) {
+      var dirx = direction()
+      var diry = direction()
+      enemies[i].xDir = dirx
+      enemies[i].yDir = diry
+    }
+  }
+
+  for (var i = 0 i < enemies.length i++) {
+    var name = enemies[i].name
+    var positionx = enemies[i].positionx
+    var positiony = enemies[i].positiony
+    positionx += enemies[i].xDir
+    positiony += enemies[i].yDir
+
+    if (positionx > maxx) {
+      positionx = maxx
+    }
+    if (positionx < minx) {
+      positionx = minx
+    }
+    if (positiony > maxy) {
+      positiony = maxy
+    }
+    if (positiony < miny) {
+      positiony = miny
+    }
+
+    enemies[i].positionx = positionx
+    enemies[i].positiony = positiony
+    io.emit('enemy move', name, positionx, positiony)
+
+}
+
+function saveMoves() {
+  // Update clients array of move
+  var index = _.findIndex(clients, {
+    name: name
+  })
+
+  if (index) {
+    clients[index].positionx = positionx
+    clients[index].positiony = positiony
+    clients[index].positionz = positionz
+    clients[index].rotationx = rotationx
+    clients[index].rotationy = rotationy
+    clients[index].rotationz = rotationz
+    clients[index].rotationw = rotationw
+
+    /*
+    var movements = db.collection('movements')
+    movements.updateOne({
+      name: name,
+    }, {
+      name: name,
+      positionx: positionx,
+      positiony: positiony,
+      positionz: positionz,
+      rotationx: rotationx,
+      rotationy: rotationy,
+      rotationz: rotationz,
+      rotationw: rotationw,
+    }, (err, res) => {
+
+      if (err) {
+        console.log('[SERVER] Error:' + name)
+      } else {
+        console.log('[RECV] Update database:' + name)
+      }
+    })
+    */
 }
