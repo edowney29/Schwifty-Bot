@@ -28,16 +28,16 @@ var database
 var ready = false
 var knum = 1
 
-for (var i = 0 i < knum i++) {
+for (var i = 0; i < knum; i++) {
   var fakes = {
     name: 'kmeans point: ' + (i + 1),
     positionx: (Math.random() * 1000),
     positiony: (Math.random() * 1000),
-    positionz: (Math.random() * 1000),
-    rotationx: 0,
-    rotationy: 0,
-    rotationz: 0,
-    rotationw: 0,
+    //positionz: (Math.random() * 1000),
+    //rotationx: 0,
+    //rotationy: 0,
+    //rotationz: 0,
+    //rotationw: 0,
     health: 0,
     socket: null,
     room: 'start'
@@ -134,17 +134,19 @@ io.on('connection', (socket) => {
   })
 
   // SPAWN OTHER PLAYER
+  /*
   socket.on('player-connect', () => {
     console.log('[RECV]: Client connect')
-    for (var i = 0 i < clients.length i++) {
+    for (var i = 0; i < clients.length; i++) {
       var playerConnected = {
         name: clients[i].name,
         positionx: clients[i].positionx,
         positiony: clients[i].positiony,
         positionz: clients[i].positionz,
-        rotationx: clients[i].rotationx,
-        rotationy: clients[i].rotationy,
-        rotationz: clients[i].rotationz,
+        //rotationx: clients[i].rotationx,
+        //rotationy: clients[i].rotationy,
+        //rotationz: clients[i].rotationz,
+        //rotationw: clients[i].rotationw,
         health: clients[i].health
       }
       // In your current game, server tells you about the other players
@@ -152,15 +154,17 @@ io.on('connection', (socket) => {
         playerConnected.name,
         playerConnected.positionx,
         playerConnected.positiony,
-        playerConnected.positionz,
-        playerConnected.rotationx,
-        playerConnected.rotationy,
-        playerConnected.rotationz,
+        //playerConnected.positionz,
+        //playerConnected.rotationx,
+        //playerConnected.rotationy,
+        //playerConnected.rotationz,
+        //playerConnected.rotationw,
         playerConnected.health
       )
     }
   })
-
+  */
+  
   // SPAWN THE PLAYER (Starting position)
   socket.on('start-up', (name) => {
     console.log('[RECV - Spawn player] : ' + name)
@@ -176,11 +180,11 @@ io.on('connection', (socket) => {
           name: name,
           positionx: doc.positionx,
           positiony: doc.positiony,
-          positionz: doc.positionz,
-          rotationx: doc.rotationx,
-          rotationy: doc.rotationy,
-          rotationz: doc.rotationz,
-          rotationw: doc.rotationw,
+          //positionz: doc.positionz,
+          //rotationx: doc.rotationx,
+          //rotationy: doc.rotationy,
+          //rotationz: doc.rotationz,
+          //rotationw: doc.rotationw,
           health: 0,
           socket: socket,
           room: 'start'
@@ -191,11 +195,11 @@ io.on('connection', (socket) => {
           name,
           client.positionx,
           client.positiony,
-          client.positionz,
-          client.rotationx,
-          client.rotationy,
-          client.rotationz,
-          client.rotationw,
+          //client.positionz,
+          //client.rotationx,
+          //client.rotationy,
+          //client.rotationz,
+          //client.rotationw,
           client.health
         )
 
@@ -205,19 +209,18 @@ io.on('connection', (socket) => {
     })
   })
 
-  socket.on('player-move', (name, positionx, positiony, positionz, rotationx, rotationy, rotationz, rotationw) => {
+  socket.on('player-move', (name, positionx, positiony) => { //, positionz, rotationx, rotationy, rotationz, rotationw) => {
     console.log('[RECV - Player move] : ' + name)
-      io.in(clients[index].room).emit('player-move',
-        name,
-        positionx,
-        positiony,
-        positionz,
-        rotationx,
-        rotationy,
-        rotationz,
-        rotationw
-      )
-    }
+    io.in(clients[index].room).emit('player-move',
+      name,
+      positionx,
+      positiony,
+      //positionz,
+      //rotationx,
+      //rotationy,
+      //rotationz,
+      //rotationw
+    )
   })
 
   socket.on('player-message', (name, message) => {
@@ -228,7 +231,7 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('[RECV - Player disconnected] : ' + playerName)
     socket.broadcast.emit('other-player-disconnected', playerName)
-    for (var i = 0 i < clients.length i++) {
+    for (var i = 0; i < clients.length; i++) {
       if (clients[i].name == playerName) {
         clients.splice(i, 1)
       }
@@ -237,13 +240,12 @@ io.on('connection', (socket) => {
 })
 
 var counter = 0
+
 setInterval(() => {
   if (ready) {
-
     io.emit('time', new Date().toTimeString())
+    enemyUpdate()
 
-    if (counter % 100 == 0)
-      enemyUpdate()
     if (counter % 500 == 0)
       setDatabase()
     if (counter == 1000) {
@@ -258,9 +260,9 @@ setInterval(() => {
 }, 10)
 
 // K MEANS CLUSTER
-function getCluster() {
+async function getCluster() {
   let vectors = new Array()
-  for (let i = 0 i < clients.length i++) {
+  for (let i = 0; i < clients.length; i++) {
     vectors[i] = [clients[i].positionx, clients[i].positiony]
   }
   kmeans.clusterize(vectors, {
@@ -270,7 +272,7 @@ function getCluster() {
     //else console.log(res)
     clusters = res
     _.forEach(clusters, cluster => {
-      for (var i = 0 i < cluster.clusterInd.length i++) {
+      for (var i = 0; i < cluster.clusterInd.length; i++) {
         var client = _.find(clients, {
           name: clients[cluster.clusterInd[i]].name,
         })
@@ -284,31 +286,33 @@ function getCluster() {
   })
 }
 
-function setDatabase() {
-  var movements = database.collection('movements')
-  _.forEach(clients, client => {
-    movements.update({
-      name: client.name,
-    }, {
-      name: client.name,
-      positionx: client.positionx,
-      positiony: client.positiony,
-      positionz: client.positionz,
-      rotationx: client.rotationx,
-      rotationy: client.rotationy,
-      rotationz: client.rotationz,
-      rotationw: client.rotationw,
-    }, (err, res) => {
-      if (err) {
-        console.log('[ERROR - SERVER]: ' + err)
-      } else {
-        //console.log('[RECV - Update database]: ' + client.name)
-      }
+async function setDatabase() {
+  try {
+    var movements = database.collection('movements')
+    _.forEach(clients, client => {
+      await movements.update({
+        name: client.name,
+      }, {
+        name: client.name,
+        positionx: client.positionx,
+        positiony: client.positiony,
+        //positionz: client.positionz,
+        //rotationx: client.rotationx,
+        //rotationy: client.rotationy,
+        //rotationz: client.rotationz,
+        //rotationw: client.rotationw,
+      }, (err, res) => {
+        if (err) {
+          console.log('[ERROR - SERVER]: ' + err)
+        } else {
+          //console.log('[RECV - Update database]: ' + client.name)
+        }
+      })
     })
-  })
+  } catch (err) {}
 }
 
-function enemyUpdate(counter) {
+async function enemyUpdate(counter) {
   if (enemies.length < 10) {
     console.log('Enemies Alive: ' + enemies.length)
     currentEnemy = {
@@ -321,7 +325,8 @@ function enemyUpdate(counter) {
     }
     enemies.push(currentEnemy)
     console.log("Spawn Enemy: " + currentEnemy.name)
-    io.emit('enemy spawn', currentEnemy.name,
+    io.emit('enemy spawn',
+      currentEnemy.name,
       currentEnemy.positionx,
       currentEnemy.positiony,
       currentEnemy.health
@@ -329,20 +334,20 @@ function enemyUpdate(counter) {
   }
 
   if (counter == 100) {
-    for (var i = 0 i < enemies.length i++) {
+    _.forEach(enemies, enemy => {
       var dirx = direction()
       var diry = direction()
-      enemies[i].xDir = dirx
-      enemies[i].yDir = diry
-    }
+      enemy.xDir = dirx
+      enemy.yDir = diry
+    })
   }
 
-  for (var i = 0 i < enemies.length i++) {
-    var name = enemies[i].name
-    var positionx = enemies[i].positionx
-    var positiony = enemies[i].positiony
-    positionx += enemies[i].xDir
-    positiony += enemies[i].yDir
+  _.forEach(enemies, enemy => {
+    var name = enemy.name
+    var positionx = enemy.positionx
+    var positiony = enemy.positiony
+    positionx += enemy.xDir
+    positiony += enemy.yDir
 
     if (positionx > maxx) {
       positionx = maxx
@@ -357,47 +362,8 @@ function enemyUpdate(counter) {
       positiony = miny
     }
 
-    enemies[i].positionx = positionx
-    enemies[i].positiony = positiony
+    enemy.positionx = positionx
+    enemy.positiony = positiony
     io.emit('enemy move', name, positionx, positiony)
-
-}
-
-function saveMoves() {
-  // Update clients array of move
-  var index = _.findIndex(clients, {
-    name: name
   })
-
-  if (index) {
-    clients[index].positionx = positionx
-    clients[index].positiony = positiony
-    clients[index].positionz = positionz
-    clients[index].rotationx = rotationx
-    clients[index].rotationy = rotationy
-    clients[index].rotationz = rotationz
-    clients[index].rotationw = rotationw
-
-    /*
-    var movements = db.collection('movements')
-    movements.updateOne({
-      name: name,
-    }, {
-      name: name,
-      positionx: positionx,
-      positiony: positiony,
-      positionz: positionz,
-      rotationx: rotationx,
-      rotationy: rotationy,
-      rotationz: rotationz,
-      rotationw: rotationw,
-    }, (err, res) => {
-
-      if (err) {
-        console.log('[SERVER] Error:' + name)
-      } else {
-        console.log('[RECV] Update database:' + name)
-      }
-    })
-    */
 }
