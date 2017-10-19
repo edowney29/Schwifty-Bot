@@ -164,7 +164,7 @@ io.on('connection', (socket) => {
     }
   })
   */
-  
+
   // SPAWN THE PLAYER (Starting position)
   socket.on('start-up', (name) => {
     console.log('[RECV - Spawn player] : ' + name)
