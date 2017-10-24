@@ -219,6 +219,11 @@ io.on('connection', (socket) => {
   socket.on('player-move', (name, positionx, positiony) => { //, positionz, rotationx, rotationy, rotationz, rotationw) => {
     console.log('[RECV - Player move] : ' + name)
     var index = _.findIndex(clients, { 'name': name })
+    
+    clients[index].name = name
+    clients[index].positionx = positionx
+    clients[index].positiony = positiony
+
     io.in(clients[index].room).emit('player-move',
       name,
       positionx,
@@ -277,7 +282,6 @@ function getCluster() {
     k: knum
   }, (err, res) => {
     if (err) console.error(err)
-    else console.log('[UPDATE - Server]: ')
     //else console.log(res)
     clusters = res
     _.forEach(clusters, cluster => {
