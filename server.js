@@ -294,7 +294,7 @@ function getCluster() {
   })
 }
 
-async function setDatabase() {
+function setDatabase() {
   var movements = database.collection('movements')
   _.forEach(clients, client => {
     movements.update({
