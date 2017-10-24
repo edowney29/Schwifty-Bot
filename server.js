@@ -372,3 +372,10 @@ async function enemyUpdate(counter) {
     io.emit('enemy-move', name, positionx, positiony)
   })
 }
+
+async function direction() {
+  var pos;
+  pos = Math.random();
+  pos *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
+  return pos;
+}
