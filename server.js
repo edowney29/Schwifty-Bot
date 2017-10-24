@@ -277,6 +277,7 @@ function getCluster() {
     k: knum
   }, (err, res) => {
     if (err) console.error(err)
+    else console.log('[UPDATE - Server]: ')
     //else console.log(res)
     clusters = res
     _.forEach(clusters, cluster => {
@@ -310,9 +311,9 @@ function setDatabase() {
         //rotationw: client.rotationw,
       }, (err, res) => {
         if (err) {
-          console.log('[ERROR - SERVER]: ' + err)
+          console.log('[ERROR - Server]: ' + err)
         } else {
-          console.log('[RECV - Update database]: ' + clients)
+          console.log('[RECV - Update database]: ' + client.name)
         }
       })
   })
