@@ -312,7 +312,7 @@ function setDatabase() {
         if (err) {
           console.log('[ERROR - SERVER]: ' + err)
         } else {
-          //console.log('[RECV - Update database]: ' + client.name)
+          console.log('[RECV - Update database]: ' + clients)
         }
       })
   })
