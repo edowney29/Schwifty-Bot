@@ -17,7 +17,7 @@ const MONGO_URI = process.env.MONGODB_URI
 
 const server = express()
   .use((req, res) => res.sendFile(INDEX))
-  .listen(PORT, () => console.log(`Listening on ${ PORT }`))
+  .listen(PORT, () => console.log(`Listening on ${PORT}`))
 
 const io = socketIO(server)
 var clients = []
@@ -287,12 +287,11 @@ async function getCluster() {
 }
 
 async function setDatabase() {
-  try {
-    var movements = database.collection('movements')
-    _.forEach(clients, client => {
-      await movements.update({
-        name: client.name,
-      }, {
+  var movements = database.collection('movements')
+  _.forEach(clients, client => {
+    movements.update({
+      name: client.name,
+    }, {
         name: client.name,
         positionx: client.positionx,
         positiony: client.positiony,
@@ -308,8 +307,7 @@ async function setDatabase() {
           //console.log('[RECV - Update database]: ' + client.name)
         }
       })
-    })
-  } catch (err) {}
+  })
 }
 
 async function enemyUpdate(counter) {
