@@ -218,6 +218,7 @@ io.on('connection', (socket) => {
 
   socket.on('player-move', (name, positionx, positiony) => { //, positionz, rotationx, rotationy, rotationz, rotationw) => {
     console.log('[RECV - Player move] : ' + name)
+    var index = _.findIndex(clients, { 'name': name })
     io.in(clients[index].room).emit('player-move',
       name,
       positionx,
@@ -267,7 +268,7 @@ setInterval(() => {
 }, 10)
 
 // K MEANS CLUSTER
-async function getCluster() {
+function getCluster() {
   let vectors = new Array()
   for (let i = 0; i < clients.length; i++) {
     vectors[i] = [clients[i].positionx, clients[i].positiony]
@@ -317,7 +318,7 @@ async function setDatabase() {
   })
 }
 
-async function enemyUpdate(counter) {
+function enemyUpdate(counter) {
   if (enemies.length < 10) {
     console.log('Enemies Alive: ' + enemies.length)
     currentEnemy = {
@@ -373,7 +374,7 @@ async function enemyUpdate(counter) {
   })
 }
 
-async function direction() {
+function direction() {
   var pos;
   pos = Math.random();
   pos *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
