@@ -28,6 +28,13 @@ var database
 var ready = false
 var knum = 1
 
+var enemyspawnx = 643;
+var enemyspawny = -793;
+var minx = 0;
+var maxx = 0;
+var miny = 0;
+var maxy = 0;
+
 for (var i = 0; i < knum; i++) {
   var fakes = {
     name: 'kmeans point: ' + (i + 1),
@@ -315,8 +322,8 @@ async function enemyUpdate(counter) {
     console.log('Enemies Alive: ' + enemies.length)
     currentEnemy = {
       name: uuid.v1(),
-      positionx: 0,
-      positiony: 0,
+      positionx: enemyspawnx,
+      positiony: enemyspawny,
       health: 100,
       xDir: 0,
       yDir: 0
@@ -362,6 +369,6 @@ async function enemyUpdate(counter) {
 
     enemy.positionx = positionx
     enemy.positiony = positiony
-    io.emit('enemy move', name, positionx, positiony)
+    io.emit('enemy-move', name, positionx, positiony)
   })
 }
