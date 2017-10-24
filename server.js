@@ -184,7 +184,7 @@ io.on('connection', (socket) => {
       } else {
 
         var client = {
-          name: name,
+          name: doc.name,
           health: 0,          
           positionx: doc.positionx,
           positiony: doc.positiony,
