@@ -314,7 +314,7 @@ async function enemyUpdate(counter) {
   if (enemies.length < 10) {
     console.log('Enemies Alive: ' + enemies.length)
     currentEnemy = {
-      name: guid(),
+      name: uuid.v1(),
       positionx: enemyspawnx,
       positiony: enemyspawny,
       health: 100,
