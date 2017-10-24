@@ -76,8 +76,8 @@ io.on('connection', (socket) => {
     }
     var newMovements = {
       name,
-      positionx: 0.0,
-      positiony: 0.0,
+      positionx: 645.0,
+      positiony: -504.0,
       //positionz: 0.0,
       //rotationx: 0.0,
       //rotationy: 0.0,
@@ -199,7 +199,7 @@ io.on('connection', (socket) => {
 
         // SETUP YOUR PLAYER
         socket.emit('start-up',
-          name,
+          client.name,
           client.health,          
           client.positionx,
           client.positiony,
