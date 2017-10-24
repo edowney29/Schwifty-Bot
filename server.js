@@ -330,7 +330,7 @@ async function enemyUpdate(counter) {
     }
     enemies.push(currentEnemy)
     console.log("Spawn Enemy: " + currentEnemy.name)
-    io.emit('enemy spawn',
+    io.emit('enemy-spawn',
       currentEnemy.name,
       currentEnemy.positionx,
       currentEnemy.positiony,
