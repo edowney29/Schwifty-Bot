@@ -185,6 +185,7 @@ io.on('connection', (socket) => {
 
         var client = {
           name: name,
+          health: 0,          
           positionx: doc.positionx,
           positiony: doc.positiony,
           //positionz: doc.positionz,
@@ -192,7 +193,6 @@ io.on('connection', (socket) => {
           //rotationy: doc.rotationy,
           //rotationz: doc.rotationz,
           //rotationw: doc.rotationw,
-          health: 0,
           socket: socket,
           room: 'start'
         }
@@ -200,14 +200,14 @@ io.on('connection', (socket) => {
         // SETUP YOUR PLAYER
         socket.emit('start-up',
           name,
+          client.health,          
           client.positionx,
           client.positiony,
           //client.positionz,
           //client.rotationx,
           //client.rotationy,
           //client.rotationz,
-          //client.rotationw,
-          client.health
+          //client.rotationw
         )
 
         socket.join('start')
@@ -219,7 +219,7 @@ io.on('connection', (socket) => {
   socket.on('player-move', (name, positionx, positiony) => { //, positionz, rotationx, rotationy, rotationz, rotationw) => {
     console.log('[RECV - Player move] : ' + name)
     var index = _.findIndex(clients, { 'name': name })
-    
+
     clients[index].name = name
     clients[index].positionx = positionx
     clients[index].positiony = positiony
