@@ -141,36 +141,34 @@ io.on('connection', (socket) => {
   })
 
   // SPAWN OTHER PLAYER
-  /*
   socket.on('player-connect', () => {
     console.log('[RECV]: Client connect')
-    for (var i = 0; i < clients.length; i++) {
+    _.forEach(clients, client => {
       var playerConnected = {
-        name: clients[i].name,
-        positionx: clients[i].positionx,
-        positiony: clients[i].positiony,
-        positionz: clients[i].positionz,
+        name: client.name,
+        health: client.health,
+        positionx: client.positionx,
+        positiony: client.positiony,
+        //positionz: clients[i].positionz,
         //rotationx: clients[i].rotationx,
         //rotationy: clients[i].rotationy,
         //rotationz: clients[i].rotationz,
-        //rotationw: clients[i].rotationw,
-        health: clients[i].health
+        //rotationw: clients[i].rotationw
       }
       // In your current game, server tells you about the other players
       socket.emit('other-player-connected',
         playerConnected.name,
+        playerConnected.health,
         playerConnected.positionx,
         playerConnected.positiony,
         //playerConnected.positionz,
         //playerConnected.rotationx,
         //playerConnected.rotationy,
         //playerConnected.rotationz,
-        //playerConnected.rotationw,
-        playerConnected.health
+        //playerConnected.rotationw
       )
-    }
+    })
   })
-  */
 
   // SPAWN THE PLAYER (Starting position)
   socket.on('start-up', (name) => {
@@ -217,7 +215,7 @@ io.on('connection', (socket) => {
   })
 
   socket.on('player-move', (name, positionx, positiony, playerMoving, moveH, moveV, lastmovex, lastmovey) => { //, positionz, rotationx, rotationy, rotationz, rotationw) => {
-    console.log('[RECV - Player move] : ' + name)
+    //console.log('[RECV - Player move] : ' + name)
     var index = _.findIndex(clients, { 'name': name })
 
     clients[index].name = name
