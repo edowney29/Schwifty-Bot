@@ -208,6 +208,18 @@ io.on('connection', (socket) => {
           //client.rotationw
         )
 
+        socket.emit('other-player-connected',
+          client.name,
+          client.health,
+          client.positionx,
+          client.positiony,
+          //client.positionz,
+          //client.rotationx,
+          //client.rotationy,
+          //client.rotationz,
+          //client.rotationw
+        )
+
         socket.join('start')
         clients.push(client)
       }
