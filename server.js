@@ -249,7 +249,7 @@ var counter = 0
 setInterval(() => {
   if (ready) {
     io.emit('time', new Date().toTimeString())
-    enemyUpdate()
+    //enemyUpdate()
 
     if (counter % 500 == 0)
       setDatabase()
