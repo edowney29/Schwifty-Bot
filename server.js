@@ -28,25 +28,17 @@ var database
 var ready = false
 var knum = 1
 
-var enemyspawnx = 643;
-var enemyspawny = -793;
-var minx = 0;
-var maxx = 0;
-var miny = 0;
-var maxy = 0;
-
 for (var i = 0; i < knum; i++) {
   var fakes = {
     name: 'kmeans point: ' + (i + 1),
     positionx: (Math.random() * 1000),
     positiony: (Math.random() * 1000),
-    //positionz: (Math.random() * 1000),
-    //rotationx: 0,
-    //rotationy: 0,
-    //rotationz: 0,
-    //rotationw: 0,
+    positionz: 0,
+    rotationx: 0,
+    rotationy: 0,
+    rotationz: 0,
+    rotationw: 0,
     health: 0,
-    socket: null,
     room: 'start'
   }
   clients.push(fakes)
@@ -76,13 +68,13 @@ io.on('connection', (socket) => {
     }
     var newMovements = {
       name,
-      positionx: 645.0,
-      positiony: -504.0,
-      //positionz: 0.0,
-      //rotationx: 0.0,
-      //rotationy: 0.0,
-      //rotationz: 0.0,
-      //rotationw: 0.0
+      positionx: 0.0,
+      positiony: 0.0,
+      positionz: 0.0,
+      rotationx: 0.0,
+      rotationy: 0.0,
+      rotationz: 0.0,
+      rotationw: 0.0
     }
 
     console.log('[RECV - Regsiter] : ' + newUser)
@@ -188,11 +180,11 @@ io.on('connection', (socket) => {
           health: 0,
           positionx: doc.positionx,
           positiony: doc.positiony,
-          //positionz: doc.positionz,
-          //rotationx: doc.rotationx,
-          //rotationy: doc.rotationy,
-          //rotationz: doc.rotationz,
-          //rotationw: doc.rotationw,
+          positionz: doc.positionz,
+          rotationx: doc.rotationx,
+          rotationy: doc.rotationy,
+          rotationz: doc.rotationz,
+          rotationw: doc.rotationw,
           socket: socket,
           room: 'start'
         }
@@ -203,11 +195,11 @@ io.on('connection', (socket) => {
           client.health,
           client.positionx,
           client.positiony,
-          //client.positionz,
-          //client.rotationx,
-          //client.rotationy,
-          //client.rotationz,
-          //client.rotationw
+          client.positionz,
+          client.rotationx,
+          client.rotationy,
+          client.rotationz,
+          client.rotationw
         )
 
         socket.join('start')
@@ -229,15 +221,15 @@ io.on('connection', (socket) => {
       positionx,
       positiony,
       playerMoving,
-      moveH,
-      moveV,
-      lastmovex,
-      lastmovey
-      //positionz,
-      //rotationx,
-      //rotationy,
-      //rotationz,
-      //rotationw
+      //moveH,
+      //moveV,
+      //lastmovex,
+      //lastmovey
+      positionz,
+      rotationx,
+      rotationy,
+      rotationz,
+      rotationw
     )
   })
 
@@ -313,11 +305,11 @@ function setDatabase() {
         name: client.name,
         positionx: client.positionx,
         positiony: client.positiony,
-        //positionz: client.positionz,
-        //rotationx: client.rotationx,
-        //rotationy: client.rotationy,
-        //rotationz: client.rotationz,
-        //rotationw: client.rotationw,
+        positionz: client.positionz,
+        rotationx: client.rotationx,
+        rotationy: client.rotationy,
+        rotationz: client.rotationz,
+        rotationw: client.rotationw,
       }, (err, res) => {
         if (err) {
           console.log('[ERROR - Server]: ' + err)
@@ -328,6 +320,7 @@ function setDatabase() {
   })
 }
 
+/*
 function enemyUpdate(counter) {
   if (enemies.length < 10) {
     console.log('Enemies Alive: ' + enemies.length)
@@ -390,3 +383,4 @@ function direction() {
   pos *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
   return pos;
 }
+*/
