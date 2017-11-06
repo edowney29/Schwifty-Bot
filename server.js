@@ -208,13 +208,19 @@ io.on('connection', (socket) => {
     })
   })
 
-  socket.on('player-move', (name, positionx, positiony, playerMoving, moveH, moveV, lastmovex, lastmovey) => { //, positionz, rotationx, rotationy, rotationz, rotationw) => {
+  socket.on('player-move', (name, positionx, positiony, positionz, rotationx, rotationy, rotationz, rotationw) => {
     //console.log('[RECV - Player move] : ' + name)
     var index = _.findIndex(clients, { 'name': name })
 
     clients[index].name = name
     clients[index].positionx = positionx
     clients[index].positiony = positiony
+    clients[index].positiony = positiony
+    clients[index].positionz = positionz
+    clients[index].rotationx = rotationx
+    clients[index].rotationy = rotationy
+    clients[index].rotationz = rotationz
+    clients[index].rotationw = rotationw
 
     io.in(clients[index].room).emit('player-move',
       name,
