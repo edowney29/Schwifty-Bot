@@ -220,11 +220,6 @@ io.on('connection', (socket) => {
       name,
       positionx,
       positiony,
-      playerMoving,
-      //moveH,
-      //moveV,
-      //lastmovex,
-      //lastmovey
       positionz,
       rotationx,
       rotationy,
