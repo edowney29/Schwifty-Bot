@@ -56,10 +56,10 @@ MongoClient.connect(MONGO_URI, (err, db) => {
 io.on('connect', (socket) => {
 
   var playerName
-  console.log(`[RECV - New connection]`)
+  console.log(`[RECV - New connection] : ${socket}`)
   
   socket.on('connecting', () => {
-    console.log(`[RECV - New connection]`)
+    console.log(`[RECV - New connection] : ${socket}`)
   })
 
   socket.on('test', () => {
