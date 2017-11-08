@@ -57,8 +57,8 @@ io.on('connection', (socket) => {
 
   var playerName
 
-  socket.on('ping', () => {
-    socket.emit('pong')
+  socket.on('test', () => {
+    socket.emit('test')
   })
 
   socket.on('player-reg', (name, email, pass) => {
@@ -223,14 +223,13 @@ io.on('connection', (socket) => {
   socket.on('disconnect', (reason) => {
     console.log(`[RECV - Player disconnected] : ${playerName} : ${reason}`)
     socket.broadcast.emit('other-player-disconnected', playerName)
-    _.remove(clients, { name: playerName })
-    /*
-    for (var i = 0; i < clients.length; i++) {
-      if (clients[i].name == playerName) {
-        clients.splice(i, 1)
-      }
+    if (playerName) {
+      _.remove(clients, { name: playerName })
     }
-    */
+  })
+
+  socket.on('error', (error) => {
+    console.log(`[RECV - Server error ] : ${playerName} : ${error}`)
   })
 })
 
@@ -290,11 +289,6 @@ function setDatabase() {
         name: client.name,
         positionx: client.positionx,
         positiony: client.positiony,
-        //positionz: client.positionz,
-        //rotationx: client.rotationx,
-        //rotationy: client.rotationy,
-        //rotationz: client.rotationz,
-        //rotationw: client.rotationw,
       }, (err, res) => {
         if (err) {
           console.log('[ERROR - Server]: ' + err)
@@ -367,3 +361,11 @@ function direction() {
   pos *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
   return pos;
 }
+
+    /*
+    for (var i = 0; i < clients.length; i++) {
+      if (clients[i].name == playerName) {
+        clients.splice(i, 1)
+      }
+    }
+    */
