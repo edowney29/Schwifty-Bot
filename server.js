@@ -28,6 +28,7 @@ var database
 var ready = false
 var knum = 1
 
+// Used for k-means points
 for (var i = 0; i < knum; i++) {
   var fakes = {
     name: 'kmeans point: ' + (i + 1),
@@ -48,7 +49,7 @@ MongoClient.connect(MONGO_URI, (err, db) => {
 
 io.on('connect', (socket) => {
 
-  var playerName
+  var playerName // Global for each socket connection
 
   /** PING */
   socket.on('test', () => {
@@ -208,14 +209,10 @@ var counter = 0
 setInterval(() => {
   if (ready) {
     io.emit('time', new Date().toTimeString())
-
-    if (counter == 300)
-      enemyUpdate()
-
-    if (counter == 600)
-      setDatabase()
+    //enemyUpdate()
 
     if (counter == 900) {
+      setDatabase()
       //getCluster()
       //var allRooms = _.map(clients, 'room')
       //console.log(_.uniq(allRooms))
@@ -225,7 +222,6 @@ setInterval(() => {
   }
 }, 10)
 
-// K MEANS CLUSTER
 function getCluster() {
   let vectors = new Array()
   for (let i = 0; i < clients.length; i++) {
@@ -263,9 +259,9 @@ function setDatabase() {
         positiony: client.positiony,
       }, (err, res) => {
         if (err) {
-          console.log('[ERROR - Server]: ' + err)
+          console.log('[SERVER - Error]: ' + err)
         } else {
-          //console.log('[RECV - Update database]: ' + client.name)
+          console.log('[RECV - Update database]: ' + client.name)
         }
       })
   })
@@ -273,19 +269,16 @@ function setDatabase() {
 
 function enemyUpdate() {
   if (enemies.length < 10) {
-    console.log('Enemies Alive: ' + enemies.length)
+    console.log('[SERVER - Enemies Alive] : ' + enemies.length)
     currentEnemy = {
       name: uuid.v1(),
       positionx: 0,
       positiony: 0,
       health: 100,
-      target: {
-        name: '',
-        distance: 1000
-      }
+      target: ''
     }
     enemies.push(currentEnemy)
-    console.log("Spawn Enemy: " + currentEnemy.name)
+    console.log("[SEND - Spawn Enemy] : " + currentEnemy.name)
     io.emit('enemy-spawn',
       currentEnemy.name,
       currentEnemy.positionx,
