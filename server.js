@@ -58,7 +58,7 @@ io.on('connect', (socket) => {
   var playerName
 
   socket.on('connecting', () => {
-
+    console.log(`[RECV - New connection]`)
   })
 
   socket.on('test', () => {
@@ -133,38 +133,6 @@ io.on('connect', (socket) => {
     }
   })
 
-  /*
-    // SPAWN OTHER PLAYER
-    socket.on('player-connect', () => {
-      console.log('[RECV]: Client connect')
-      _.forEach(clients, client => {
-        var playerConnected = {
-          name: client.name,
-          health: client.health,
-          positionx: client.positionx,
-          positiony: client.positiony,
-          //positionz: clients[i].positionz,
-          //rotationx: clients[i].rotationx,
-          //rotationy: clients[i].rotationy,
-          //rotationz: clients[i].rotationz,
-          //rotationw: clients[i].rotationw
-        }
-        // In your current game, server tells you about the other players
-        socket.emit('other-player-connected',
-          playerConnected.name,
-          playerConnected.health,
-          playerConnected.positionx,
-          playerConnected.positiony,
-          //playerConnected.positionz,
-          //playerConnected.rotationx,
-          //playerConnected.rotationy,
-          //playerConnected.rotationz,
-          //playerConnected.rotationw
-        )
-      })
-    })
-  */
-
   // SPAWN THE PLAYER (Starting position)
   socket.on('start-up', (name) => {
     console.log('[RECV - Spawn player] : ' + name)
@@ -233,28 +201,25 @@ io.on('connect', (socket) => {
   })
 
   socket.on('error', (error) => {
-    console.log(`[RECV - Server error ] : ${playerName} : ${error}`)
+    console.log(`[RECV - Server error] : ${playerName} : ${error}`)
   })
 })
 
 var counter = 0
-
 setInterval(() => {
   if (ready) {
     io.emit('time', new Date().toTimeString())
-    enemyUpdate()
+    //enemyUpdate()
 
-    if (counter % 500 == 0)
-      setDatabase()
     if (counter == 1000) {
-      counter = 0
+      setDatabase()
       //getCluster()
       //var allRooms = _.map(clients, 'room')
       //console.log(_.uniq(allRooms))
+      counter = 0
     }
     counter++
   }
-
 }, 10)
 
 // K MEANS CLUSTER
@@ -366,10 +331,42 @@ function direction() {
   return pos;
 }
 
-    /*
-    for (var i = 0; i < clients.length; i++) {
-      if (clients[i].name == playerName) {
-        clients.splice(i, 1)
-      }
+/*
+for (var i = 0; i < clients.length; i++) {
+  if (clients[i].name == playerName) {
+    clients.splice(i, 1)
+  }
+}
+*/
+
+/*
+// SPAWN OTHER PLAYER
+socket.on('player-connect', () => {
+  console.log('[RECV]: Client connect')
+  _.forEach(clients, client => {
+    var playerConnected = {
+      name: client.name,
+      health: client.health,
+      positionx: client.positionx,
+      positiony: client.positiony,
+      //positionz: clients[i].positionz,
+      //rotationx: clients[i].rotationx,
+      //rotationy: clients[i].rotationy,
+      //rotationz: clients[i].rotationz,
+      //rotationw: clients[i].rotationw
     }
-    */
+    // In your current game, server tells you about the other players
+    socket.emit('other-player-connected',
+      playerConnected.name,
+      playerConnected.health,
+      playerConnected.positionx,
+      playerConnected.positiony,
+      //playerConnected.positionz,
+      //playerConnected.rotationx,
+      //playerConnected.rotationy,
+      //playerConnected.rotationz,
+      //playerConnected.rotationw
+    )
+  })
+})
+*/
