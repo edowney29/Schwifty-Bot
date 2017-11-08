@@ -132,8 +132,8 @@ io.on('connect', (socket) => {
     }
   })
 
-  socket.on('menu-disconnect', (reason) => {
-    socket.disconnect()
+  socket.on('menu-disconnect', () => {
+    socket.disconnect('true')
   })
 
   /** NETWORK PLAY */
