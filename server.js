@@ -58,8 +58,8 @@ io.on('connect', (socket) => {
   var playerName
 
   socket.on('connecting', () => {
-    
-  }) 
+
+  })
 
   socket.on('test', () => {
     socket.emit('test')
