@@ -194,13 +194,13 @@ io.on('connect', (socket) => {
   })
 
   socket.on('menu-disconnect', (reason) => {
-    socket.disconnect('true')
+    socket.disconnect()
   })
 
   socket.on('disconnect', (reason) => {
     console.log(`[RECV - Player disconnected] : ${playerName} : ${reason}`)
     socket.broadcast.emit('other-player-disconnected', playerName)
-    socket.disconnect('true')
+    socket.disconnect()
     if (playerName) {
       _.remove(clients, { name: playerName })
     }
