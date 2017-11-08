@@ -56,10 +56,10 @@ MongoClient.connect(MONGO_URI, (err, db) => {
 io.on('connect', (socket) => {
 
   var playerName
-  console.log(`[RECV - New connection] : ${socket}`)
-  
+  console.log(`[RECV - New connection] : ${socket.toString()}`)
+
   socket.on('connecting', () => {
-    console.log(`[RECV - New connection] : ${socket}`)
+    console.log(`[RECV - New connection] : ${socket.toString()}`)
   })
 
   socket.on('test', () => {
@@ -193,9 +193,14 @@ io.on('connect', (socket) => {
     socket.broadcast.emit('player-message', name, message)
   })
 
+  socket.on('menu-disconnect', (reason) => {
+    socket.disconnect('true')
+  })
+
   socket.on('disconnect', (reason) => {
     console.log(`[RECV - Player disconnected] : ${playerName} : ${reason}`)
     socket.broadcast.emit('other-player-disconnected', playerName)
+    socket.disconnect('true')
     if (playerName) {
       _.remove(clients, { name: playerName })
     }
