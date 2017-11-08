@@ -28,13 +28,6 @@ var database
 var ready = false
 var knum = 1
 
-var enemyspawnx = 643;
-var enemyspawny = -793;
-var minx = 0;
-var maxx = 0;
-var miny = 0;
-var maxy = 0;
-
 for (var i = 0; i < knum; i++) {
   var fakes = {
     name: 'kmeans point: ' + (i + 1),
@@ -59,7 +52,7 @@ io.on('connect', (socket) => {
 
   /** PING */
   socket.on('test', () => {
-    console.log(`[RECV - New connection] : ${socket}`)    
+    console.log(`[RECV - New connection] : ${socket}`)
   })
 
   /** NETWORK MENU */
@@ -197,7 +190,7 @@ io.on('connect', (socket) => {
 
   /** SOCKET HANDLERS */
   socket.on('connecting', () => {
-    console.log(`[RECV - New connection] : ${socket}`)    
+    console.log(`[RECV - New connection] : ${socket}`)
   })
 
   socket.on('disconnect', (reason) => {
@@ -281,9 +274,6 @@ function enemyUpdate(counter) {
       name: uuid.v1(),
       positionx: enemyspawnx,
       positiony: enemyspawny,
-      health: 100,
-      xDir: 0,
-      yDir: 0
     }
     enemies.push(currentEnemy)
     console.log("Spawn Enemy: " + currentEnemy.name)
@@ -291,59 +281,15 @@ function enemyUpdate(counter) {
       currentEnemy.name,
       currentEnemy.positionx,
       currentEnemy.positiony,
-      currentEnemy.health
     )
-  }
-
-  if (counter == 100) {
-    _.forEach(enemies, enemy => {
-      var dirx = direction()
-      var diry = direction()
-      enemy.xDir = dirx
-      enemy.yDir = diry
-    })
   }
 
   _.forEach(enemies, enemy => {
     var name = enemy.name
-    var positionx = enemy.positionx
-    var positiony = enemy.positiony
-    positionx += enemy.xDir
-    positiony += enemy.yDir
-
-    if (positionx > maxx) {
-      positionx = maxx
-    }
-    if (positionx < minx) {
-      positionx = minx
-    }
-    if (positiony > maxy) {
-      positiony = maxy
-    }
-    if (positiony < miny) {
-      positiony = miny
-    }
-
-    enemy.positionx = positionx
-    enemy.positiony = positiony
-    io.emit('enemy-move', name, positionx, positiony)
+    var target = Math.a
+    io.emit('enemy-move', name, target)
   })
 }
-
-function direction() {
-  var pos;
-  pos = Math.random();
-  pos *= Math.floor(Math.random() * 2) == 1 ? 1 : -1;
-  return pos;
-}
-
-/*
-for (var i = 0; i < clients.length; i++) {
-  if (clients[i].name == playerName) {
-    clients.splice(i, 1)
-  }
-}
-*/
 
 /*
 // SPAWN OTHER PLAYER
