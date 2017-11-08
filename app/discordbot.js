@@ -2,7 +2,6 @@ const discord = require('discord.js')
 const random = require('random-js')
 const googleapi = require('googleapis')
 const moment = require('moment-timezone');
-const _ = require('lodash')
 //const sqlite = require('sqlite')
 
 const client = new discord.Client()
@@ -21,13 +20,14 @@ client.on('ready', () => {
 })
 
 client.on('message', message => {
-	var msg = message.content.toLowerCase()
+	var msg = _.toLower(message.content)
 	msg = msg.split(' ')
 	console.log(msg)
 
 	if (_.includes(msg, 'ping')) {
 		message.reply('pong')
 	}
+
 	/*
 	if (msg == 'stat1') {
 		getData()
@@ -36,6 +36,7 @@ client.on('message', message => {
 			})
 	}
 	*/
+
 	if (_.includes(msg, 'magic') && _.includes(msg, 'conch')) {
 		var answers = [
 			'Maybe.', 'Certainly not.', 'Not in your wildest dreams.', 'Nah, fam.',

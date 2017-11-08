@@ -208,10 +208,14 @@ var counter = 0
 setInterval(() => {
   if (ready) {
     io.emit('time', new Date().toTimeString())
-    //enemyUpdate()
 
-    if (counter == 1000) {
+    if (counter == 300)
+      enemyUpdate()
+
+    if (counter == 600)
       setDatabase()
+
+    if (counter == 900) {
       //getCluster()
       //var allRooms = _.map(clients, 'room')
       //console.log(_.uniq(allRooms))
@@ -267,13 +271,18 @@ function setDatabase() {
   })
 }
 
-function enemyUpdate(counter) {
+function enemyUpdate() {
   if (enemies.length < 10) {
     console.log('Enemies Alive: ' + enemies.length)
     currentEnemy = {
       name: uuid.v1(),
-      positionx: enemyspawnx,
-      positiony: enemyspawny,
+      positionx: 0,
+      positiony: 0,
+      health: 100,
+      target: {
+        name: '',
+        distance: 1000
+      }
     }
     enemies.push(currentEnemy)
     console.log("Spawn Enemy: " + currentEnemy.name)
@@ -285,40 +294,8 @@ function enemyUpdate(counter) {
   }
 
   _.forEach(enemies, enemy => {
-    var name = enemy.name
-    var target = Math.a
-    io.emit('enemy-move', name, target)
+    var index = new Random().nextInt(someArray.length);
+    var client = clients[index]
   })
 }
 
-/*
-// SPAWN OTHER PLAYER
-socket.on('player-connect', () => {
-  console.log('[RECV]: Client connect')
-  _.forEach(clients, client => {
-    var playerConnected = {
-      name: client.name,
-      health: client.health,
-      positionx: client.positionx,
-      positiony: client.positiony,
-      //positionz: clients[i].positionz,
-      //rotationx: clients[i].rotationx,
-      //rotationy: clients[i].rotationy,
-      //rotationz: clients[i].rotationz,
-      //rotationw: clients[i].rotationw
-    }
-    // In your current game, server tells you about the other players
-    socket.emit('other-player-connected',
-      playerConnected.name,
-      playerConnected.health,
-      playerConnected.positionx,
-      playerConnected.positiony,
-      //playerConnected.positionz,
-      //playerConnected.rotationx,
-      //playerConnected.rotationy,
-      //playerConnected.rotationz,
-      //playerConnected.rotationw
-    )
-  })
-})
-*/
