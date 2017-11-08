@@ -59,8 +59,7 @@ io.on('connect', (socket) => {
 
   /** PING */
   socket.on('test', () => {
-    console.log(`[RECV - New connection] : ${socket.client}`)    
-    socket.emit('test')
+    console.log(`[RECV - New connection] : ${socket}`)    
   })
 
   /** NETWORK MENU */
@@ -198,7 +197,7 @@ io.on('connect', (socket) => {
 
   /** SOCKET HANDLERS */
   socket.on('connecting', () => {
-    console.log(`[RECV - New connection] : ${socket.client}`)
+    console.log(`[RECV - New connection] : ${socket}`)    
   })
 
   socket.on('disconnect', (reason) => {
