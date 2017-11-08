@@ -137,6 +137,7 @@ io.on('connect', (socket) => {
   // SPAWN THE PLAYER (Starting position)
   socket.on('start-up', (name) => {
     console.log('[RECV - Spawn player] : ' + name)
+    playerName = name
     var movements = database.collection('movements')
     movements.findOne({
       name: name,
@@ -200,10 +201,7 @@ io.on('connect', (socket) => {
   socket.on('disconnect', (reason) => {
     console.log(`[RECV - Player disconnected] : ${playerName} : ${reason}`)
     socket.broadcast.emit('other-player-disconnected', playerName)
-    socket.disconnect()
-    if (playerName) {
-      _.remove(clients, { name: playerName })
-    }
+    _.remove(clients, { name: playerName })
   })
 
   socket.on('error', (error) => {
