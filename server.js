@@ -40,12 +40,6 @@ for (var i = 0; i < knum; i++) {
     name: 'kmeans point: ' + (i + 1),
     positionx: (Math.random() * 1000),
     positiony: (Math.random() * 1000),
-    //positionz: (Math.random() * 1000),
-    //rotationx: 0,
-    //rotationy: 0,
-    //rotationz: 0,
-    //rotationw: 0,
-    health: 0,
     socket: null,
     room: 'start'
   }
@@ -78,11 +72,6 @@ io.on('connection', (socket) => {
       name,
       positionx: 645.0,
       positiony: -504.0,
-      //positionz: 0.0,
-      //rotationx: 0.0,
-      //rotationy: 0.0,
-      //rotationz: 0.0,
-      //rotationw: 0.0
     }
 
     console.log('[RECV - Regsiter] : ' + newUser)
@@ -188,11 +177,6 @@ io.on('connection', (socket) => {
           health: 0,
           positionx: doc.positionx,
           positiony: doc.positiony,
-          //positionz: doc.positionz,
-          //rotationx: doc.rotationx,
-          //rotationy: doc.rotationy,
-          //rotationz: doc.rotationz,
-          //rotationw: doc.rotationw,
           socket: socket,
           room: 'start'
         }
@@ -203,11 +187,6 @@ io.on('connection', (socket) => {
           client.health,
           client.positionx,
           client.positiony,
-          //client.positionz,
-          //client.rotationx,
-          //client.rotationy,
-          //client.rotationz,
-          //client.rotationw
         )
 
         socket.join('start')
@@ -216,7 +195,7 @@ io.on('connection', (socket) => {
     })
   })
 
-  socket.on('player-move', (name, positionx, positiony, playerMoving, moveH, moveV, lastmovex, lastmovey) => { //, positionz, rotationx, rotationy, rotationz, rotationw) => {
+  socket.on('player-move', (name, positionx, positiony, playerMoving, moveH, moveV, lastmovex, lastmovey) => {
     //console.log('[RECV - Player move] : ' + name)
     var index = _.findIndex(clients, { 'name': name })
 
@@ -233,11 +212,6 @@ io.on('connection', (socket) => {
       moveV,
       lastmovex,
       lastmovey
-      //positionz,
-      //rotationx,
-      //rotationy,
-      //rotationz,
-      //rotationw
     )
   })
 
@@ -246,14 +220,17 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('player-message', name, message)
   })
 
-  socket.on('disconnect', () => {
-    console.log('[RECV - Player disconnected] : ' + playerName)
+  socket.on('disconnect', (reason) => {
+    console.log(`[RECV - Player disconnected] : ${playerName} : ${reason}`)
     socket.broadcast.emit('other-player-disconnected', playerName)
+    _.remove(clients, { name: playerName })
+    /*
     for (var i = 0; i < clients.length; i++) {
       if (clients[i].name == playerName) {
         clients.splice(i, 1)
       }
     }
+    */
   })
 })
 
