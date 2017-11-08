@@ -56,16 +56,13 @@ MongoClient.connect(MONGO_URI, (err, db) => {
 io.on('connect', (socket) => {
 
   var playerName
-  console.log(`[RECV - New connection] : ${socket.toString()}`)
 
-  socket.on('connecting', () => {
-    console.log(`[RECV - New connection] : ${socket.toString()}`)
-  })
-
+  /** PING */
   socket.on('test', () => {
     socket.emit('test')
   })
 
+  /** NETWORK MENU */
   socket.on('player-reg', (name, email, pass) => {
     var newUser = {
       name,
@@ -134,7 +131,11 @@ io.on('connect', (socket) => {
     }
   })
 
-  // SPAWN THE PLAYER (Starting position)
+  socket.on('menu-disconnect', (reason) => {
+    socket.disconnect()
+  })
+
+  /** NETWORK PLAY */
   socket.on('start-up', (name) => {
     console.log('[RECV - Spawn player] : ' + name)
     playerName = name
@@ -194,8 +195,9 @@ io.on('connect', (socket) => {
     socket.broadcast.emit('player-message', name, message)
   })
 
-  socket.on('menu-disconnect', (reason) => {
-    socket.disconnect()
+  /** SOCKET HANDLERS */
+  socket.on('connecting', () => {
+    console.log(`[RECV - New connection] : ${socket.toString()}`)
   })
 
   socket.on('disconnect', (reason) => {
