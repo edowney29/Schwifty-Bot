@@ -189,6 +189,11 @@ io.on('connect', (socket) => {
     socket.broadcast.emit('player-message', name, message)
   })
 
+  socket.on('player-attack', (name, attacking) => {
+    //console.log('[RECV - Attack] ' + name + ': ' + attacking)
+    socket.broadcast.emit('player-attack', name, message)
+  })
+
   /** SOCKET HANDLERS */
   socket.on('connecting', () => {
     console.log(`[RECV - New connection] : ${socket}`)
