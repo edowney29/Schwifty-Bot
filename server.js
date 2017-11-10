@@ -195,22 +195,21 @@ io.on('connect', (socket) => {
     var index = _.findIndex(clients, { 'name': name })
     io.in(clients[index].room).emit('player-attack', name, attacking)
   })
-})
 
-/** SOCKET HANDLERS */
-socket.on('connecting', () => {
-  console.log(`[RECV - New connection] : ${socket}`)
-})
+  /** SOCKET HANDLERS */
+  socket.on('connecting', () => {
+    console.log(`[RECV - New connection] : ${socket}`)
+  })
 
-socket.on('disconnect', (reason) => {
-  console.log(`[RECV - Player disconnected] : ${playerName} : ${reason}`)
-  socket.broadcast.emit('other-player-disconnected', playerName)
-  _.remove(clients, { name: playerName })
-})
+  socket.on('disconnect', (reason) => {
+    console.log(`[RECV - Player disconnected] : ${playerName} : ${reason}`)
+    socket.broadcast.emit('other-player-disconnected', playerName)
+    _.remove(clients, { name: playerName })
+  })
 
-socket.on('error', (error) => {
-  console.log(`[RECV - Server error] : ${playerName} : ${error}`)
-})
+  socket.on('error', (error) => {
+    console.log(`[RECV - Server error] : ${playerName} : ${error}`)
+  })
 })
 
 var counter = 0
