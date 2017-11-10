@@ -168,20 +168,22 @@ io.on('connect', (socket) => {
     //console.log('[RECV - Player move] : ' + name)
     var index = _.findIndex(clients, { 'name': name })
 
-    clients[index].name = name
-    clients[index].positionx = positionx
-    clients[index].positiony = positiony
+    if (index) {
+      clients[index].name = name
+      clients[index].positionx = positionx
+      clients[index].positiony = positiony
 
-    io.in(clients[index].room).emit('player-move',
-      name,
-      positionx,
-      positiony,
-      playerMoving,
-      moveH,
-      moveV,
-      lastmovex,
-      lastmovey
-    )
+      io.in(clients[index].room).emit('player-move',
+        name,
+        positionx,
+        positiony,
+        playerMoving,
+        moveH,
+        moveV,
+        lastmovex,
+        lastmovey
+      )
+    }
   })
 
   socket.on('player-message', (name, message) => {
@@ -193,7 +195,9 @@ io.on('connect', (socket) => {
   socket.on('player-attack', (name, attacking) => {
     //console.log('[RECV - Attack] ' + name + ': ' + attacking)
     var index = _.findIndex(clients, { 'name': name })
-    io.in(clients[index].room).emit('player-attack', name, attacking)
+    if (index) {
+      io.in(clients[index].room).emit('player-attack', name, attacking)
+    }
   })
 
   /** SOCKET HANDLERS */
