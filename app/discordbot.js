@@ -2,6 +2,7 @@ const discord = require('discord.js')
 const random = require('random-js')
 const googleapi = require('googleapis')
 const moment = require('moment-timezone');
+const _ = require('lodash')
 //const sqlite = require('sqlite')
 
 const client = new discord.Client()
