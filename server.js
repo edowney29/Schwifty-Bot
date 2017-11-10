@@ -187,11 +187,13 @@ io.on('connect', (socket) => {
   socket.on('player-message', (name, message) => {
     console.log('[RECV - Message] ' + name + ': ' + message)
     socket.broadcast.emit('player-message', name, message)
+    socket.emit('player-message', name, message);        
   })
 
   socket.on('player-attack', (name, attacking) => {
     console.log('[RECV - Attack] ' + name + ': ' + attacking)
     socket.broadcast.emit('player-attack', name, attacking)
+    socket.emit('player-attack', name, attacking);    
   })
 
   /** SOCKET HANDLERS */
