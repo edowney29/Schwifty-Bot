@@ -15,6 +15,9 @@ const PORT = process.env.PORT || 5000
 const INDEX = path.join(__dirname, 'index.html')
 const MONGO_URI = process.env.MONGODB_URI
 
+const PI_FLOAT = 3.14159
+const PIBY2_FLOAT = 1.57079
+
 const server = express()
   .use((req, res) => res.sendFile(INDEX))
   .listen(PORT, () => console.log(`Listening on ${PORT}`))
@@ -280,7 +283,7 @@ function setDatabase() {
 
 function enemyUpdate() {
   if (enemies.length < 10) {
-    console.log('[SERVER - Enemies Alive] : ' + enemies.length)
+    //console.log('[SERVER - Enemies Alive] : ' + enemies.length)
     currentEnemy = {
       name: uuid.v1(),
       positionx: 0,
@@ -298,8 +301,62 @@ function enemyUpdate() {
   }
 
   _.forEach(enemies, enemy => {
-    var index = new Random().nextInt(someArray.length);
-    var client = clients[index]
+    if (enemy.target == '') {
+      var index = clients[Math.floor(Math.random() * clients.length)]
+      var client = clients[index]
+      var r = calcMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+      if (r.distance < 500) {
+        enemy.target = client.playerName
+      }
+
+    } else {
+      var index = _.find(clients, { playerName: enemy.target })
+      if (index) {
+        var client = clients[index]
+        var r = calcMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+        if (r.distance > 750) {
+          enemy.target = ''
+        } else {
+          var movex = (-PI_FLOAT / 2 + r.radian * PI_FLOAT) * 50
+          var movey = (r.radian * PI_FLOAT) * 50
+          io.emit('enemy-move', enemy.name, movex, movey)
+        }
+      }
+    }
+
   })
 }
 
+function calcMove(x1, y1, x2, y2) {
+  var r = { distance: 0.0, radian: 0.0 }
+  var axD = Math.abs(x2 - x1)
+  var ayD = Math.abs(y2 - y1)
+  var dD = Math.min([axD, ayD])
+  r.distance += dD * 1.41421
+  r.distance += (axD - dD) + (ayD - dD)
+  r.radian = atan2_approximation2(x2 - x1, y2 - y1)
+  return r
+}
+
+// |error| < 0.005
+function atan2_approximation2(x, y) {
+  if (x == 0.0) {
+    if (y > 0.0) return PIBY2_FLOAT
+    if (y == 0.0) return 0.0
+    return -PIBY2_FLOAT
+  }
+  var atan
+  var z = y / x;
+  if (Math.abs(z) < 1.0) {
+    atan = z / (1.0 + 0.28 * z * z)
+    if (x < 0.0) {
+      if (y < 0.0) return atan - PI_FLOAT
+      return atan + PI_FLOAT
+    }
+  }
+  else {
+    atan = PIBY2_FLOAT - z / (z * z + 0.28)
+    if (y < 0.0) return atan - PI_FLOAT
+  }
+  return atan
+}
