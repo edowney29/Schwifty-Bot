@@ -298,7 +298,7 @@ function enemyUpdate() {
     if (enemy.target == '') {
       var index = clients[Math.floor(Math.random() * clients.length)]
       var client = clients[index]
-      var r = calcMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+      var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
       if (r.distance < 500) {
         enemy.target = client.playerName
       }
@@ -307,7 +307,7 @@ function enemyUpdate() {
       var index = _.find(clients, { playerName: enemy.target })
       if (index) {
         var client = clients[index]
-        var r = calcMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+        var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
         if (r.distance > 750) {
           enemy.target = ''
         } else {
@@ -321,7 +321,7 @@ function enemyUpdate() {
   })
 }
 
-function calcMove(x1, y1, x2, y2) {
+function calculateMove(x1, y1, x2, y2) {
   var r = { distance: 0.0, radian: 0.0 }
   var axD = Math.abs(x2 - x1)
   var ayD = Math.abs(y2 - y1)
