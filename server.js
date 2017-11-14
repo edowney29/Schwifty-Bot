@@ -297,12 +297,13 @@ function enemyUpdate() {
   _.forEach(enemies, enemy => {
     if (enemy.target == '') {
       var index = clients[Math.floor(Math.random() * clients.length)]
-      var client = clients[index]
-      var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-      if (r.distance < 500) {
-        enemy.target = client.playerName
+      if (index != 0) {
+        var client = clients[index]
+        var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+        if (r.distance < 500) {
+          enemy.target = client.playerName
+        }
       }
-
     } else {
       var index = _.find(clients, { playerName: enemy.target })
       if (index) {
