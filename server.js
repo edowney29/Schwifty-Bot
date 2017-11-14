@@ -298,6 +298,7 @@ function enemyUpdate() {
     if (clients.length > 0) {
       if (enemy.target == '') {
         var index = clients[Math.floor(Math.random() * clients.length)]
+        console.log(index)
         var client = clients[index]
         var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
         if (r.distance < 500) {
