@@ -293,11 +293,6 @@ function enemyUpdate() {
     }
     enemies.push(currentEnemy)
     console.log("[SEND - Spawn Enemy] : " + currentEnemy.name)
-    io.emit('enemy-spawn',
-      currentEnemy.name,
-      currentEnemy.positionx,
-      currentEnemy.positiony,
-    )
   }
 
   _.forEach(enemies, enemy => {
