@@ -295,30 +295,29 @@ function enemyUpdate() {
   }
 
   _.forEach(enemies, enemy => {
-    if (enemy.target == '') {
-      var index = clients[Math.floor(Math.random() * clients.length)]
-      if (index != 0) {
+    if (clients.length > 0) {
+      if (enemy.target == '') {
+        var index = clients[Math.floor(Math.random() * clients.length)]
         var client = clients[index]
         var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
         if (r.distance < 500) {
           enemy.target = client.playerName
         }
-      }
-    } else {
-      var index = _.find(clients, { playerName: enemy.target })
-      if (index) {
-        var client = clients[index]
-        var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-        if (r.distance > 750) {
-          enemy.target = ''
-        } else {
-          var movex = (-PI_FLOAT / 2 + r.radian * PI_FLOAT) * 50
-          var movey = (r.radian * PI_FLOAT) * 50
-          io.emit('enemy-move', enemy.name, movex, movey)
+      } else {
+        var index = _.find(clients, { playerName: enemy.target })
+        if (index) {
+          var client = clients[index]
+          var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+          if (r.distance > 750) {
+            enemy.target = ''
+          } else {
+            var movex = (-PI_FLOAT / 2 + r.radian * PI_FLOAT) * 50
+            var movey = (r.radian * PI_FLOAT) * 50
+            io.emit('enemy-move', enemy.name, movex, movey)
+          }
         }
       }
     }
-
   })
 }
 
