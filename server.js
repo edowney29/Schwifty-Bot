@@ -223,7 +223,7 @@ var counter = 0
 setInterval(() => {
   if (ready) {
     io.emit('time', new Date().toTimeString())
-    //enemyUpdate()
+    enemyUpdate()
 
     if (counter == 900) {
       setDatabase()
@@ -283,7 +283,6 @@ function setDatabase() {
 
 function enemyUpdate() {
   if (enemies.length < 10) {
-    //console.log('[SERVER - Enemies Alive] : ' + enemies.length)
     currentEnemy = {
       name: uuid.v1(),
       positionx: 0,
@@ -292,7 +291,7 @@ function enemyUpdate() {
       target: ''
     }
     enemies.push(currentEnemy)
-    console.log("[SEND - Spawn Enemy] : " + currentEnemy.name)
+    console.log("[SERVER - Spawn Enemy] : " + currentEnemy.name)
   }
 
   _.forEach(enemies, enemy => {
