@@ -40,7 +40,7 @@ for (var i = 0; i < knum; i++) {
     socket: null,
     room: 'start'
   }
-  clients.push(fakes)
+  //clients.push(fakes)
 }
 
 MongoClient.connect(MONGO_URI, (err, db) => {
