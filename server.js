@@ -69,8 +69,8 @@ io.on('connect', (socket) => {
     }
     var newMovements = {
       name,
-      positionx: 645.0,
-      positiony: -504.0,
+      positionx: 1297.0,
+      positiony: -1125,
     }
 
     console.log('[RECV - Regsiter] : ' + newUser)
@@ -287,8 +287,8 @@ function enemyUpdate() {
   if (enemies.length < 10) {
     currentEnemy = {
       name: uuid.v1(),
-      positionx: 0,
-      positiony: 0,
+      positionx: 1452,
+      positiony: -1433,
       health: 100,
       target: ''
     }
@@ -357,6 +357,7 @@ function enemyUpdate() {
 function calculateMove(x1, y1, x2, y2) {
   var r = { distance: 0.0, radian: 0.0 }
   r.distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
+  //r.radian = atan2_approximation2(x2 - x1, y2 - y1)  
   r.radian = Math.atan2(y2 - y1, x2 - x1)
   return r
 }
@@ -383,13 +384,3 @@ function atan2_approximation2(x, y) {
   }
   return atan
 }
-
-/*
-r.radian = atan2_approximation2(x2 - x1, y2 - y1)
-
-var axD = Math.abs(x2 - x1)
-var ayD = Math.abs(y2 - y1)
-var dD = Math.min(axD, ayD)
-r.distance += dD * 1.41421
-r.distance += (axD - dD) + (ayD - dD)
-*/
