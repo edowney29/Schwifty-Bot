@@ -308,8 +308,8 @@ function enemyUpdate() {
         var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
         if (r.distance < 100) {
           enemy.target = client.name
-          var movex = Math.cos(r.radian) * 100
-          var movey = Math.sin(r.radian) * 100
+          var movex = Math.cos(r.radian) * 50
+          var movey = Math.sin(r.radian) * 50
           enemy.positionx += movex
           enemy.positiony += movey
           //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
@@ -317,8 +317,8 @@ function enemyUpdate() {
         } else {
           enemy.target = ''
           r.radian = Math.random() * (2 * Math.PI)
-          var movex = Math.cos(r.radian) * 100
-          var movey = Math.sin(r.radian) * 100
+          var movex = Math.cos(r.radian) * 50
+          var movey = Math.sin(r.radian) * 50
           enemy.positionx += movex
           enemy.positiony += movey
           //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
@@ -335,15 +335,15 @@ function enemyUpdate() {
         if (r.distance > 200) {
           enemy.target = ''
           r.radian = Math.random() * (2 * Math.PI)
-          var movex = Math.cos(r.radian) * 100
-          var movey = Math.sin(r.radian) * 100
+          var movex = Math.cos(r.radian) * 50
+          var movey = Math.sin(r.radian) * 50
           enemy.positionx += movex
           enemy.positiony += movey
           //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
           io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
         } else {
-          var movex = Math.cos(r.radian) * 100
-          var movey = Math.sin(r.radian) * 100
+          var movex = Math.cos(r.radian) * 50
+          var movey = Math.sin(r.radian) * 50
           enemy.positionx += movex
           enemy.positiony += movey
           //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
