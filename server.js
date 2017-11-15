@@ -223,10 +223,11 @@ var counter = 0
 setInterval(() => {
   if (ready) {
     io.emit('time', new Date().toTimeString())
+    enemyUpdate()    
 
-    if (counter == 100) {
-      enemyUpdate()
-    }
+    //if (counter == 100) {
+    //  enemyUpdate()
+    //}
 
     if (counter == 900) {
       setDatabase()
@@ -320,7 +321,7 @@ function enemyUpdate() {
           } else {
             var movex = (-PI_FLOAT / 2 + r.radian * PI_FLOAT) * 50
             var movey = (r.radian * PI_FLOAT) * 50
-            io.local.emit('enemy-move', enemy.name, movex, movey)
+            io.local.emit('enemy-move', enemy.name, movex, movey, enemy.target)
           }
         }
       }
