@@ -225,7 +225,7 @@ setInterval(() => {
     io.emit('time', new Date().toTimeString())
     enemyUpdate()
 
-    if (counter == 900) {
+    if (counter == 100) {
       setDatabase()
       //getCluster()
       //var allRooms = _.map(clients, 'room')
@@ -234,7 +234,7 @@ setInterval(() => {
     }
     counter++
   }
-}, 10)
+}, 100)
 
 function getCluster() {
   let vectors = new Array()
@@ -315,8 +315,8 @@ function enemyUpdate() {
         if (r.distance > 750) {
           enemy.target = ''
         } else {
-          var movex = (-PI_FLOAT / 2 + r.radian * PI_FLOAT) * 50
-          var movey = (r.radian * PI_FLOAT) * 50
+          var movex = Math.cos(r.radian) * 100
+          var movey = Math.sin(r.radian) * 100
           console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
           io.local.emit('enemy-move', enemy.name, movex, movey, enemy.target)
         }
@@ -329,14 +329,7 @@ function enemyUpdate() {
 function calculateMove(x1, y1, x2, y2) {
   var r = { distance: 0.0, radian: 0.0 }
   r.distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
-  r.radian = atan2_approximation2(x2 - x1, y2 - y1)
-  /*
-  var axD = Math.abs(x2 - x1)
-  var ayD = Math.abs(y2 - y1)
-  var dD = Math.min(axD, ayD)
-  r.distance += dD * 1.41421
-  r.distance += (axD - dD) + (ayD - dD)
-  */
+  r.radian = Math.atan2(y2 - y1, x2 - x1)
   return r
 }
 
@@ -365,16 +358,25 @@ function atan2_approximation2(x, y) {
 
 function sqrt_approximation(n, g) {
   if (!g) {
-      // Take an initial guess at the square root
-      g = n / 2.0;
+    // Take an initial guess at the square root
+    g = n / 2.0;
   }
   var d = n / g;              // Divide our guess into the number
   var ng = (d + g) / 2.0;     // Use average of g and d as our new guess
-  if (g == ng) {          
-      // The new guess is the same as the old guess; further guesses
-      // can get no more accurate so we return this guess
-      return g;
+  if (g == ng) {
+    // The new guess is the same as the old guess; further guesses
+    // can get no more accurate so we return this guess
+    return g;
   }
   // Recursively solve for closer and closer approximations of the square root
   return squirt(n, ng);
 }
+
+  //r.radian = atan2_approximation2(x2 - x1, y2 - y1)
+  /*
+  var axD = Math.abs(x2 - x1)
+  var ayD = Math.abs(y2 - y1)
+  var dD = Math.min(axD, ayD)
+  r.distance += dD * 1.41421
+  r.distance += (axD - dD) + (ayD - dD)
+  */
