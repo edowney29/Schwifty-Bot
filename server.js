@@ -325,7 +325,6 @@ function enemyUpdate() {
       }
     }
   }
-
   else {
     var client = _.find(clients, { name: enemy.target })
     if (client) {
