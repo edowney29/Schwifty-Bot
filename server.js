@@ -306,19 +306,8 @@ function enemyUpdate() {
         enemy.target = client.name
       } else {
         enemy.target = ''
-        r.radian = Math.random() * (2 * Math.PI)
-        var movex = Math.cos(r.radian) * ((Math.random * 100) + 50)
-        var movey = Math.sin(r.radian) * ((Math.random * 100) + 50)
-        enemy.positionx += movex
-        enemy.positiony += movey
-        if (enemy.positionx < 1245)
-          enemy.positionx = 1245
-        if (enemy.positionx > 1602)
-          enemy.positionx = 1602
-        if (enemy.positiony < 1309)
-          enemy.positiony = 1309
-        if (enemy.positiony > 1568)
-          enemy.positiony = 1568
+        var radian = Math.random() * (2 * Math.PI)
+        enemy = checkMove(enemy, radian)
         console.log(enemy)
         //console.log(`[Server - Enemy random] : ${enemy.name} -> ${client.name}`)
         io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
@@ -334,18 +323,7 @@ function enemyUpdate() {
       } else {
         enemy.target = client.name
         var radian = getRadian(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-        var movex = Math.cos(radian) * ((Math.random * 100) + 50)
-        var movey = Math.sin(radian) * ((Math.random * 100) + 50)
-        enemy.positionx += movex
-        enemy.positiony += movey
-        if (enemy.positionx < 1245)
-          enemy.positionx = 1245
-        if (enemy.positionx > 1602)
-          enemy.positionx = 1602
-        if (enemy.positiony < 1309)
-          enemy.positiony = 1309
-        if (enemy.positiony > 1568)
-          enemy.positiony = 1568
+        enemy = checkMove(enemy, radian)
         console.log(enemy)
         //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
         io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
@@ -362,9 +340,25 @@ function getDistance(x1, y1, x2, y2) {
 
 function getRadian(x1, y1, x2, y2) {
   var radian = 0.0
-  //radian = Math.atan2(y2 - y1, x2 - x1)
-  radian = atan2_approximation2(x2 - x1, y2 - y1)  
+  radian = Math.atan2(y2 - y1, x2 - x1)
+  //radian = atan2_approximation2(x2 - x1, y2 - y1)
   return radian
+}
+
+function checkMove(enemy, radian) {
+  var movex = Math.cos(radian) * (Math.random(100 - 50) + 50)
+  var movey = Math.sin(radian) * (Math.random(100 - 50) + 50)
+  enemy.positionx += movex
+  enemy.positiony += movey
+  if (enemy.positionx < 1245)
+    enemy.positionx = 1245
+  if (enemy.positionx > 1602)
+    enemy.positionx = 1602
+  if (enemy.positiony < 1309)
+    enemy.positiony = 1309
+  if (enemy.positiony > 1568)
+    enemy.positiony = 1568
+  return enemy
 }
 
 // |error| < 0.005
