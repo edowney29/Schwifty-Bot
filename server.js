@@ -308,6 +308,7 @@ function enemyUpdate() {
         enemy.target = ''
         var radian = Math.random() * (2 * Math.PI)
         enemy = checkMove(enemy, radian)
+        console.log(enemy)        
         //console.log(`[Server - Enemy random] : ${enemy.name} -> ${client.name}`)
         io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
       }
@@ -323,6 +324,7 @@ function enemyUpdate() {
         enemy.target = client.name
         var radian = getRadian(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
         enemy = checkMove(enemy, radian)
+        console.log(enemy)
         //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
         io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
       }
