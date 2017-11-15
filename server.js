@@ -297,61 +297,58 @@ function enemyUpdate() {
   }
 
   // Enemy AI
-  if (clients.length > 0) {
-    var enemy = enemies[counter % enemies.length]
+  var enemy = enemies[counter % enemies.length]
 
-    if (enemy.target == '') {
-      var client = clients[Math.floor(Math.random() * clients.length)]
-      if (!_.includes(client.name, 'kmeans')) {
-        var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-        if (r.distance < 100) {
-          enemy.target = client.name
-        } else {
-          enemy.target = ''
-          r.radian = Math.random() * (2 * Math.PI)
-          var movex = Math.cos(radian) * ((Math.random * 100) + 50)
-          var movey = Math.sin(radian) * ((Math.random * 100) + 50)
-          enemy.positionx += movex
-          enemy.positiony += movey
-          if (enemy.positionx < 1245)
-            enemy.positionx = 1245
-          if (enemy.positionx > 1602)
-            enemy.positionx = 1602
-          if (enemy.positiony < 1309)
-            enemy.positiony = 1309
-          if (enemy.positiony > 1568)
-            enemy.positiony = 1568
-          console.log(enemy)
-          //console.log(`[Server - Enemy random] : ${enemy.name} -> ${client.name}`)
-          io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
-        }
+  if (enemy.target == '') {
+    var client = clients[Math.floor(Math.random() * clients.length)]
+    if (!_.includes(client.name, 'kmeans')) {
+      var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+      if (r.distance < 100) {
+        enemy.target = client.name
+      } else {
+        enemy.target = ''
+        r.radian = Math.random() * (2 * Math.PI)
+        var movex = Math.cos(radian) * ((Math.random * 100) + 50)
+        var movey = Math.sin(radian) * ((Math.random * 100) + 50)
+        enemy.positionx += movex
+        enemy.positiony += movey
+        if (enemy.positionx < 1245)
+          enemy.positionx = 1245
+        if (enemy.positionx > 1602)
+          enemy.positionx = 1602
+        if (enemy.positiony < 1309)
+          enemy.positiony = 1309
+        if (enemy.positiony > 1568)
+          enemy.positiony = 1568
+        console.log(enemy)
+        //console.log(`[Server - Enemy random] : ${enemy.name} -> ${client.name}`)
+        io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
       }
     }
+  }
 
-    // Old Target
-    else {
-      var client = _.find(clients, { name: enemy.target })
-      if (client) {
-        var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-        if (r.distance > 200) {
-          enemy.target = ''
-        } else {
-          var movex = Math.cos(radian) * ((Math.random * 100) + 50)
-          var movey = Math.sin(radian) * ((Math.random * 100) + 50)
-          enemy.positionx += movex
-          enemy.positiony += movey
-          if (enemy.positionx < 1245)
-            enemy.positionx = 1245
-          if (enemy.positionx > 1602)
-            enemy.positionx = 1602
-          if (enemy.positiony < 1309)
-            enemy.positiony = 1309
-          if (enemy.positiony > 1568)
-            enemy.positiony = 1568
-          console.log(enemy)
-          //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
-          io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
-        }
+  else {
+    var client = _.find(clients, { name: enemy.target })
+    if (client) {
+      var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+      if (r.distance > 200) {
+        enemy.target = ''
+      } else {
+        var movex = Math.cos(radian) * ((Math.random * 100) + 50)
+        var movey = Math.sin(radian) * ((Math.random * 100) + 50)
+        enemy.positionx += movex
+        enemy.positiony += movey
+        if (enemy.positionx < 1245)
+          enemy.positionx = 1245
+        if (enemy.positionx > 1602)
+          enemy.positionx = 1602
+        if (enemy.positiony < 1309)
+          enemy.positiony = 1309
+        if (enemy.positiony > 1568)
+          enemy.positiony = 1568
+        console.log(enemy)
+        //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
+        io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
       }
     }
   }
