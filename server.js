@@ -15,8 +15,8 @@ const PORT = process.env.PORT || 5000
 const INDEX = path.join(__dirname, 'index.html')
 const MONGO_URI = process.env.MONGODB_URI
 
-const PI_FLOAT = 3.14159
-const PIBY2_FLOAT = 1.57079
+const PI_FLOAT = 3.14159265
+const PIBY2_FLOAT = 1.5707963
 
 const server = express()
   .use((req, res) => res.sendFile(INDEX))
@@ -333,12 +333,15 @@ function enemyUpdate() {
 
 function calculateMove(x1, y1, x2, y2) {
   var r = { distance: 0.0, radian: 0.0 }
+  r.distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
+  r.radian = atan2_approximation2(x2 - x1, y2 - y1)  
+  /*
   var axD = Math.abs(x2 - x1)
   var ayD = Math.abs(y2 - y1)
   var dD = Math.min(axD, ayD)
   r.distance += dD * 1.41421
   r.distance += (axD - dD) + (ayD - dD)
-  r.radian = atan2_approximation2(x2 - x1, y2 - y1)
+  */
   return r
 }
 
