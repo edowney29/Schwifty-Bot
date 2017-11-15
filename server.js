@@ -305,7 +305,6 @@ function enemyUpdate() {
         var client = clients[Math.floor(Math.random() * clients.length)]
         if (!_.includes(client.name, 'kmeans')) {
           var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-          console.log(r)
           if (r.distance < 500) {
             enemy.target = client.name
           } else {
@@ -313,11 +312,9 @@ function enemyUpdate() {
           }
         }
       } else {
-        var index = _.find(clients, { name: enemy.target })
-        if (index) {
-          var client = clients[index]
+        var client = _.find(clients, { name: enemy.target })
+        if (client) {
           var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-          console.log(r)
           if (r.distance > 750) {
             enemy.target = ''
           } else {
@@ -334,7 +331,7 @@ function enemyUpdate() {
 function calculateMove(x1, y1, x2, y2) {
   var r = { distance: 0.0, radian: 0.0 }
   r.distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
-  r.radian = atan2_approximation2(x2 - x1, y2 - y1)  
+  r.radian = atan2_approximation2(x2 - x1, y2 - y1)
   /*
   var axD = Math.abs(x2 - x1)
   var ayD = Math.abs(y2 - y1)
