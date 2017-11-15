@@ -223,11 +223,10 @@ var counter = 0
 setInterval(() => {
   if (ready) {
     io.emit('time', new Date().toTimeString())
-    enemyUpdate()    
 
-    //if (counter == 100) {
-    //  enemyUpdate()
-    //}
+    if (counter == 100) {
+      enemyUpdate()
+    }
 
     if (counter == 900) {
       setDatabase()
