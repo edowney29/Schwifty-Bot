@@ -335,7 +335,7 @@ function calculateMove(x1, y1, x2, y2) {
   var r = { distance: 0.0, radian: 0.0 }
   var axD = Math.abs(x2 - x1)
   var ayD = Math.abs(y2 - y1)
-  var dD = Math.min([axD, ayD])
+  var dD = Math.min(axD, ayD)
   r.distance += dD * 1.41421
   r.distance += (axD - dD) + (ayD - dD)
   r.radian = atan2_approximation2(x2 - x1, y2 - y1)
