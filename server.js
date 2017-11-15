@@ -268,19 +268,21 @@ function getCluster() {
 function setDatabase() {
   var movements = database.collection('movements')
   _.forEach(clients, client => {
-    movements.update({
-      name: client.name,
-    }, {
+    if (!_.includes(client, 'kmeans')) {
+      movements.update({
         name: client.name,
-        positionx: client.positionx,
-        positiony: client.positiony,
-      }, (err, res) => {
-        if (err) {
-          console.log('[SERVER - Error]: ' + err)
-        } else {
-          console.log('[RECV - Update database]: ' + client.name)
-        }
-      })
+      }, {
+          name: client.name,
+          positionx: client.positionx,
+          positiony: client.positiony,
+        }, (err, res) => {
+          if (err) {
+            console.log('[SERVER - Error]: ' + err)
+          } else {
+            console.log('[RECV - Update database]: ' + client.name)
+          }
+        })
+    }
   })
 }
 
@@ -301,7 +303,7 @@ function enemyUpdate() {
     if (clients.length > 0) {
       if (enemy.target == '') {
         var client = clients[Math.floor(Math.random() * clients.length)]
-        if (_.includes(client, 'kmeans point:')) {
+        if (!_.includes(client, 'kmeans')) {
           var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
           if (r.distance < 500) {
             enemy.target = client.playerName
