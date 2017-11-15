@@ -298,33 +298,35 @@ function enemyUpdate() {
 
   // Enemy AI
   var enemy = enemies[counter % enemies.length]
-  if (enemy.target == '') {
-    var client = clients[Math.floor(Math.random() * clients.length)]
-    if (!_.includes(client.name, 'kmeans')) {
-      var distance = getDistance(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-      if (distance < 100) {
-        enemy.target = client.name
-      } else {
-        enemy.target = ''
-        var radian = Math.random() * (2 * Math.PI)
-        enemy = checkMove(enemy, radian)
-        //console.log(`[Server - Enemy random] : ${enemy.name} -> ${client.name}`)
-        io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
+  if (Math.random >= 0.25) {
+    if (enemy.target == '') {
+      var client = clients[Math.floor(Math.random() * clients.length)]
+      if (!_.includes(client.name, 'kmeans')) {
+        var distance = getDistance(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+        if (distance < 100) {
+          enemy.target = client.name
+        } else {
+          enemy.target = ''
+          var radian = Math.random() * (2 * Math.PI)
+          enemy = checkMove(enemy, radian)
+          //console.log(`[Server - Enemy random] : ${enemy.name} -> ${client.name}`)
+          io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
+        }
       }
     }
-  }
-  else {
-    var client = _.find(clients, { name: enemy.target })
-    if (client) {
-      var distance = getDistance(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-      if (distance > 200) {
-        enemy.target = ''
-      } else {
-        enemy.target = client.name
-        var radian = getRadian(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-        enemy = checkMove(enemy, radian)
-        //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
-        io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
+    else {
+      var client = _.find(clients, { name: enemy.target })
+      if (client) {
+        var distance = getDistance(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+        if (distance > 200) {
+          enemy.target = ''
+        } else {
+          enemy.target = client.name
+          var radian = getRadian(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+          enemy = checkMove(enemy, radian)
+          //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
+          io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
+        }
       }
     }
   }
