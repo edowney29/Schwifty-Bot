@@ -299,15 +299,15 @@ function enemyUpdate() {
     console.log("[SERVER - Spawn Enemy] : " + currentEnemy.name)
   }
 
-  _.forEach(enemies, enemy => {
-    if (clients.length > 0) {
+  if (clients.length > 0) {
+    _.forEach(enemies, enemy => {
       if (enemy.target == '') {
         var client = clients[Math.floor(Math.random() * clients.length)]
         if (!_.includes(client.name, 'kmeans')) {
           var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+          console.log(r)          
           if (r.distance < 500) {
-            console.log(client.name)
-            enemy.target = client.name            
+            enemy.target = client.name
           } else {
             enemy.target = ''
           }
@@ -317,18 +317,18 @@ function enemyUpdate() {
         if (index) {
           var client = clients[index]
           var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+          console.log(r)                    
           if (r.distance > 750) {
             enemy.target = ''
           } else {
-            console.log(client.name)            
             var movex = (-PI_FLOAT / 2 + r.radian * PI_FLOAT) * 50
             var movey = (r.radian * PI_FLOAT) * 50
             io.local.emit('enemy-move', enemy.name, movex, movey)
           }
         }
       }
-    }
-  })
+    })
+  }
 }
 
 function calculateMove(x1, y1, x2, y2) {
