@@ -299,92 +299,93 @@ function enemyUpdate() {
     console.log(`[SERVER - Spawn Enemy] : ${currentEnemy.name}`)
   }
 
+  // Enemy AI
   if (clients.length > 0) {
-    _.forEach(enemies, enemy => {
-      if (Math.random() >= 0.5) {
+    var enemy = enemies[counter % enemies.length]
+    //if (Math.random >= 0.5) {
 
-        if (enemy.target == '') {
-          var client = clients[Math.floor(Math.random() * clients.length)]
-          if (!_.includes(client.name, 'kmeans')) {
-            var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-            if (r.distance < 100) {
-              enemy.target = client.name
-              var movex = Math.cos(r.radian) * 50
-              var movey = Math.sin(r.radian) * 50
-              enemy.positionx += movex
-              enemy.positiony += movey
-              //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
-              io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
-            } else {
-              enemy.target = ''
-              r.radian = Math.random() * (2 * Math.PI)
-              var movex = Math.cos(r.radian) * 50
-              var movey = Math.sin(r.radian) * 50
-              enemy.positionx += movex
-              enemy.positiony += movey
-              //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
-              io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
-            }
-          }
-        }
-
-        // Old Target
-        else {
-          var client = _.find(clients, { name: enemy.target })
-          if (client) {
-            var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-            if (r.distance > 200) {
-              enemy.target = ''
-              r.radian = Math.random() * (2 * Math.PI)
-              var movex = Math.cos(r.radian) * 50
-              var movey = Math.sin(r.radian) * 50
-              enemy.positionx += movex
-              enemy.positiony += movey
-              //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
-              io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
-            } else {
-              var movex = Math.cos(r.radian) * 50
-              var movey = Math.sin(r.radian) * 50
-              enemy.positionx += movex
-              enemy.positiony += movey
-              //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
-              io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
-            }
-          }
+    if (enemy.target == '') {
+      var client = clients[Math.floor(Math.random() * clients.length)]
+      if (!_.includes(client.name, 'kmeans')) {
+        var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+        if (r.distance < 100) {
+          enemy.target = client.name
+          var movex = Math.cos(r.radian) * 50
+          var movey = Math.sin(r.radian) * 50
+          enemy.positionx += movex
+          enemy.positiony += movey
+          //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
+          io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
+        } else {
+          enemy.target = ''
+          r.radian = Math.random() * (2 * Math.PI)
+          var movex = Math.cos(r.radian) * 50
+          var movey = Math.sin(r.radian) * 50
+          enemy.positionx += movex
+          enemy.positiony += movey
+          //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
+          io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
         }
       }
-    })
-  }
-
-  function calculateMove(x1, y1, x2, y2) {
-    var r = { distance: 0.0, radian: 0.0 }
-    r.distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
-    r.radian = Math.atan2(y2 - y1, x2 - x1)
-    return r
-  }
-
-  // |error| < 0.005
-  function atan2_approximation2(x, y) {
-    if (x == 0.0) {
-      if (y > 0.0) return PIBY2_FLOAT
-      if (y == 0.0) return 0.0
-      return -PIBY2_FLOAT
     }
-    var atan
-    var z = y / x;
-    if (Math.abs(z) < 1.0) {
-      atan = z / (1.0 + 0.28 * z * z)
-      if (x < 0.0) {
-        if (y < 0.0) return atan - PI_FLOAT
-        return atan + PI_FLOAT
-      }
-    }
+
+    // Old Target
     else {
-      atan = PIBY2_FLOAT - z / (z * z + 0.28)
-      if (y < 0.0) return atan - PI_FLOAT
+      var client = _.find(clients, { name: enemy.target })
+      if (client) {
+        var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+        if (r.distance > 200) {
+          enemy.target = ''
+          r.radian = Math.random() * (2 * Math.PI)
+          var movex = Math.cos(r.radian) * 50
+          var movey = Math.sin(r.radian) * 50
+          enemy.positionx += movex
+          enemy.positiony += movey
+          //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
+          io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
+        } else {
+          var movex = Math.cos(r.radian) * 50
+          var movey = Math.sin(r.radian) * 50
+          enemy.positionx += movex
+          enemy.positiony += movey
+          //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
+          io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
+        }
+      }
     }
-    return atan
+    //}
   }
+}
+
+function calculateMove(x1, y1, x2, y2) {
+  var r = { distance: 0.0, radian: 0.0 }
+  r.distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
+  r.radian = Math.atan2(y2 - y1, x2 - x1)
+  return r
+}
+
+// |error| < 0.005
+function atan2_approximation2(x, y) {
+  if (x == 0.0) {
+    if (y > 0.0) return PIBY2_FLOAT
+    if (y == 0.0) return 0.0
+    return -PIBY2_FLOAT
+  }
+  var atan
+  var z = y / x;
+  if (Math.abs(z) < 1.0) {
+    atan = z / (1.0 + 0.28 * z * z)
+    if (x < 0.0) {
+      if (y < 0.0) return atan - PI_FLOAT
+      return atan + PI_FLOAT
+    }
+  }
+  else {
+    atan = PIBY2_FLOAT - z / (z * z + 0.28)
+    if (y < 0.0) return atan - PI_FLOAT
+  }
+  return atan
+}
 
 /*
 r.radian = atan2_approximation2(x2 - x1, y2 - y1)
