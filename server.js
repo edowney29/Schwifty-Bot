@@ -274,9 +274,9 @@ function setDatabase() {
           positiony: client.positiony,
         }, (err, res) => {
           if (err) {
-            console.log('[SERVER - Error]: ' + err)
+            console.log(`[SERVER - Error]: ${err}`)
           } else {
-            console.log('[RECV - Update database]: ' + client.name)
+            console.log(`[RECV - Update database]: ${client.name}`)
           }
         })
     }
@@ -293,7 +293,7 @@ function enemyUpdate() {
       target: ''
     }
     enemies.push(currentEnemy)
-    console.log("[SERVER - Spawn Enemy] : " + currentEnemy.name)
+    console.log(`[SERVER - Spawn Enemy] : ${currentEnemy.name}`)
   }
 
   if (clients.length > 0) {
@@ -356,6 +356,7 @@ function atan2_approximation2(x, y) {
   return atan
 }
 
+// max_guesses = 10
 function sqrt_approximation(n, g) {
   if (!g) {
     // Take an initial guess at the square root
@@ -372,11 +373,12 @@ function sqrt_approximation(n, g) {
   return squirt(n, ng);
 }
 
-  //r.radian = atan2_approximation2(x2 - x1, y2 - y1)
-  /*
-  var axD = Math.abs(x2 - x1)
-  var ayD = Math.abs(y2 - y1)
-  var dD = Math.min(axD, ayD)
-  r.distance += dD * 1.41421
-  r.distance += (axD - dD) + (ayD - dD)
-  */
+/*
+r.radian = atan2_approximation2(x2 - x1, y2 - y1)
+
+var axD = Math.abs(x2 - x1)
+var ayD = Math.abs(y2 - y1)
+var dD = Math.min(axD, ayD)
+r.distance += dD * 1.41421
+r.distance += (axD - dD) + (ayD - dD)
+*/
