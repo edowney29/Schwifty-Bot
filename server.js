@@ -223,10 +223,7 @@ var counter = 0
 setInterval(() => {
   if (ready) {
     io.emit('time', new Date().toTimeString())
-
-    if (counter == 100) {
-      enemyUpdate()
-    }
+    enemyUpdate()
 
     if (counter == 900) {
       setDatabase()
@@ -300,31 +297,31 @@ function enemyUpdate() {
   }
 
   if (clients.length > 0) {
-    _.forEach(enemies, enemy => {
-      if (enemy.target == '') {
-        var client = clients[Math.floor(Math.random() * clients.length)]
-        if (!_.includes(client.name, 'kmeans')) {
-          var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-          if (r.distance < 500) {
-            enemy.target = client.name
-          } else {
-            enemy.target = ''
-          }
-        }
-      } else {
-        var client = _.find(clients, { name: enemy.target })
-        if (client) {
-          var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-          if (r.distance > 750) {
-            enemy.target = ''
-          } else {
-            var movex = (-PI_FLOAT / 2 + r.radian * PI_FLOAT) * 50
-            var movey = (r.radian * PI_FLOAT) * 50
-            io.local.emit('enemy-move', enemy.name, movex, movey, enemy.target)
-          }
+    var enemy = enemies[Math.floor(Math.random() * enemies.length)]
+    if (enemy.target == '') {
+      var client = clients[Math.floor(Math.random() * clients.length)]
+      if (!_.includes(client.name, 'kmeans')) {
+        var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+        if (r.distance < 500) {
+          enemy.target = client.name
+        } else {
+          enemy.target = ''
         }
       }
-    })
+    } else {
+      var client = _.find(clients, { name: enemy.target })
+      if (client) {
+        var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+        if (r.distance > 750) {
+          enemy.target = ''
+        } else {
+          var movex = (-PI_FLOAT / 2 + r.radian * PI_FLOAT) * 50
+          var movey = (r.radian * PI_FLOAT) * 50
+          io.local.emit('enemy-move', enemy.name, movex, movey, enemy.target)
+        }
+      }
+    }
+
   }
 }
 
