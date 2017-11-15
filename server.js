@@ -312,16 +312,16 @@ function enemyUpdate() {
           var movey = Math.sin(r.radian) * 100
           enemy.positionx += movex
           enemy.positiony += movey
-          console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
+          //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
           io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
         } else {
           enemy.target = ''
-          r.radian = Math.random() * (2 * PI_FLOAT)
+          r.radian = Math.random() * (2 * Math.PI)
           var movex = Math.cos(r.radian) * 100
           var movey = Math.sin(r.radian) * 100
           enemy.positionx += movex
           enemy.positiony += movey
-          console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
+          //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
           io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
         }
       }
@@ -334,19 +334,19 @@ function enemyUpdate() {
         var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
         if (r.distance > 250) {
           enemy.target = ''
-          r.radian = Math.random() * (2 * PI_FLOAT)
+          r.radian = Math.random() * (2 * Math.PI)
           var movex = Math.cos(r.radian) * 100
           var movey = Math.sin(r.radian) * 100
           enemy.positionx += movex
           enemy.positiony += movey
-          console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
+          //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
           io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
         } else {
           var movex = Math.cos(r.radian) * 100
           var movey = Math.sin(r.radian) * 100
           enemy.positionx += movex
           enemy.positiony += movey
-          console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
+          //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
           io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
         }
       }
@@ -382,23 +382,6 @@ function atan2_approximation2(x, y) {
     if (y < 0.0) return atan - PI_FLOAT
   }
   return atan
-}
-
-// max_guesses = 10
-function sqrt_approximation(n, g) {
-  if (!g) {
-    // Take an initial guess at the square root
-    g = n / 2.0;
-  }
-  var d = n / g;              // Divide our guess into the number
-  var ng = (d + g) / 2.0;     // Use average of g and d as our new guess
-  if (g == ng) {
-    // The new guess is the same as the old guess; further guesses
-    // can get no more accurate so we return this guess
-    return g;
-  }
-  // Recursively solve for closer and closer approximations of the square root
-  return squirt(n, ng);
 }
 
 /*
