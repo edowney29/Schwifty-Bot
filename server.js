@@ -301,14 +301,14 @@ function enemyUpdate() {
   if (enemy.target == '') {
     var client = clients[Math.floor(Math.random() * clients.length)]
     if (!_.includes(client.name, 'kmeans')) {
-      var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-      if (r.distance < 100) {
+      var distance = getDistance(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+      if (distance < 100) {
         enemy.target = client.name
       } else {
         enemy.target = ''
         r.radian = Math.random() * (2 * Math.PI)
-        var movex = Math.cos(radian) * ((Math.random * 100) + 50)
-        var movey = Math.sin(radian) * ((Math.random * 100) + 50)
+        var movex = Math.cos(r.radian) * ((Math.random * 100) + 50)
+        var movey = Math.sin(r.radian) * ((Math.random * 100) + 50)
         enemy.positionx += movex
         enemy.positiony += movey
         if (enemy.positionx < 1245)
@@ -328,10 +328,12 @@ function enemyUpdate() {
   else {
     var client = _.find(clients, { name: enemy.target })
     if (client) {
-      var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-      if (r.distance > 200) {
+      var distance = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+      if (distance > 200) {
         enemy.target = ''
       } else {
+        enemy.target = client.name
+        var radian = getRadian(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
         var movex = Math.cos(radian) * ((Math.random * 100) + 50)
         var movey = Math.sin(radian) * ((Math.random * 100) + 50)
         enemy.positionx += movex
@@ -352,12 +354,17 @@ function enemyUpdate() {
   }
 }
 
-function calculateMove(x1, y1, x2, y2) {
-  var r = { distance: 0.0, radian: 0.0 }
-  r.distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
-  //r.radian = atan2_approximation2(x2 - x1, y2 - y1)  
-  r.radian = Math.atan2(y2 - y1, x2 - x1)
-  return r
+function getDistance(x1, y1, x2, y2) {
+  var distance = 0.0
+  distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
+  return distance
+}
+
+function getRadian(x1, y1, x2, y2) {
+  var radian = 0.0
+  //radian = Math.atan2(y2 - y1, x2 - x1)
+  radian = atan2_approximation2(x2 - x1, y2 - y1)  
+  return radian
 }
 
 // |error| < 0.005
