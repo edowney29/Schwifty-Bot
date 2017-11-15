@@ -297,6 +297,7 @@ function enemyUpdate() {
   }
 
   if (clients.length > 0) {
+    // New target 
     var enemy = enemies[Math.floor(Math.random() * enemies.length)]
     if (enemy.target == '') {
       var client = clients[Math.floor(Math.random() * clients.length)]
@@ -308,7 +309,10 @@ function enemyUpdate() {
           enemy.target = ''
         }
       }
-    } else {
+    }
+
+    // Old Target
+    else {
       var client = _.find(clients, { name: enemy.target })
       if (client) {
         var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
@@ -322,7 +326,6 @@ function enemyUpdate() {
         }
       }
     }
-
   }
 }
 
