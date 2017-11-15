@@ -332,7 +332,7 @@ function enemyUpdate() {
       var client = _.find(clients, { name: enemy.target })
       if (client) {
         var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-        if (r.distance > 250) {
+        if (r.distance > 200) {
           enemy.target = ''
           r.radian = Math.random() * (2 * Math.PI)
           var movex = Math.cos(r.radian) * 100
