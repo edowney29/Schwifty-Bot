@@ -301,11 +301,12 @@ function enemyUpdate() {
 
   if (clients.length > 0) {
     _.forEach(enemies, enemy => {
+      console.log(enemy)
       if (enemy.target == '') {
         var client = clients[Math.floor(Math.random() * clients.length)]
         if (!_.includes(client.name, 'kmeans')) {
           var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-          console.log(r)          
+          console.log(r)
           if (r.distance < 500) {
             enemy.target = client.name
           } else {
@@ -317,7 +318,7 @@ function enemyUpdate() {
         if (index) {
           var client = clients[index]
           var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-          console.log(r)                    
+          console.log(r)
           if (r.distance > 750) {
             enemy.target = ''
           } else {
