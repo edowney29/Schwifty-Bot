@@ -306,7 +306,10 @@ function enemyUpdate() {
         if (!_.includes(client.name, 'kmeans')) {
           var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
           if (r.distance < 500) {
-            enemy.target = client.name
+            console.log(client.name)
+            enemy.target = client.name            
+          } else {
+            enemy.target = ''
           }
         }
       } else {
@@ -317,6 +320,7 @@ function enemyUpdate() {
           if (r.distance > 750) {
             enemy.target = ''
           } else {
+            console.log(client.name)            
             var movex = (-PI_FLOAT / 2 + r.radian * PI_FLOAT) * 50
             var movey = (r.radian * PI_FLOAT) * 50
             io.local.emit('enemy-move', enemy.name, movex, movey)
