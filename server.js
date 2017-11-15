@@ -227,6 +227,7 @@ setInterval(() => {
 
     if (counter == 100) {
       setDatabase()
+      console.log(enemies)
       //getCluster()
       //var allRooms = _.map(clients, 'room')
       //console.log(_.uniq(allRooms))
@@ -298,7 +299,7 @@ function enemyUpdate() {
 
   // Enemy AI
   var enemy = enemies[counter % enemies.length]
-  if (Math.random >= 0.25) {
+  if (Math.random() >= 0.25) {
     if (enemy.target == '') {
       var client = clients[Math.floor(Math.random() * clients.length)]
       if (!_.includes(client.name, 'kmeans')) {
