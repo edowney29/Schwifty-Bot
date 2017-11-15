@@ -318,11 +318,20 @@ function enemyUpdate() {
         var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
         if (r.distance > 750) {
           enemy.target = ''
-        } else {
+          r.radian = Math.random() * (2 * PI_FLOAT)
           var movex = Math.cos(r.radian) * 100
           var movey = Math.sin(r.radian) * 100
+          enemy.positionx += movex
+          enemy.positiony += movey
           console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
-          io.local.emit('enemy-move', enemy.name, movex, movey, enemy.target)
+          io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
+        } else {
+          var movex = Math.cos(r.radian) * 50
+          var movey = Math.sin(r.radian) * 50
+          enemy.positionx += movex
+          enemy.positiony += movey
+          console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
+          io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
         }
       }
     }
