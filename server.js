@@ -352,8 +352,8 @@ function calculateMove(x1, y1, x2, y2) {
 
 function checkMove(enemy, radian) {
   var move = {
-    movex: Math.cos(radian) * 100,
-    movey: Math.sin(radian) * 100
+    movex: Math.cos(radian) * ((Math.random * 100) + 50),
+    movey: Math.sin(radian) * ((Math.random * 100) + 50)
   }
   enemy.positionx += move.movex
   enemy.positiony += move.movey
