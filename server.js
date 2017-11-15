@@ -317,6 +317,7 @@ function enemyUpdate() {
         } else {
           var movex = (-PI_FLOAT / 2 + r.radian * PI_FLOAT) * 50
           var movey = (r.radian * PI_FLOAT) * 50
+          console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
           io.local.emit('enemy-move', enemy.name, movex, movey, enemy.target)
         }
       }
