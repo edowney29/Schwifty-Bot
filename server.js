@@ -168,7 +168,7 @@ io.on('connect', (socket) => {
   })
 
   socket.on('player-move', (name, positionx, positiony, playerMoving, moveH, moveV, lastmovex, lastmovey) => {
-    console.log('[RECV - Player move] : ' + name)
+    //console.log('[RECV - Player move] : ' + name)
     var index = _.findIndex(clients, { 'name': name })
 
     if (index) {
