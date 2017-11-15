@@ -351,14 +351,22 @@ function checkMove(enemy, radian) {
   var movey = Math.sin(radian) * (Math.random(100 - 50) + 50)
   enemy.positionx += movex
   enemy.positiony += movey
-  if (enemy.positionx < 1245)
+  if (enemy.positionx < 1245) {
     enemy.positionx = 1245
-  if (enemy.positionx > 1602)
+    checkMove(enemy, radian + Math.PI / 2)
+  }
+  else if (enemy.positionx > 1602) {
     enemy.positionx = 1602
-  if (enemy.positiony > -1309)
+    checkMove(enemy, radian + Math.PI / 2)
+  }
+  else if (enemy.positiony > -1309) {
     enemy.positiony = -1309
-  if (enemy.positiony < -1568)
+    checkMove(enemy, radian + Math.PI / 2)
+  }
+  else if (enemy.positiony < -1568) {
     enemy.positiony = -1568
+    checkMove(enemy, radian + Math.PI / 2)
+  }
   return enemy
 }
 
