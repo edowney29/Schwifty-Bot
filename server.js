@@ -354,10 +354,10 @@ function checkMove(enemy, radian) {
     enemy.positionx = 1245
   if (enemy.positionx > 1602)
     enemy.positionx = 1602
-  if (enemy.positiony < 1309)
-    enemy.positiony = 1309
-  if (enemy.positiony > 1568)
-    enemy.positiony = 1568
+  if (enemy.positiony > -1309)
+    enemy.positiony = -1309
+  if (enemy.positiony < -1568)
+    enemy.positiony = -1568
   return enemy
 }
 
