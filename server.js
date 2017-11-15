@@ -310,7 +310,8 @@ function enemyUpdate() {
           enemy.target = ''
           r.radian = Math.random() * (2 * Math.PI)
           enemy = checkMove(enemy, r.radian)
-          console.log(`[Server - Enemy random] : ${enemy.name} -> ${client.name}`)
+          console.log(enemy)
+          //console.log(`[Server - Enemy random] : ${enemy.name} -> ${client.name}`)
           io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
         }
       }
@@ -325,7 +326,8 @@ function enemyUpdate() {
           enemy.target = ''
         } else {
           enemy = checkMove(enemy, r.radian)
-          console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
+          console.log(enemy)          
+          //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
           io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
         }
       }
