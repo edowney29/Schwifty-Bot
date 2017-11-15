@@ -169,14 +169,14 @@ io.on('connect', (socket) => {
 
   socket.on('player-move', (name, positionx, positiony, playerMoving, moveH, moveV, lastmovex, lastmovey) => {
     //console.log('[RECV - Player move] : ' + name)
-    var index = _.findIndex(clients, { 'name': name })
+    var client = _.find(clients, { name: name })
 
-    if (index) {
-      clients[index].name = name
-      clients[index].positionx = positionx
-      clients[index].positiony = positiony
+    if (client) {
+      client.name = name
+      client.positionx = positionx
+      client.positiony = positiony
 
-      io.in(clients[index].room).emit('player-move',
+      io.in(client.room).emit('player-move',
         name,
         positionx,
         positiony,
@@ -197,9 +197,9 @@ io.on('connect', (socket) => {
 
   socket.on('player-attack', (name, attacking) => {
     //console.log('[RECV - Attack] ' + name + ': ' + attacking)
-    var index = _.findIndex(clients, { 'name': name })
-    if (index) {
-      io.in(clients[index].room).emit('player-attack', name, attacking)
+    var client = _.find(clients, { name: name })
+    if (client) {
+      io.in(client.room).emit('player-attack', name, attacking)
     }
   })
 
@@ -287,7 +287,7 @@ function setDatabase() {
 }
 
 function enemyUpdate() {
-  if (enemies.length < 10) {
+  while (enemies.length < 10) {
     currentEnemy = {
       name: uuid.v1(),
       positionx: 0,
@@ -319,7 +319,7 @@ function enemyUpdate() {
           } else {
             var movex = (-PI_FLOAT / 2 + r.radian * PI_FLOAT) * 50
             var movey = (r.radian * PI_FLOAT) * 50
-            io.emit('enemy-move', enemy.name, movex, movey)
+            io.local.emit('enemy-move', enemy.name, movex, movey)
           }
         }
       }
