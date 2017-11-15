@@ -298,9 +298,11 @@ function enemyUpdate() {
     if (clients.length > 0) {
       if (enemy.target == '') {
         var client = clients[Math.floor(Math.random() * clients.length)]
-        var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-        if (r.distance < 500) {
-          enemy.target = client.playerName
+        if (_.includes(client, 'kmeans point:')) {
+          var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+          if (r.distance < 500) {
+            enemy.target = client.playerName
+          }
         }
       } else {
         var index = _.find(clients, { playerName: enemy.target })
