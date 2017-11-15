@@ -284,7 +284,7 @@ function setDatabase() {
 }
 
 function enemyUpdate() {
-  while (enemies.length < 10) {
+  if (enemies.length < 10) {
     currentEnemy = {
       name: uuid.v1(),
       positionx: 0,
