@@ -234,7 +234,7 @@ setInterval(() => {
     }
     counter++
   }
-}, 100)
+}, 10)
 
 function getCluster() {
   let vectors = new Array()
@@ -305,8 +305,21 @@ function enemyUpdate() {
         var r = calculateMove(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
         if (r.distance < 100) {
           enemy.target = client.name
+          var movex = Math.cos(r.radian) * 100
+          var movey = Math.sin(r.radian) * 100
+          enemy.positionx += movex
+          enemy.positiony += movey
+          console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
+          io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
         } else {
           enemy.target = ''
+          r.radian = Math.random() * (2 * PI_FLOAT)
+          var movex = Math.cos(r.radian) * 100
+          var movey = Math.sin(r.radian) * 100
+          enemy.positionx += movex
+          enemy.positiony += movey
+          console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
+          io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
         }
       }
     }
