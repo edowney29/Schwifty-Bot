@@ -354,22 +354,22 @@ function checkMove(enemy, radian) {
   if (enemy.positionx < 1245) {
     enemy.positionx = 1245
     enemy.target = ''
-    //checkMove(enemy, radian + Math.PI / 2)
+    checkMove(enemy, radian + Math.PI / 2)
   }
   else if (enemy.positionx > 1602) {
     enemy.positionx = 1602
     enemy.target = ''
-    //checkMove(enemy, radian + Math.PI / 2)
+    checkMove(enemy, radian + Math.PI / 2)
   }
   else if (enemy.positiony > -1309) {
     enemy.positiony = -1309
     enemy.target = ''
-    //checkMove(enemy, radian + Math.PI / 2)
+    checkMove(enemy, radian + Math.PI / 2)
   }
   else if (enemy.positiony < -1568) {
     enemy.positiony = -1568
     enemy.target = ''
-    //checkMove(enemy, radian + Math.PI / 2)
+    checkMove(enemy, radian + Math.PI / 2)
   }
   return enemy
 }
