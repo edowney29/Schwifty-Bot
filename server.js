@@ -298,7 +298,6 @@ function enemyUpdate() {
 
   // Enemy AI
   var enemy = enemies[counter % enemies.length]
-
   if (enemy.target == '') {
     var client = clients[Math.floor(Math.random() * clients.length)]
     if (!_.includes(client.name, 'kmeans')) {
