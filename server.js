@@ -223,9 +223,12 @@ var counter = 0
 setInterval(() => {
   if (ready) {
     io.emit('time', new Date().toTimeString())
-    enemyUpdate()
 
-    if (counter == 100) {
+    if (counter % 10 == 0) {
+      enemyUpdate()
+    }
+
+    if (counter == 1000) {
       setDatabase()
       //getCluster()
       //var allRooms = _.map(clients, 'room')
