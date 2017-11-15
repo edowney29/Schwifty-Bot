@@ -301,7 +301,6 @@ function enemyUpdate() {
 
   if (clients.length > 0) {
     _.forEach(enemies, enemy => {
-      console.log(enemy)
       if (enemy.target == '') {
         var client = clients[Math.floor(Math.random() * clients.length)]
         if (!_.includes(client.name, 'kmeans')) {
