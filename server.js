@@ -309,7 +309,18 @@ function enemyUpdate() {
         } else {
           enemy.target = ''
           r.radian = Math.random() * (2 * Math.PI)
-          enemy = checkMove(enemy, r.radian)
+          var movex = Math.cos(radian) * ((Math.random * 100) + 50)
+          var movey = Math.sin(radian) * ((Math.random * 100) + 50)
+          enemy.positionx += movex
+          enemy.positiony += movey
+          if (enemy.positionx < 1245)
+            enemy.positionx = 1245
+          if (enemy.positionx > 1602)
+            enemy.positionx = 1602
+          if (enemy.positiony < 1309)
+            enemy.positiony = 1309
+          if (enemy.positiony > 1568)
+            enemy.positiony = 1568
           console.log(enemy)
           //console.log(`[Server - Enemy random] : ${enemy.name} -> ${client.name}`)
           io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
@@ -325,8 +336,19 @@ function enemyUpdate() {
         if (r.distance > 200) {
           enemy.target = ''
         } else {
-          enemy = checkMove(enemy, r.radian)
-          console.log(enemy)          
+          var movex = Math.cos(radian) * ((Math.random * 100) + 50)
+          var movey = Math.sin(radian) * ((Math.random * 100) + 50)
+          enemy.positionx += movex
+          enemy.positiony += movey
+          if (enemy.positionx < 1245)
+            enemy.positionx = 1245
+          if (enemy.positionx > 1602)
+            enemy.positionx = 1602
+          if (enemy.positiony < 1309)
+            enemy.positiony = 1309
+          if (enemy.positiony > 1568)
+            enemy.positiony = 1568
+          console.log(enemy)
           //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
           io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
         }
@@ -341,24 +363,6 @@ function calculateMove(x1, y1, x2, y2) {
   //r.radian = atan2_approximation2(x2 - x1, y2 - y1)  
   r.radian = Math.atan2(y2 - y1, x2 - x1)
   return r
-}
-
-function checkMove(enemy, radian) {
-  var move = {
-    movex: Math.cos(radian) * ((Math.random * 100) + 50),
-    movey: Math.sin(radian) * ((Math.random * 100) + 50)
-  }
-  enemy.positionx += move.movex
-  enemy.positiony += move.movey
-  if (enemy.positionx < 1245)
-    enemy.positionx = 1245
-  if (enemy.positionx > 1602)
-    enemy.positionx = 1602
-  if (enemy.positiony < 1309)
-    enemy.positiony = 1309
-  if (enemy.positiony > 1568)
-    enemy.positiony = 1568
-  return enemy
 }
 
 // |error| < 0.005
