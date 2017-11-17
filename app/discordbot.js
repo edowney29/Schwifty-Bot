@@ -132,15 +132,14 @@ function getZone(zone) {
 	}
 }
 
+/*
 function getOffset(hour, offset) {
-
 	var counter = offset;
 	var isPosDir = true;
 	if (offset < 0) {
 		counter = offset * -1
 		isPosDir = false;
 	}
-
 	for (var i = 0; i < counter; i++) {
 		if (isPosDir) {
 			hour = hour + 1;
@@ -152,9 +151,9 @@ function getOffset(hour, offset) {
 				hour = 12
 		}
 	}
-
 	return hour;
 }
+*/
 /*
 function getData() {
 	return new Promise((resolve, reject) => {
