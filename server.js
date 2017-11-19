@@ -187,6 +187,8 @@ io.on('connect', (socket) => {
         lastmovey
       )
     }
+
+    socket.emit('ack-move')
   })
 
   socket.on('player-message', (name, message) => {
