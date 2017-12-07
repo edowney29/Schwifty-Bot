@@ -1,3 +1,5 @@
+const nodemailer = require('nodemailer')
+
 const emailWithPromise = (user, teamname) => {
   let email = user.email;
   let password = user.password;
