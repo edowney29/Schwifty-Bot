@@ -1,3 +1,7 @@
+
+const PI_FLOAT = 3.14159265
+const PIBY2_FLOAT = 1.5707963
+
 module.exports.checkMove = checkMove(enemy, radian)
 module.exports.getDistance = getDistance(x1, y1, x2, y2)
 module.exports.getRadian = getRadian(x1, y1, x2, y2)

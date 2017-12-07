@@ -10,14 +10,11 @@ const uuid = require('uuid')
 
 const discord = require('./app/discordbot.js')
 const enemyAI = require('./app/modules/enemyAI.js')
-const playerController = require('./app/modules/playerController.js')
+const playerAPI = require('./app/modules/playerController.js')
 
 const PORT = process.env.PORT || 5000
-const INDEX = path.join(__dirname, 'index.html')
+const INDEX = path.join(__dirusername, 'index.html')
 const MONGO_URI = process.env.MONGODB_URI
-
-const PI_FLOAT = 3.14159265
-const PIBY2_FLOAT = 1.5707963
 
 const server = express()
   .use((req, res) => res.sendFile(INDEX))
@@ -35,7 +32,7 @@ var knum = 1
 // Used for k-means points
 for (var i = 0; i < knum; i++) {
   var fakes = {
-    name: 'kmeans point: ' + (i + 1),
+    username: 'kmeans point: ' + (i + 1),
     positionx: (Math.random() * 1000),
     positiony: (Math.random() * 1000),
     socket: null,
@@ -53,7 +50,7 @@ MongoClient.connect(MONGO_URI, (err, db) => {
 
 io.on('connect', (socket) => {
 
-  var playerName = null // Global for each socket connection
+  var playerToken = null // Global for each socket connection
 
   /** PING */
   socket.on('test', () => {
@@ -61,15 +58,15 @@ io.on('connect', (socket) => {
   })
 
   /** NETWORK MENU */
-  socket.on('player-reg', (name, email, pass) => {
+  socket.on('player-reg', (username, email, pass) => {
     var newUser = {
-      name,
+      username,
       email,
       pass,
       reg: false,
     }
     var newMovements = {
-      name,
+      username,
       positionx: 1297.0,
       positiony: -1125,
     }
@@ -80,7 +77,7 @@ io.on('connect', (socket) => {
 
     users.findOne({
       $or: [{
-        name: name
+        username: username
       }, {
         email: email
       }]
@@ -103,25 +100,25 @@ io.on('connect', (socket) => {
     })
   })
 
-  socket.on('player-login', (name) => {
+  socket.on('player-login', (username) => {
     var pass = true
     _.forEach(clients, client => {
-      if (name == client.name) {
+      if (username == client.username) {
         pass = false
         socket.emit('player-menu', 'log')
       }
     })
-    console.log('[RECV - Login] : ' + name)
+    console.log('[RECV - Login] : ' + username)
     if (pass) {
       var users = database.collection('users')
       users.findOne({
-        name: name
+        username: username
       }, (err, doc) => {
         if (err) {
           socket.emit('player-menu', 'err')
         } else if (doc) {
           socket.emit('player-menu', doc.pass)
-          playerName = name
+          playerToken = username
         } else {
           socket.emit('player-menu', 'not')
         }
@@ -134,79 +131,84 @@ io.on('connect', (socket) => {
   })
 
   /** NETWORK PLAY */
-  if (playerName) {
-    socket.on('start-up', (name) => {
-      console.log('[RECV - Spawn player] : ' + name)
-      playerName = name
-      var movements = database.collection('movements')
-      movements.findOne({
-        name: name,
-      }, (err, doc) => {
-        if (err) {
-          console.log('[ERROR - No login]:  ' + err)
-        } else {
+  socket.on('start-up', (username) => {
+    console.log('[RECV - Spawn player] : ' + username)
+    playerToken = username
+    var movements = database.collection('movements')
+    movements.findOne({
+      username: username,
+    }, (err, doc) => {
+      if (err) {
+        console.log('[ERROR - No login]:  ' + err)
+      } else {
 
-          var client = {
-            name: doc.name,
-            health: 0,
-            positionx: doc.positionx,
-            positiony: doc.positiony,
-            socket: socket,
-            room: 'start'
-          }
-
-          // SETUP YOUR PLAYER
-          socket.emit('start-up',
-            client.name,
-            client.health,
-            client.positionx,
-            client.positiony,
-          )
-
-          socket.join('start')
-          clients.push(client)
+        var client = {
+          username: doc.username,
+          health: 0, //doc.health
+          positionx: doc.positionx,
+          positiony: doc.positiony,
+          socket: socket,
+          world: null, //doc.world
+          zone: null, //doc.zone
+          room: 'start'
         }
-      })
-    })
 
-    socket.on('player-move', (name, positionx, positiony, playerMoving, moveH, moveV, lastmovex, lastmovey, targetable, area) => {
-      //console.log('[RECV - Player move] : ' + name)
-      var client = _.find(clients, { name: name })
-
-      if (client) {
-        client.name = name
-        client.positionx = positionx
-        client.positiony = positiony
-
-        io.in(client.room).emit('player-move',
-          name,
-          positionx,
-          positiony,
-          playerMoving,
-          moveH,
-          moveV,
-          lastmovex,
-          lastmovey
+        // SETUP YOUR PLAYER
+        socket.emit('start-up',
+          client.username,
+          client.health,
+          client.positionx,
+          client.positiony
+          //client.world
+          //client.zone
         )
-      }
 
-      socket.emit('ack-move')
-    })
-
-    socket.on('player-message', (name, message) => {
-      console.log('[RECV - Message] ' + name + ': ' + message)
-      socket.broadcast.emit('player-message', name, message)
-      socket.emit('player-message', name, message);
-    })
-
-    socket.on('player-attack', (name, attacking) => {
-      //console.log('[RECV - Attack] ' + name + ': ' + attacking)
-      var client = _.find(clients, { name: name })
-      if (client) {
-        io.in(client.room).emit('player-attack', name, attacking)
+        socket.join('start')
+        clients.push(client)
       }
     })
-  }
+  })
+
+  socket.on('player-move', (username, positionx, positiony, playerMoving, moveH, moveV, lastmovex, lastmovey, world, zone) => {
+    //console.log('[RECV - Player move] : ' + username)
+    var client = _.find(clients, { username: username })
+
+    if (client) {
+      client.username = username
+      client.positionx = positionx
+      client.positiony = positiony
+      //client.world = world
+      //client.zone = zone
+
+      io.in(client.room).emit('player-move',
+        username,
+        positionx,
+        positiony,
+        playerMoving,
+        moveH,
+        moveV,
+        lastmovex,
+        lastmovey
+      )
+    }
+
+    socket.emit('ack-move')
+  })
+
+  socket.on('player-message', (username, message) => {
+    //console.log('[RECV - Message] ' + username + ': ' + message)
+    socket.broadcast.emit('player-message', username, message)
+    socket.emit('player-message', username, message);
+  })
+
+  socket.on('player-attack', (username, attacking) => {
+    //console.log('[RECV - Attack] ' + username + ': ' + attacking)
+    var client = _.find(clients, { username: username })
+    if (client) {
+      io.in(client.room).emit('player-attack', username, attacking)
+    }
+  })
+
 
   /** SOCKET HANDLERS */
   socket.on('connecting', () => {
@@ -214,13 +216,13 @@ io.on('connect', (socket) => {
   })
 
   socket.on('disconnect', (reason) => {
-    console.log(`[RECV - Player disconnected] : ${playerName} : ${reason}`)
-    socket.broadcast.emit('other-player-disconnected', playerName)
-    _.remove(clients, { name: playerName })
+    console.log(`[RECV - Player disconnected] : ${playerToken} : ${reason}`)
+    socket.broadcast.emit('other-player-disconnected', playerToken)
+    _.remove(clients, { username: playerToken })
   })
 
   socket.on('error', (error) => {
-    console.log(`[RECV - Server error] : ${playerName} : ${error}`)
+    console.log(`[RECV - Server error] : ${playerToken} : ${error}`)
   })
 
 })
@@ -257,7 +259,7 @@ function getCluster() {
     _.forEach(clusters, cluster => {
       for (var i = 0; i < cluster.clusterInd.length; i++) {
         var client = _.find(clients, {
-          name: clients[cluster.clusterInd[i]].name,
+          username: clients[cluster.clusterInd[i]].username,
         })
         if (client.socket) {
           client.socket.leaveAll()
@@ -272,18 +274,18 @@ function getCluster() {
 function setDatabase() {
   var movements = database.collection('movements')
   _.forEach(clients, client => {
-    if (!_.includes(client.name, 'kmeans')) {
+    if (!_.includes(client.username, 'kmeans')) {
       movements.update({
-        name: client.name,
+        username: client.username,
       }, {
-          name: client.name,
+          username: client.username,
           positionx: client.positionx,
           positiony: client.positiony,
         }, (err, res) => {
           if (err) {
             console.log(`[SERVER - Error]: ${err}`)
           } else {
-            console.log(`[RECV - Update database]: ${client.name}`)
+            console.log(`[RECV - Update database]: ${client.username}`)
           }
         })
     }
@@ -293,14 +295,14 @@ function setDatabase() {
 function enemyUpdate() {
   if (enemies.length < 10) {
     currentEnemy = {
-      name: uuid.v1(),
+      username: uuid.v1(),
       positionx: 1452,
       positiony: -1433,
       health: 100,
       target: ''
     }
     enemies.push(currentEnemy)
-    console.log(`[SERVER - Spawn Enemy] : ${currentEnemy.name}`)
+    console.log(`[SERVER - Spawn Enemy] : ${currentEnemy.username}`)
   }
 
   // Enemy AI
@@ -308,31 +310,31 @@ function enemyUpdate() {
   if (Math.random() >= 0.25) {
     if (enemy.target == '') {
       var client = clients[Math.floor(Math.random() * clients.length)]
-      if (!_.includes(client.name, 'kmeans')) {
+      if (!_.includes(client.username, 'kmeans')) {
         var distance = enemyAI.getDistance(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
         if (distance < 100) {
-          enemy.target = client.name
+          enemy.target = client.username
         } else {
           enemy.target = ''
           var radian = Math.random() * (2 * Math.PI)
           enemy = enemyAI.checkMove(enemy, radian)
-          //console.log(`[Server - Enemy random] : ${enemy.name} -> ${client.name}`)
-          io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
+          //console.log(`[Server - Enemy random] : ${enemy.username} -> ${client.username}`)
+          io.local.emit('enemy-move', enemy.username, enemy.positionx, enemy.positiony, enemy.target)
         }
       }
     }
     else {
-      var client = _.find(clients, { name: enemy.target })
+      var client = _.find(clients, { username: enemy.target })
       if (client) {
         var distance = enemyAI.getDistance(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
         if (distance > 200) {
           enemy.target = ''
         } else {
-          enemy.target = client.name
+          enemy.target = client.username
           var radian = enemyAI.getRadian(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
           enemy = enemyAI.checkMove(enemy, radian)
-          //console.log(`[Server - Enemy target] : ${enemy.name} -> ${client.name}`)
-          io.local.emit('enemy-move', enemy.name, enemy.positionx, enemy.positiony, enemy.target)
+          //console.log(`[Server - Enemy target] : ${enemy.username} -> ${client.username}`)
+          io.local.emit('enemy-move', enemy.username, enemy.positionx, enemy.positiony, enemy.target)
         }
       }
     }
