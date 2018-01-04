@@ -12,6 +12,8 @@
   "author": "Slayerbeing",
   "license": "ISC",
   "dependencies": {
+    "assert": "^1.4.1",
+    "body-parser": "^1.18.2",
     "discord.js": "^11.1.0",
     "express": "^4.15.3",
     "lodash": "^4.17.4",
