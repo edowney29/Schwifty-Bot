@@ -24,6 +24,7 @@
     "mongodb": "^2.2.34",
     "node-kmeans": "^1.1.0",
     "nodemailer": "^4.4.1",
+    "opusscript": "0.0.6",
     "path": "^0.12.7",
     "random-js": "^1.0.8",
     "socket.io": "^2.0.4",
