@@ -22,7 +22,7 @@ client.on('ready', () => {
 	var channel = client.channels.find('id', '398332590349746216')
 
 	channel.join()
-		.then(connection => console.log('Connected'))
+		.then(connection => console.log('Connected to discord'))
 		.catch(console.error);
 })
 
@@ -109,11 +109,11 @@ client.on('message', message => {
 
 		// tz mutates date, does not return new one
 		message.reply(
-			'\n' + date.tz('America/New_York').zoneAbbr() + ':\t' + date.format('h:mm a') +
-			'\n' + date.tz('America/Chicago').zoneAbbr() + ':\t' + date.format('h:mm a') +
-			'\n' + date.tz('America/Denver').zoneAbbr() + ':\t' + date.format('h:mm a') +
-			'\n' + date.tz('America/Los_Angeles').zoneAbbr() + ':\t' + date.format('h:mm a') +
-			'\n' + date.tz('Europe/Dublin').zoneAbbr() + ':\t' + date.format('h:mm a')
+			'\n' + date.tz('America/New_York').zoneAbbr() + ':\t' + date.format('h:mm') +
+			'\n' + date.tz('America/Chicago').zoneAbbr() + ':\t' + date.format('h:mm') +
+			'\n' + date.tz('America/Denver').zoneAbbr() + ':\t' + date.format('h:mm') +
+			'\n' + date.tz('America/Los_Angeles').zoneAbbr() + ':\t' + date.format('h:mm') +
+			'\n' + date.tz('Europe/Dublin').zoneAbbr() + ':\t' + date.format('h:mm')
 		)
 	}
 
