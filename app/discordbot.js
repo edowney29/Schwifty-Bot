@@ -3,10 +3,7 @@ const random = require('random-js')
 const moment = require('moment-timezone');
 const _ = require('lodash')
 const ffmpeg = require('ffmpeg')
-const fs = require('fs');
-const readline = require('readline');
-const google = require('googleapis');
-const googleAuth = require('google-auth-library');
+const googleapis = require('googleapis');
 
 const client = new discord.Client()
 const DISCORD_KEY = process.env.DISCORD_KEY
@@ -38,14 +35,26 @@ client.on('message', message => {
 		message.reply('pong')
 	}
 
-	/*
-	if (msg == 'stat1') {
-		getData()
-			.then(str => {
-				message.reply(str)
-			})
+	if (msg == '!play') {
+		var split = msg.split(',')
+		var term = split.join(' ')
+		var youtube = googleapis.youtube({
+			version: 'v3',
+			auth: GOOGLE_KEY
+		});
+
+		youtube.search.list({
+			part: 'snippet',
+			q: term
+		}, function (err, data) {
+			if (err) {
+				console.error('Error: ' + err);
+			}
+			if (data) {
+				console.log(data)
+			}
+		});
 	}
-	*/
 
 	if (_.includes(msg, 'magic') && _.includes(msg, 'conch')) {
 		var answers = [
