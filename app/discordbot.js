@@ -35,7 +35,7 @@ client.on('message', message => {
 		message.reply('pong')
 	}
 
-	if (msg == '!play') {
+	if (_.includes(msg, '!play')) {
 		var split = msg.split(',')
 		var term = split.join(' ')
 		var youtube = googleapis.youtube({
@@ -52,6 +52,7 @@ client.on('message', message => {
 			}
 			if (data) {
 				console.log(data)
+				message.reply(data.toString())
 			}
 		});
 	}
