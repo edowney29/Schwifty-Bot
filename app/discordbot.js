@@ -58,7 +58,7 @@ client.on('message', message => {
 						.then(connection => { // Connection is an instance of VoiceConnection
 							var streamOptions = { seek: 0, volume: 1 };
 							var stream = ytdl('https://www.youtube.com/watch?v=' + data.items[0].id.videoId, { filter: 'audioonly' });
-							var dispatcher = connection.playOpusStream(stream, streamOptions);
+							var dispatcher = connection.playStream(stream, streamOptions);
 						})
 						.catch(console.log);
 				} else {
