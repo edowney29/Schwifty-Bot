@@ -31,19 +31,6 @@ client.on('message', message => {
 		message.reply('pong')
 	}
 
-	if (_, includes(msg, '!join')) {
-		// Only try to join the sender's voice channel if they are in one themselves
-		if (message.member.voiceChannel) {
-			message.member.voiceChannel.join()
-				.then(connection => { // Connection is an instance of VoiceConnection
-					message.reply('I have successfully connected to the channel!');
-				})
-				.catch(console.log);
-		} else {
-			message.reply('You need to join a voice channel first!');
-		}
-	}
-
 	if (_.includes(msg, '!play')) {
 		_.drop(msg, 1)
 		var term = msg.join(' ')
@@ -64,26 +51,18 @@ client.on('message', message => {
 				message.reply('Fucking ERRORS @#%@!%@# ^__^');
 			}
 			if (data) {
-				//ytdl('http://www.youtube.com/watch?v=' + data[0].id.videoId)
-				//	.pipe(fs.createWriteStream('video.mp3'));
-				var connection = client.internal.voiceConnection;
+				if (message.member.voiceChannel) {
+					message.member.voiceChannel.join()
+						.then(connection => { // Connection is an instance of VoiceConnection
+							var streamOptions = { seek: 0, volume: 1 };
+							var stream = ytdl('https://www.youtube.com/watch?v=' + data[0].id.videoId, { filter: 'audioonly' });
+							var dispatcher = connection.playStream(stream, streamOptions);
+						})
+						.catch(console.log);
 
-				var request = require("request");
-				// ...get the stream from the URL...
-				var stream = request('http://www.youtube.com/watch?v=' + data[0].id.videoId);
-				// ...and play it back
-				connection.playRawStream(stream).then(intent => {
-					// If the playback has started successfully, reply with a "playing"
-					// message...
-					client.reply(m, "Playing!").then((msg) => {
-						// and add an event handler that tells the user when the song has
-						// finished
-						intent.on("end", () => {
-							// Edit the "playing" message to say that the song has finished
-							client.updateMessage(msg, "That song has finished now.");
-						});
-					});
-				});
+				} else {
+					message.reply('You need to join a voice channel first!');
+				}
 			}
 		});
 	}
