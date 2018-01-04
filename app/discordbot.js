@@ -43,6 +43,7 @@ client.on('message', message => {
 			auth: GOOGLE_KEY
 		});
 
+		console.log(youtube)
 		youtube.search.list({
 			part: 'snippet',
 			q: term
