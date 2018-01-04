@@ -51,6 +51,7 @@ client.on('message', message => {
 				message.reply('Fucking ERRORS @#%@!%@# ^__^');
 			}
 			if (data) {
+				console.log(data.toString())
 				if (message.member.voiceChannel) {
 					message.member.voiceChannel.join()
 						.then(connection => { // Connection is an instance of VoiceConnection
