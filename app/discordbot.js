@@ -1,6 +1,5 @@
 const discord = require('discord.js')
 const random = require('random-js')
-const googleapi = require('googleapis')
 const moment = require('moment-timezone');
 const _ = require('lodash')
 
@@ -136,51 +135,3 @@ function getZone(zone) {
 			break;
 	}
 }
-
-/*
-function getOffset(hour, offset) {
-	var counter = offset;
-	var isPosDir = true;
-	if (offset < 0) {
-		counter = offset * -1
-		isPosDir = false;
-	}
-	for (var i = 0; i < counter; i++) {
-		if (isPosDir) {
-			hour = hour + 1;
-			if (hour > 12)
-				hour = 1
-		} else {
-			hour = hour - 1;
-			if (hour < 1)
-				hour = 12
-		}
-	}
-	return hour;
-}
-*/
-/*
-function getData() {
-	return new Promise((resolve, reject) => {
-		var sheets = google.sheets('v4')
-		sheets.spreadsheets.values.get({
-			auth: API_KEY,
-			spreadsheetId: GOOGLE_KEY,
-			range: 'GameHistory!A2:V2', // Example 
-		}, (err, response) => {
-			if (err) {
-				reject('[ERROR]: ' + err)
-			}
-			var rows = response.values
-			if (rows.length == 0) {
-				reject('No data found')
-			} else {
-				for (var i = 0; i < rows.length; i++) {
-					var row = rows[i]
-					resolve(row.join(', '))
-				}
-			}
-		})
-	})
-}
-*/
