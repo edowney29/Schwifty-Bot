@@ -60,7 +60,6 @@ client.on('message', message => {
 							var dispatcher = connection.playStream(stream, streamOptions);
 						})
 						.catch(console.log);
-
 				} else {
 					message.reply('You need to join a voice channel first!');
 				}
