@@ -6,11 +6,10 @@ const path = require('path')
 const assert = require('assert')
 const _ = require('lodash')
 const kmeans = require('node-kmeans')
-const uuid = require('uuid')
+const uuidv1 = require('uuid/v1')
 
 const discord = require('./app/discordbot.js')
-//const enemyAI = require('./app/modules/enemyAI.js')
-//const playerAPI = require('./app/modules/playerController.js')
+const enemyAI = require('./app/modules/enemyAI.js')
 
 const PORT = process.env.PORT || 5000
 const INDEX = path.join(__dirname, 'index.html')
@@ -291,11 +290,10 @@ function setDatabase() {
   })
 }
 
-/*
 function enemyUpdate() {
   if (enemies.length < 10) {
     currentEnemy = {
-      username: uuid.v1(),
+      username: uuidv1(),
       positionx: 1452,
       positiony: -1433,
       health: 100,
@@ -340,4 +338,3 @@ function enemyUpdate() {
     }
   }
 }
-*/
