@@ -36,8 +36,8 @@ client.on('message', message => {
 	}
 
 	if (_.includes(msg, '!play')) {
-		var split = msg.split(',')
-		var term = split.join(' ')
+		_.drop(msg, 1)
+		var term = msg.join(' ')
 		var youtube = googleapis.youtube({
 			version: 'v3',
 			auth: GOOGLE_KEY
@@ -81,13 +81,12 @@ client.on('message', message => {
 
 	if (_.includes(msg, 'tz')) {
 		msg = _.toUpper(msg)
-		var split = msg.split(',')
-		var index = split.indexOf('TZ')
-		var time = split[index + 1].split(':')
+		var index = msg.indexOf('TZ')
+		var time = msg[index + 1].split(':')
 		var hour = parseInt(time[0])
 		var minutes = parseInt(time[1])
 
-		var tz = split[index + 2]
+		var tz = msg[index + 2]
 		var zone = getZone(tz)
 
 		var now = new Date()
