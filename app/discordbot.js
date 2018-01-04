@@ -2,8 +2,10 @@ const discord = require('discord.js')
 const random = require('random-js')
 const moment = require('moment-timezone');
 const _ = require('lodash')
-const ffmpeg = require('ffmpeg')
+//const ffmpeg = require('ffmpeg')
 const googleapis = require('googleapis');
+const ytdl = require('ytdl-core');
+const fs = require('fs')
 
 const client = new discord.Client()
 const DISCORD_KEY = process.env.DISCORD_KEY
@@ -18,12 +20,6 @@ client.on('ready', () => {
 	var temp = _.toLower(obj)
 	users = _.split(temp, ';')
 	//console.log(users)
-
-	var channel = client.channels.find('id', '398332590349746216')
-
-	channel.join()
-		.then(connection => console.log('Connected to discord'))
-		.catch(console.error);
 })
 
 client.on('message', message => {
@@ -35,9 +31,23 @@ client.on('message', message => {
 		message.reply('pong')
 	}
 
+	if (_, includes(msg, '!join')) {
+		// Only try to join the sender's voice channel if they are in one themselves
+		if (message.member.voiceChannel) {
+			message.member.voiceChannel.join()
+				.then(connection => { // Connection is an instance of VoiceConnection
+					message.reply('I have successfully connected to the channel!');
+				})
+				.catch(console.log);
+		} else {
+			message.reply('You need to join a voice channel first!');
+		}
+	}
+
 	if (_.includes(msg, '!play')) {
 		_.drop(msg, 1)
 		var term = msg.join(' ')
+
 		var youtube = googleapis.youtube({
 			version: 'v3',
 			auth: GOOGLE_KEY
@@ -51,10 +61,29 @@ client.on('message', message => {
 		}, function (err, data) {
 			if (err) {
 				console.error('Error: ' + err);
+				message.reply('Fucking ERRORS @#%@!%@# ^__^');
 			}
 			if (data) {
-				console.log(data[0].id.videoId)
-				message.reply(data[0].id.videoId)
+				//ytdl('http://www.youtube.com/watch?v=' + data[0].id.videoId)
+				//	.pipe(fs.createWriteStream('video.mp3'));
+				var connection = client.internal.voiceConnection;
+
+				var request = require("request");
+				// ...get the stream from the URL...
+				var stream = request('http://www.youtube.com/watch?v=' + data[0].id.videoId);
+				// ...and play it back
+				connection.playRawStream(stream).then(intent => {
+					// If the playback has started successfully, reply with a "playing"
+					// message...
+					client.reply(m, "Playing!").then((msg) => {
+						// and add an event handler that tells the user when the song has
+						// finished
+						intent.on("end", () => {
+							// Edit the "playing" message to say that the song has finished
+							client.updateMessage(msg, "That song has finished now.");
+						});
+					});
+				});
 			}
 		});
 	}
