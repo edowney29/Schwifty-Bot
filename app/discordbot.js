@@ -2,6 +2,12 @@ const discord = require('discord.js')
 const random = require('random-js')
 const moment = require('moment-timezone');
 const _ = require('lodash')
+const ffmpeg = require('ffmpeg')
+const fs = require('fs');
+const readline = require('readline');
+const google = require('googleapis');
+const googleAuth = require('google-auth-library');
+const SC = require('soundcloud');
 
 const client = new discord.Client()
 const DISCORD_KEY = process.env.DISCORD_KEY
@@ -17,7 +23,7 @@ client.on('ready', () => {
 	users = _.split(temp, ';')
 	//console.log(users)
 
-	var channel = client.channels.find('id','398332590349746216')
+	var channel = client.channels.find('id', '398332590349746216')
 
 	channel.join()
 		.then(connection => console.log('Connected'))
