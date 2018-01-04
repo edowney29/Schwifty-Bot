@@ -3,7 +3,6 @@ const random = require('random-js')
 const googleapi = require('googleapis')
 const moment = require('moment-timezone');
 const _ = require('lodash')
-//const sqlite = require('sqlite')
 
 const client = new discord.Client()
 const DISCORD_KEY = process.env.DISCORD_KEY
@@ -18,16 +17,23 @@ client.on('ready', () => {
 	var temp = _.toLower(obj)
 	users = _.split(temp, ';')
 	//console.log(users)
+
+	var channel = client.channels.find('id','398332590349746216')
+
+	channel.join()
+		.then(connection => console.log('Connected'))
+		.catch(console.error);
 })
 
 client.on('message', message => {
-	var msg = message.content.toLowerCase()
+	var msg = _.toLower(message.content)
 	msg = msg.split(' ')
 	console.log(msg)
 
 	if (_.includes(msg, 'ping')) {
 		message.reply('pong')
 	}
+
 	/*
 	if (msg == 'stat1') {
 		getData()
@@ -36,6 +42,7 @@ client.on('message', message => {
 			})
 	}
 	*/
+
 	if (_.includes(msg, 'magic') && _.includes(msg, 'conch')) {
 		var answers = [
 			'Maybe.', 'Certainly not.', 'Not in your wildest dreams.', 'Nah, fam.',
@@ -85,11 +92,11 @@ client.on('message', message => {
 
 		// tz mutates date, does not return new one
 		message.reply(
-			'\n' + date.tz('America/New_York').zoneAbbr() + ':\t' + date.format('h:mm') +
-			'\n' + date.tz('America/Chicago').zoneAbbr() + ':\t' + date.format('h:mm') +
-			'\n' + date.tz('America/Denver').zoneAbbr() + ':\t' + date.format('h:mm') +
-			'\n' + date.tz('America/Los_Angeles').zoneAbbr() + ':\t' + date.format('h:mm') +
-			'\n' + date.tz('Europe/Dublin').zoneAbbr() + ':\t' + date.format('h:mm')
+			'\n' + date.tz('America/New_York').zoneAbbr() + ':\t' + date.format('h:mm a') +
+			'\n' + date.tz('America/Chicago').zoneAbbr() + ':\t' + date.format('h:mm a') +
+			'\n' + date.tz('America/Denver').zoneAbbr() + ':\t' + date.format('h:mm a') +
+			'\n' + date.tz('America/Los_Angeles').zoneAbbr() + ':\t' + date.format('h:mm a') +
+			'\n' + date.tz('Europe/Dublin').zoneAbbr() + ':\t' + date.format('h:mm a')
 		)
 	}
 
@@ -130,15 +137,14 @@ function getZone(zone) {
 	}
 }
 
+/*
 function getOffset(hour, offset) {
-
 	var counter = offset;
 	var isPosDir = true;
 	if (offset < 0) {
 		counter = offset * -1
 		isPosDir = false;
 	}
-
 	for (var i = 0; i < counter; i++) {
 		if (isPosDir) {
 			hour = hour + 1;
@@ -150,9 +156,9 @@ function getOffset(hour, offset) {
 				hour = 12
 		}
 	}
-
 	return hour;
 }
+*/
 /*
 function getData() {
 	return new Promise((resolve, reject) => {
