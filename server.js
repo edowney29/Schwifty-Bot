@@ -7,6 +7,7 @@ const assert = require('assert')
 const _ = require('lodash')
 const kmeans = require('node-kmeans')
 const uuid = require('uuid')
+const ffmpeg = require('ffmpeg')
 
 const discord = require('./app/discordbot.js')
 //const enemyAI = require('./app/modules/enemyAI.js')
