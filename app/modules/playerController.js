@@ -1,3 +1,4 @@
+/*
 const _ = require('lodash')
 
 var worldsAPI = require('../constants/worlds.js')
@@ -10,3 +11,4 @@ function updatePlayerZone(username, zoneid, worldid) {
 	zone.players.push(username)
 
 }
+*/
