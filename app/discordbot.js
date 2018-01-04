@@ -80,8 +80,12 @@ client.on('message', message => {
 	}
 
 	if (_.includes(msg, 'tz')) {
-		msg = _.toUpper(msg)
+		var m = msg.join(' ')
+		msg = _.toUpper(m)
+		msg = msg.split(' ')
+
 		var index = msg.indexOf('TZ')
+
 		var time = msg[index + 1].split(':')
 		var hour = parseInt(time[0])
 		var minutes = parseInt(time[1])
@@ -98,7 +102,7 @@ client.on('message', message => {
 			(minutes < 10 ? '0' : '') + minutes,
 			zone);
 
-		if (zone === null) {
+		if (zone == null) {
 			message.reply('Unknown Timezone');
 			return
 		}
