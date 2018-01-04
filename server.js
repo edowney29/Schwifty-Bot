@@ -13,7 +13,7 @@ const discord = require('./app/discordbot.js')
 //const playerAPI = require('./app/modules/playerController.js')
 
 const PORT = process.env.PORT || 5000
-const INDEX = path.join(__dirusername, 'index.html')
+const INDEX = path.join(__dirname, 'index.html')
 const MONGO_URI = process.env.MONGODB_URI
 
 const server = express()
