@@ -1,4 +1,4 @@
-
+/*
 const PI_FLOAT = 3.14159265
 const PIBY2_FLOAT = 1.5707963
 
@@ -70,3 +70,4 @@ function atan2_approximation2(x, y) {
 	}
 	return atan
 }
+*/
