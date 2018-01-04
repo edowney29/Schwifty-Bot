@@ -45,14 +45,16 @@ client.on('message', message => {
 
 		youtube.search.list({
 			part: 'snippet',
-			q: term
+			q: term,
+			maxResults: 1,
+			type: 'video'
 		}, function (err, data) {
 			if (err) {
 				console.error('Error: ' + err);
 			}
 			if (data) {
-				console.log(data)
-				message.reply(data.toString())
+				console.log(data[0].id.videoId)
+				message.reply(data[0].id.videoId)
 			}
 		});
 	}
