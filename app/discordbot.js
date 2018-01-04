@@ -17,6 +17,12 @@ client.on('ready', () => {
 	var temp = _.toLower(obj)
 	users = _.split(temp, ';')
 	//console.log(users)
+
+	var channel = client.channels.find('id','398332590349746216')
+
+	channel.join()
+		.then(connection => console.log('Connected'))
+		.catch(console.error);
 })
 
 client.on('message', message => {
