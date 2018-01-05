@@ -55,6 +55,8 @@ client.on('message', message => {
 			queueIds = _.drop(queueIds, 1)
 			queueNames = _.drop(queueNames, 1)
 			console.log(url)
+		} else {
+			message.reply('No songs queued.')
 		}
 	}
 
