@@ -3,6 +3,7 @@ const random = require('random-js')
 const moment = require('moment-timezone')
 const _ = require('lodash')
 const ytdl = require('ytdl-core')
+const googleapis = require('googleapis')
 
 const client = new discord.Client()
 const DISCORD_KEY = process.env.DISCORD_KEY
