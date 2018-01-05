@@ -83,23 +83,23 @@ client.on('message', message => {
 					id: idstring,
 					part: 'snippet,contentDetails,statistics'
 				}, (err, res2) => {
-						if (err) {
-							console.log('Videos error: ' + err);
-							message.reply('Fucking ERRORS @#%@!%@# ^__^ --- Videos')
-						}
-						else if (res2) {
-							var likes = 0
-							_.forEach(res2.items, item => {
-								if (likes < parseInt(item.statistics.likeCount)) {
-									id = item.id
-									name = item.snippet.title
-								}
-							})
-							queueIds.push('https://www.youtube.com/watch?v=' + id)
-							queueNames.push(name)
-						}
-					})
-				message.reply(queueNames)
+					if (err) {
+						console.log('Videos error: ' + err);
+						message.reply('Fucking ERRORS @#%@!%@# ^__^ --- Videos')
+					}
+					else if (res2) {
+						var likes = 0
+						_.forEach(res2.items, item => {
+							if (likes < parseInt(item.statistics.likeCount)) {
+								id = item.id
+								name = item.snippet.title
+							}
+						})
+						queueIds.push('https://www.youtube.com/watch?v=' + id)
+						queueNames.push(name)
+					}
+				})
+				message.reply(queueNames.join('\n'))
 			}
 		})
 
