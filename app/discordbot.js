@@ -92,20 +92,21 @@ client.on('message', message => {
 						})
 						queueIds.push('https://www.youtube.com/watch?v=' + id)
 						queueNames.push(name)
+
+						console.log(_.toString(queueNames))
+						console.log(_.toString(queueIds))
+						if (queueIds.length > 0)
+							message.reply('Song queued: ' + queueNames[queueNames.length - 1])
+						else
+							message.reply('Could not queue song :(')
 					}
 				})
-				console.log(_.toString(queueNames))
-				console.log(_.toString(queueIds))
-				if (queueIds.length > 0)
-					message.reply('Song queued: ' + queueNames[queueNames.length - 1])
-				else
-					message.reply('Could not queue song :(')
 			}
 		})
 	}
 
 	if (_.includes(string, '!check')) {
-		var str = _.join(queueNames, ' | ')
+		var str = _.join(queueNames, '\n')
 		message.reply(str)
 	}
 
