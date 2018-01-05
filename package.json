@@ -16,6 +16,7 @@
     "body-parser": "^1.18.2",
     "bufferutil": "^3.0.3",
     "discord.js": "^11.1.0",
+    "dotenv": "^4.0.0",
     "erlpack": "github:hammerandchisel/erlpack",
     "express": "^4.15.3",
     "ffmpeg": "0.0.4",
