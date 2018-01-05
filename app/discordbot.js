@@ -39,11 +39,11 @@ client.on('message', message => {
 	}
 
 	if (_.includes(msg, '!play')) {
-		if (queue.length > 0) {
+		if (queueIds.length > 0) {
 			var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
-			var stream = ytdl(queue[0], { filter: 'audio', highWaterMark: 48000 })
+			var stream = ytdl(queueIds[0], { filter: 'audio', highWaterMark: 48000 })
 			var dispatcher = connection.playStream(stream, streamOptions)
-			queue = _.drop(queue, 1)
+			queueIds = _.drop(queueIds, 1)
 		} else {
 			message.reply('No songs queued.')
 		}
@@ -70,20 +70,20 @@ client.on('message', message => {
 			if (err) {
 				console.log('Search error: ' + err);
 				message.reply('Fucking ERRORS @#%@!%@# ^__^ --- Search')
-				return
 			}
 			else if (res1) {
 				_.forEach(res1.items, item => {
 					ids.push(item.id.videoId)
 				})
-
 				var idstring = _.join(ids, ',')
-				youtube.videos.list(idstring,
-					(err, res2) => {
+				
+				youtube.videos.list({
+					id: idstring,
+					part: 'snippet,contentDetails,statistics'
+				}, (err, res2) => {
 						if (err) {
 							console.log('Videos error: ' + err);
 							message.reply('Fucking ERRORS @#%@!%@# ^__^ --- Videos')
-							return;
 						}
 						else if (res2) {
 							var likes = 0
