@@ -25,36 +25,36 @@ client.on('message', message => {
 		message.reply('pong')
 	}
 
-	if (_.includes(string, '!play')) {
+	if (_.includes(string, '!join')) {
 		if (message.member.voiceChannel) {
 			message.member.voiceChannel.join()
-				.then(connection => { // Connection is an instance of VoiceConnection
-					if (queueIds.length > 0) {
-						var url = 'https://www.youtube.com/watch?v=' + queueIds[0]
-						var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
-						var stream = ytdl(url, { filter: 'audio', highWaterMark: 48000 })
-						var dispatcher = connection.playStream(stream, streamOptions)
-
-						dispatcher.on('error', err => {
-							message.reply(err)
-							message.reply('Fucking ERRORS @#%@!%@# ^__^ --- Error')
-						})
-						dispatcher.on('failed', err => {
-							message.reply('Fucking ERRORS @#%@!%@# ^__^ --- Failed')
-							console.log(err)
-						})
-
-						message.reply('Playing: ' + queueNames[0])
-						queueIds = _.drop(queueIds, 1)
-						queueNames = _.drop(queueNames, 1)
-						console.log(url)
-					} else {
-						message.reply('No songs queued.')
-					}
-				})
-				.catch(console.log)
 		} else {
-			message.reply('You need to join a voice channel first!')
+			message.reply('You must be in a voice channel!')
+		}
+	}
+
+	if (_.includes(string, '!play')) {
+		if (queueIds.length > 0 && message.member.voiceChannel.connection) {
+			var url = 'https://www.youtube.com/watch?v=' + queueIds[0]
+			var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
+			var stream = ytdl(url, { filter: 'audio', highWaterMark: 48000 })
+
+			var connection = message.member.voiceChannel.connection
+			if (!connection.dispatcher.destroyed) {
+				connection.dispatcher.end()
+			}
+			var dispatcher = connection.playStream(stream, streamOptions)
+			dispatcher.on('error', err => {
+				message.reply('playStream error')
+			})
+			dispatcher.on('end', err => {
+				dispatcher.end()
+			})
+
+			message.reply('Playing: ' + queueNames[0])
+			queueIds = _.drop(queueIds, 1)
+			queueNames = _.drop(queueNames, 1)
+			console.log(url)
 		}
 	}
 
@@ -71,12 +71,12 @@ client.on('message', message => {
 		youtube.search.list({
 			part: 'snippet',
 			q: msg,
-			maxResults: 10,
+			maxResults: 50,
 			type: 'video'
 		}, (err, res1) => {
 			if (err) {
-				console.log('Search error: ' + err);
-				message.reply('Fucking ERRORS @#%@!%@# ^__^ --- Search')
+				console.log(err);
+				message.reply('@#%@!%@# ^__^ --- [SEARCH]')
 			}
 			else if (res1) {
 				var ids = []
@@ -90,8 +90,8 @@ client.on('message', message => {
 					part: 'snippet,contentDetails,statistics'
 				}, (err, res2) => {
 					if (err) {
-						console.log('Videos error: ' + err);
-						message.reply('Fucking ERRORS @#%@!%@# ^__^ --- Videos')
+						console.log(err);
+						message.reply('@#%@!%@# ^__^ --- [VIDEOS]')
 					}
 					else if (res2) {
 						var views = 0, id = '', name = ''
@@ -116,6 +116,14 @@ client.on('message', message => {
 	if (_.includes(string, '!check')) {
 		var str = _.join(queueNames, '\n')
 		message.reply(str)
+	}
+
+	if (_.includes(string, '!remove')) {
+		if (queueIds.length > 0) {
+			message.reply('Song remove: ' + queueNames[queueNames.length - 1])
+			queueIds = _.drop(queueIds, 1)
+			queueNames = _.drop(queueNames, 1)
+		}
 	}
 
 	if (_.includes(string, 'magic') && _.includes(string, 'conch')) {
