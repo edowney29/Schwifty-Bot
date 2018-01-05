@@ -2,9 +2,8 @@ const discord = require('discord.js')
 const random = require('random-js')
 const moment = require('moment-timezone')
 const _ = require('lodash')
-const ffmpeg = require('ffmpeg')
-const opus = require('opusscript')
 const googleapis = require('googleapis')
+const youtube = require('youtube-api')
 const ytdl = require('ytdl-core')
 const fs = require('fs')
 
@@ -56,6 +55,28 @@ client.on('message', message => {
 		_.drop(msg, 1)
 		var term = msg.join(' ')
 
+		youtube.authenticate({
+			type: "oauth",
+			token: GOOGLE_KEY
+		});
+
+		youtube.search.list({
+			part: 'snippet',
+			q: term,
+			maxResults: 10,
+			type: 'video'
+		}, function (err, data) {
+			if (err) {
+				console.error('Error: ' + err)
+				message.reply('Fucking ERRORS @#%@!%@# ^__^')
+			}
+			if (data) {
+				console.log(data.toString())
+				queue.push('https://www.youtube.com/watch?v=' + data.items[0].id.videoId)
+			}
+		})
+
+		/*
 		var youtube = googleapis.youtube({
 			version: 'v3',
 			auth: GOOGLE_KEY
@@ -76,6 +97,7 @@ client.on('message', message => {
 				queue.push('https://www.youtube.com/watch?v=' + data.items[0].id.videoId)
 			}
 		})
+		*/
 	}
 
 	if (_.includes(msg, 'magic') && _.includes(msg, 'conch')) {
