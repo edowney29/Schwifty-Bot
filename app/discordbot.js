@@ -37,10 +37,10 @@ client.on('message', message => {
 
 						dispatcher.on('error', err => {
 							message.reply(err)
-							console.log(err)
+							message.reply('Fucking ERRORS @#%@!%@# ^__^ --- Error')
 						})
 						dispatcher.on('failed', err => {
-							message.reply(err)
+							message.reply('Fucking ERRORS @#%@!%@# ^__^ --- Failed')
 							console.log(err)
 						})
 
