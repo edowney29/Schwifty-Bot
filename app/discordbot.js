@@ -11,7 +11,7 @@ const GOOGLE_KEY = process.env.GOOGLE_KEY
 
 const engine = random.engines.mt19937().autoSeed()
 
-var queueIds = [], queueNames = [], connection
+var queueIds = [], queueNames = []
 
 client.on('ready', () => {
 
@@ -26,28 +26,25 @@ client.on('message', message => {
 		message.reply('pong')
 	}
 
-	if (_.includes(msg, '!join')) {
+	if (_.includes(msg, '!play')) {
 		if (message.member.voiceChannel) {
-			message.member.voiceChannel.join()
-				.then(con => { // Connection is an instance of VoiceConnection
-					connection = con
+			message.member.voiceChannel.
+				message.member.voiceChannel.join()
+				.then(connection => { // Connection is an instance of VoiceConnection
+					if (queueIds.length > 0) {
+						var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
+						var stream = ytdl(queueIds[0], { filter: 'audio', highWaterMark: 48000 })
+						var dispatcher = connection.playStream(stream, streamOptions)
+						message.reply('Playing: ' + queueNames[0])
+						queueIds = _.drop(queueIds, 1)
+						queueNames = _.drop(queueNames, 1)
+					} else {
+						message.reply('No songs queued.')
+					}
 				})
 				.catch(console.log)
 		} else {
 			message.reply('You need to join a voice channel first!')
-		}
-	}
-
-	if (_.includes(msg, '!play')) {
-		if (queueIds.length > 0) {
-			var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
-			var stream = ytdl(queueIds[0], { filter: 'audio', highWaterMark: 48000 })
-			var dispatcher = connection.playStream(stream, streamOptions)
-			message.reply('Playing: ' + queueNames[0])
-			queueIds = _.drop(queueIds, 1)
-			queueNames = _.drop(queueNames, 1)
-		} else {
-			message.reply('No songs queued.')
 		}
 	}
 
@@ -99,30 +96,17 @@ client.on('message', message => {
 						queueNames.push(name)
 					}
 				})
-				message.reply(queueNames.join('\n'))
+				console.log(queueNames)
+				console.log(queueIds)
+				var str = queueNames.join(' | ')
+				message.reply(str)
 			}
 		})
+	}
 
-		/*
-
-		})
-
-		youtube.search.list({
-			part: 'snippet',
-			q: term,
-			maxResults: 1,
-			type: 'video'
-		}, function (err, data) {
-			if (err) {
-				console.error('Error: ' + err)
-				message.reply('Fucking ERRORS @#%@!%@# ^__^')
-			}
-			if (data) {
-				console.log(data.toString())
-				queue.push('https://www.youtube.com/watch?v=' + data.items[0].id.videoId)
-			}
-		})
-		*/
+	if (_.includes(msg, '!check')) {
+		var str = queueNames.join(' | ')
+		message.reply(str)
 	}
 
 	if (_.includes(msg, 'magic') && _.includes(msg, 'conch')) {
