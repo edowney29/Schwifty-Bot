@@ -4,6 +4,7 @@ const moment = require('moment-timezone')
 const _ = require('lodash')
 const ytdl = require('ytdl-core')
 const googleapis = require('googleapis')
+const fs = require('fs')
 
 const client = new discord.Client()
 const DISCORD_KEY = process.env.DISCORD_KEY
