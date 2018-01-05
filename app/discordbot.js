@@ -2,7 +2,6 @@ const discord = require('discord.js')
 const random = require('random-js')
 const moment = require('moment-timezone')
 const _ = require('lodash')
-const youtube = require('youtube-api')
 const ytdl = require('ytdl-core')
 
 const client = new discord.Client()
@@ -56,10 +55,10 @@ client.on('message', message => {
 		var id = ''
 		var name = ''
 
-		youtube.authenticate({
-			type: "oauth",
-			token: GOOGLE_KEY
-		});
+		var youtube = googleapis.youtube({
+			version: 'v3',
+			auth: GOOGLE_KEY
+		})
 
 		youtube.search.list({
 			part: 'snippet',
@@ -102,9 +101,7 @@ client.on('message', message => {
 		})
 
 		/*
-		var youtube = googleapis.youtube({
-			version: 'v3',
-			auth: GOOGLE_KEY
+
 		})
 
 		youtube.search.list({
