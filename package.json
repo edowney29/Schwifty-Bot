@@ -21,7 +21,6 @@
     "express": "^4.15.3",
     "ffmpeg": "0.0.4",
     "googleapis": "^23.0.0",
-    "libsodium-wrappers": "^0.7.3",
     "lodash": "^4.17.4",
     "moment": "^2.20.1",
     "moment-timezone": "^0.5.14",
