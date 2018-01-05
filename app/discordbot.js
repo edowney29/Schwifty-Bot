@@ -39,14 +39,16 @@ client.on('message', message => {
 			var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
 			var stream = ytdl(url, { filter: 'audio', highWaterMark: 48000 }).pipe(fs.createWriteStream('music.mp3'));
 
-
 			var connection = message.member.voiceChannel.connection
 			var sd = connection.playStream(stream, streamOptions)
 			sd.on('error', err => {
 				message.reply('playStream error')
+				sd.end()
+				stream.destroy()
 			})
 			sd.on('end', err => {
 				sd.end()
+				stream.destroy()
 			})
 
 			message.reply('Playing: ' + queueNames[0])
