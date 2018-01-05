@@ -32,11 +32,12 @@ client.on('message', message => {
 					if (queueIds.length > 0) {
 						var url = 'https://www.youtube.com/watch?v=' + queueIds[0]
 						var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
-						var stream = ytdl(queueIds[0], { filter: 'audio', highWaterMark: 48000 })
+						var stream = ytdl(url, { filter: 'audio', highWaterMark: 48000 })
 						var dispatcher = connection.playStream(stream, streamOptions)
 						message.reply('Playing: ' + queueNames[0])
 						queueIds = _.drop(queueIds, 1)
 						queueNames = _.drop(queueNames, 1)
+						console.log(url)
 					} else {
 						message.reply('No songs queued.')
 					}
@@ -90,15 +91,12 @@ client.on('message', message => {
 								name = item.snippet.title
 							}
 						})
-						queueIds.push('https://www.youtube.com/watch?v=' + id)
+						queueIds.push(id)
 						queueNames.push(name)
 
 						console.log(_.toString(queueNames))
 						console.log(_.toString(queueIds))
-						if (queueIds.length > 0)
-							message.reply('Song queued: ' + queueNames[queueNames.length - 1])
-						else
-							message.reply('Could not queue song :(')
+						message.reply('Song queued: https://www.youtube.com/watch?v=' + id)
 					}
 				})
 			}
