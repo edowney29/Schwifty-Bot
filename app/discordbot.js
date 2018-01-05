@@ -28,8 +28,7 @@ client.on('message', message => {
 
 	if (_.includes(msg, '!play')) {
 		if (message.member.voiceChannel) {
-			message.member.voiceChannel.
-				message.member.voiceChannel.join()
+			message.member.voiceChannel.join()
 				.then(connection => { // Connection is an instance of VoiceConnection
 					if (queueIds.length > 0) {
 						var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
