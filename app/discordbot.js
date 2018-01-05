@@ -19,14 +19,13 @@ client.on('ready', () => {
 
 client.on('message', message => {
 	var string = _.toLower(message.content)
-	var msg = _.split(string, ' ')
-	console.log(msg)
+	console.log(string)
 
-	if (_.includes(msg, 'ping')) {
+	if (_.includes(string, 'ping')) {
 		message.reply('pong')
 	}
 
-	if (_.includes(msg, '!play')) {
+	if (_.includes(string, '!play')) {
 		if (message.member.voiceChannel) {
 			message.member.voiceChannel.join()
 				.then(connection => { // Connection is an instance of VoiceConnection
@@ -47,12 +46,10 @@ client.on('message', message => {
 		}
 	}
 
-	if (_.includes(msg, '!queue')) {
+	if (_.includes(string, '!queue')) {
+		var msg = _.split(string, ' ')
 		msg = _.drop(msg, 1)
 		msg = _.join(msg, ' ')
-		var ids = []
-		var id = ''
-		var name = ''
 
 		var youtube = googleapis.youtube({
 			version: 'v3',
@@ -70,6 +67,7 @@ client.on('message', message => {
 				message.reply('Fucking ERRORS @#%@!%@# ^__^ --- Search')
 			}
 			else if (res1) {
+				var ids = []
 				_.forEach(res1.items, item => {
 					ids.push(item.id.videoId)
 				})
@@ -84,7 +82,7 @@ client.on('message', message => {
 						message.reply('Fucking ERRORS @#%@!%@# ^__^ --- Videos')
 					}
 					else if (res2) {
-						var likes = 0
+						var likes = 0, id = '', name = ''
 						_.forEach(res2.items, item => {
 							if (likes < parseInt(item.statistics.likeCount)) {
 								id = item.id
@@ -95,20 +93,22 @@ client.on('message', message => {
 						queueNames.push(name)
 					}
 				})
-				console.log(queueNames)
-				console.log(queueIds)
-				var str = queueNames.join(' | ')
-				message.reply(str)
+				console.log(_.toString(queueNames))
+				console.log(_.toString(queueIds))
+				if (queueIds.length > 0)
+					message.reply('Song queued: ' + queueNames[queueNames.length - 1])
+				else
+					message.reply('Could not queue song :(')
 			}
 		})
 	}
 
-	if (_.includes(msg, '!check')) {
-		var str = queueNames.join(' | ')
+	if (_.includes(string, '!check')) {
+		var str = _.join(queueNames, ' | ')
 		message.reply(str)
 	}
 
-	if (_.includes(msg, 'magic') && _.includes(msg, 'conch')) {
+	if (_.includes(string, 'magic') && _.includes(string, 'conch')) {
 		var answers = [
 			'Maybe.', 'Certainly not.', 'Not in your wildest dreams.', 'Nah, fam.',
 			'There is a good chance.', 'Quite likely.', 'I hope not.', 'Without a doubt.',
@@ -120,19 +120,18 @@ client.on('message', message => {
 		]
 		var length = answers.length - 1
 		var distribution = random.integer(0, length)
-		var answer = answers[distribution(engine)].toString()
+		var answer = _.toString(answers[distribution(engine)])
 		message.reply(answer)
 	}
 
-	if (_.includes(msg, 'd20')) {
+	if (_.includes(string, 'd20')) {
 		var distribution = random.integer(1, 20)
-		var d20 = distribution(engine).toString()
+		var d20 = _.toString(distribution(engine))
 		message.reply(d20)
 	}
 
-	if (_.includes(msg, 'tz')) {
-		msg = _.join(msg, ' ')
-		msg = _.toUpper(msg)
+	if (_.includes(string, 'tz')) {
+		var msg = _.toUpper(string)
 		msg = _.split(msg, ' ')
 
 		var index = msg.indexOf('TZ')
