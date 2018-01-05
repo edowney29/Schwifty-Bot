@@ -34,6 +34,16 @@ client.on('message', message => {
 						var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
 						var stream = ytdl(url, { filter: 'audio', highWaterMark: 48000 })
 						var dispatcher = connection.playStream(stream, streamOptions)
+
+						dispatcher.on('error', err => {
+							message.reply(err)
+							console.log(err)
+						})
+						dispatcher.on('failed', err => {
+							message.reply(err)
+							console.log(err)
+						})
+
 						message.reply('Playing: ' + queueNames[0])
 						queueIds = _.drop(queueIds, 1)
 						queueNames = _.drop(queueNames, 1)
