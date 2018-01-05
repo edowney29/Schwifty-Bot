@@ -1,11 +1,11 @@
 const discord = require('discord.js')
 const random = require('random-js')
-const moment = require('moment-timezone');
+const moment = require('moment-timezone')
 const _ = require('lodash')
 const ffmpeg = require('ffmpeg')
 const opus = require('opusscript')
-const googleapis = require('googleapis');
-const ytdl = require('ytdl-core');
+const googleapis = require('googleapis')
+const ytdl = require('ytdl-core')
 const fs = require('fs')
 
 const client = new discord.Client()
@@ -14,13 +14,10 @@ const GOOGLE_KEY = process.env.GOOGLE_KEY
 
 const engine = random.engines.mt19937().autoSeed()
 
-var users
+var users, queue, connection
 
 client.on('ready', () => {
-	var obj = client.users.map(u => `${u.username}#${u.discriminator}${u.id}`).join('')
-	var temp = _.toLower(obj)
-	users = _.split(temp, ';')
-	//console.log(users)
+
 })
 
 client.on('message', message => {
@@ -32,14 +29,37 @@ client.on('message', message => {
 		message.reply('pong')
 	}
 
+	if (_.includes(msg, '!join')) {
+		if (message.member.voiceChannel) {
+			message.member.voiceChannel.join()
+				.then(con => { // Connection is an instance of VoiceConnection
+					connection = con
+				})
+				.catch(console.log)
+		} else {
+			message.reply('You need to join a voice channel first!')
+		}
+	}
+
 	if (_.includes(msg, '!play')) {
+		if (queue.length > 0) {
+			var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
+			var stream = ytdl(queue[0], { filter: 'audio', highWaterMark: 48000 })
+			var dispatcher = connection.playStream(stream, streamOptions)
+			_.drop(queue, 1)
+		} else {
+			message.reply('No songs queued.')
+		}
+	}
+
+	if (_.includes(msg, '!queue')) {
 		_.drop(msg, 1)
 		var term = msg.join(' ')
 
 		var youtube = googleapis.youtube({
 			version: 'v3',
 			auth: GOOGLE_KEY
-		});
+		})
 
 		youtube.search.list({
 			part: 'snippet',
@@ -48,24 +68,14 @@ client.on('message', message => {
 			type: 'video'
 		}, function (err, data) {
 			if (err) {
-				console.error('Error: ' + err);
-				message.reply('Fucking ERRORS @#%@!%@# ^__^');
+				console.error('Error: ' + err)
+				message.reply('Fucking ERRORS @#%@!%@# ^__^')
 			}
 			if (data) {
 				console.log(data.toString())
-				if (message.member.voiceChannel) {
-					message.member.voiceChannel.join()
-						.then(connection => { // Connection is an instance of VoiceConnection
-							var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 };
-							var stream = ytdl('https://www.youtube.com/watch?v=' + data.items[0].id.videoId, { filter: 'audio', highWaterMark: 48000 });
-							var dispatcher = connection.playStream(stream, streamOptions);
-						})
-						.catch(console.log);
-				} else {
-					message.reply('You need to join a voice channel first!');
-				}
+				queue.push('https://www.youtube.com/watch?v=' + data.items[0].id.videoId)
 			}
-		});
+		})
 	}
 
 	if (_.includes(msg, 'magic') && _.includes(msg, 'conch')) {
@@ -111,10 +121,10 @@ client.on('message', message => {
 			(now.getDate() < 10 ? '0' : '') + now.getDate() + ' ' +
 			(hour < 10 ? '0' : '') + hour + ':' +
 			(minutes < 10 ? '0' : '') + minutes,
-			zone);
+			zone)
 
 		if (zone == null) {
-			message.reply('Unknown Timezone');
+			message.reply('Unknown Timezone')
 			return
 		}
 
@@ -137,30 +147,30 @@ function getZone(zone) {
 		case 'EDT':
 		case 'EST':
 		case 'EASTERN':
-			return 'America/New_York';
-			break;
+			return 'America/New_York'
+			break
 		case 'CDT':
 		case 'CST':
 		case 'CENTRAL':
-			return 'America/Chicago';
-			break;
+			return 'America/Chicago'
+			break
 		case 'MDT':
 		case 'MST':
 		case 'MOUNTAIN':
-			return 'America/Denver';
-			break;
+			return 'America/Denver'
+			break
 		case 'PST':
 		case 'PDT':
 		case 'PACIFIC':
-			return 'America/Los_Angeles';
-			break;
+			return 'America/Los_Angeles'
+			break
 		case 'GMT':
 		case 'IST':
 		case 'IRELAND':
-			return 'Europe/Dublin';
-			break;
+			return 'Europe/Dublin'
+			break
 		default:
-			return null;
-			break;
+			return null
+			break
 	}
 }
