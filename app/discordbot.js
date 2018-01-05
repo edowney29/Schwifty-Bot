@@ -99,6 +99,7 @@ client.on('message', message => {
 						var views = 0, id = '', name = ''
 						_.forEach(res2.items, item => {
 							if (views < parseInt(item.statistics.viewCount)) {
+								views = parseInt(item.statistics.viewCount)
 								id = item.id
 								name = item.snippet.title
 							}
