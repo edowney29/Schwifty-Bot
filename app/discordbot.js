@@ -57,7 +57,7 @@ client.on('message', message => {
 					message.member.voiceChannel.join()
 						.then(connection => { // Connection is an instance of VoiceConnection
 							var streamOptions = { seek: 0, volume: 1, passes: 2, bitrate: 48000 };
-							var stream = ytdl('https://www.youtube.com/watch?v=' + data.items[0].id.videoId, { filter: 'audioonly' });
+							var stream = ytdl('https://www.youtube.com/watch?v=' + data.items[0].id.videoId, { filter: 'audioonly', highWaterMark: 48000 });
 							var dispatcher = connection.playStream(stream, streamOptions);
 						})
 						.catch(console.log);
