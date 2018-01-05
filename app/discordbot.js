@@ -41,7 +41,7 @@ client.on('message', message => {
 
 			var connection = message.member.voiceChannel.connection
 			connection.dispatcher.end()
-			
+
 			var dispatcher = connection.playStream(stream, streamOptions)
 			dispatcher.on('error', err => {
 				message.reply('playStream error')
@@ -77,7 +77,7 @@ client.on('message', message => {
 		}, (err, res1) => {
 			if (err) {
 				console.log(err);
-				message.reply('@#%@!%@# ^__^ --- [SEARCH]')
+				message.reply('youtube.search.list error')
 			}
 			else if (res1) {
 				var ids = []
@@ -92,7 +92,7 @@ client.on('message', message => {
 				}, (err, res2) => {
 					if (err) {
 						console.log(err);
-						message.reply('@#%@!%@# ^__^ --- [VIDEOS]')
+						message.reply('youtube.videos.list error')
 					}
 					else if (res2) {
 						var views = 0, id = '', name = ''
