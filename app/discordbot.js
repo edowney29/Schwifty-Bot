@@ -37,12 +37,11 @@ client.on('message', message => {
 		if (queueIds.length > 0 && message.member.voiceChannel.connection) {
 			var url = 'https://www.youtube.com/watch?v=' + queueIds[0]
 			var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
-			var stream = ytdl(url, { filter: 'audio', highWaterMark: 48000 })
+			let stream = ytdl(url, { filter: 'audio', highWaterMark: 48000 })
 
 			stream.on('response', res => {
-				console.log(res)
 				var connection = message.member.voiceChannel.connection
-				var sd = connection.playStream(stream, streamOptions)
+				let sd = connection.playStream(stream, streamOptions)
 				sd.on('error', err => {
 					message.reply('playStream error')
 					sd.end()
