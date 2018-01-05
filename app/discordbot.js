@@ -90,7 +90,7 @@ client.on('message', message => {
 						else if (res2) {
 							var likes = 0
 							_.forEach(res2.items, item => {
-								if (like < parseInt(item.statistics.likeCount)) {
+								if (likes < parseInt(item.statistics.likeCount)) {
 									id = item.id
 									name = item.snippet.title
 								}
