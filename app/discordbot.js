@@ -30,6 +30,7 @@ client.on('message', message => {
 			message.member.voiceChannel.join()
 				.then(connection => { // Connection is an instance of VoiceConnection
 					if (queueIds.length > 0) {
+						var url = 'https://www.youtube.com/watch?v=' + queueIds[0]
 						var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
 						var stream = ytdl(queueIds[0], { filter: 'audio', highWaterMark: 48000 })
 						var dispatcher = connection.playStream(stream, streamOptions)
@@ -82,9 +83,9 @@ client.on('message', message => {
 						message.reply('Fucking ERRORS @#%@!%@# ^__^ --- Videos')
 					}
 					else if (res2) {
-						var likes = 0, id = '', name = ''
+						var views = 0, id = '', name = ''
 						_.forEach(res2.items, item => {
-							if (likes < parseInt(item.statistics.likeCount)) {
+							if (views < parseInt(item.statistics.viewCount)) {
 								id = item.id
 								name = item.snippet.title
 							}
