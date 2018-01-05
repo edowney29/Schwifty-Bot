@@ -43,7 +43,9 @@ client.on('message', message => {
 			var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
 			var stream = ytdl(queueIds[0], { filter: 'audio', highWaterMark: 48000 })
 			var dispatcher = connection.playStream(stream, streamOptions)
+			message.reply('Playing: ' + queueNames[0])
 			queueIds = _.drop(queueIds, 1)
+			queueNames = _.drop(queueNames, 1)
 		} else {
 			message.reply('No songs queued.')
 		}
@@ -76,7 +78,7 @@ client.on('message', message => {
 					ids.push(item.id.videoId)
 				})
 				var idstring = _.join(ids, ',')
-				
+
 				youtube.videos.list({
 					id: idstring,
 					part: 'snippet,contentDetails,statistics'
