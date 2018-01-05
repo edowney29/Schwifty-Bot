@@ -4,7 +4,6 @@ const moment = require('moment-timezone')
 const _ = require('lodash')
 const ytdl = require('ytdl-core')
 const googleapis = require('googleapis')
-const fs = require('fs')
 
 const client = new discord.Client()
 const DISCORD_KEY = process.env.DISCORD_KEY
@@ -38,7 +37,7 @@ client.on('message', message => {
 		if (queueIds.length > 0 && message.member.voiceChannel.connection) {
 			var url = 'https://www.youtube.com/watch?v=' + queueIds[0]
 			var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
-			var stream = ytdl(url, { filter: 'audio', highWaterMark: 48000 }).pipe(fs.createWriteStream('music.mp3'));
+			var stream = ytdl(url, { filter: 'audio', highWaterMark: 48000 })
 
 			var connection = message.member.voiceChannel.connection
 			var sd = connection.playStream(stream, streamOptions)
