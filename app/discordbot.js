@@ -40,11 +40,6 @@ client.on('message', message => {
 			var stream = ytdl(url, { filter: 'audio', highWaterMark: 48000 })
 
 			var connection = message.member.voiceChannel.connection
-			var dispatcher = connection.dispatcher
-
-			if (!dispatcher.destroyed) {
-				dispatcher.end()
-			}
 			var sd = connection.playStream(stream, streamOptions)
 			sd.on('error', err => {
 				message.reply('playStream error')
