@@ -67,8 +67,8 @@ client.on('message', message => {
 			type: 'video'
 		}, (err, res1) => {
 			if (err) {
-				console.log('The API returned an error: ' + err);
-				message.reply('Fucking ERRORS @#%@!%@# ^__^')
+				console.log('Search error: ' + err);
+				message.reply('Fucking ERRORS @#%@!%@# ^__^ --- Search')
 				return
 			}
 			else if (res1) {
@@ -80,8 +80,8 @@ client.on('message', message => {
 				youtube.videos.list(idstring,
 					(err, res2) => {
 						if (err) {
-							console.log('The API returned an error: ' + err);
-							message.reply('Fucking ERRORS @#%@!%@# ^__^')
+							console.log('Videos error: ' + err);
+							message.reply('Fucking ERRORS @#%@!%@# ^__^ --- Videos')
 							return;
 						}
 						else if (res2) {
