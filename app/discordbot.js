@@ -11,15 +11,15 @@ const GOOGLE_KEY = process.env.GOOGLE_KEY
 
 const engine = random.engines.mt19937().autoSeed()
 
-var users, queue, connection
+var queueIds = [], queueNames = [], connection
 
 client.on('ready', () => {
 
 })
 
 client.on('message', message => {
-	var msg = _.toLower(message.content)
-	msg = msg.split(' ')
+	var string = _.toLower(message.content)
+	var msg = _.split(string, ' ')
 	console.log(msg)
 
 	if (_.includes(msg, 'ping')) {
@@ -43,15 +43,18 @@ client.on('message', message => {
 			var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
 			var stream = ytdl(queue[0], { filter: 'audio', highWaterMark: 48000 })
 			var dispatcher = connection.playStream(stream, streamOptions)
-			_.drop(queue, 1)
+			queue = _.drop(queue, 1)
 		} else {
 			message.reply('No songs queued.')
 		}
 	}
 
 	if (_.includes(msg, '!queue')) {
-		_.drop(msg, 1)
-		var term = msg.join(' ')
+		msg = _.drop(msg, 1)
+		msg = _.join(msg, ' ')
+		var ids = []
+		var id = ''
+		var name = ''
 
 		youtube.authenticate({
 			type: "oauth",
@@ -60,17 +63,41 @@ client.on('message', message => {
 
 		youtube.search.list({
 			part: 'snippet',
-			q: term,
+			q: msg,
 			maxResults: 10,
 			type: 'video'
-		}, function (err, data) {
+		}, (err, res1) => {
 			if (err) {
-				console.error('Error: ' + err)
+				console.log('The API returned an error: ' + err);
 				message.reply('Fucking ERRORS @#%@!%@# ^__^')
+				return
 			}
-			if (data) {
-				console.log(data.toString())
-				queue.push('https://www.youtube.com/watch?v=' + data.items[0].id.videoId)
+			else if (res1) {
+				_.forEach(res1.items, item => {
+					ids.push(item.id.videoId)
+				})
+
+				var idstring = _.join(ids, ',')
+				youtube.videos.list(idstring,
+					(err, res2) => {
+						if (err) {
+							console.log('The API returned an error: ' + err);
+							message.reply('Fucking ERRORS @#%@!%@# ^__^')
+							return;
+						}
+						else if (res2) {
+							var likes = 0
+							_.forEach(res2.items, item => {
+								if (like < parseInt(item.statistics.likeCount)) {
+									id = item.id
+									name = item.snippet.title
+								}
+							})
+							queueIds.push('https://www.youtube.com/watch?v=' + id)
+							queueNames.push(name)
+						}
+					})
+				message.reply(queueNames)
 			}
 		})
 
@@ -121,9 +148,9 @@ client.on('message', message => {
 	}
 
 	if (_.includes(msg, 'tz')) {
-		var m = msg.join(' ')
-		msg = _.toUpper(m)
-		msg = msg.split(' ')
+		msg = _.join(msg, ' ')
+		msg = _.toUpper(msg)
+		msg = _.split(msg, ' ')
 
 		var index = msg.indexOf('TZ')
 
