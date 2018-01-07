@@ -37,26 +37,23 @@ client.on('message', message => {
 		if (queueIds.length > 0 && message.member.voiceChannel.connection) {
 			var url = 'https://www.youtube.com/watch?v=' + queueIds[0]
 			var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
-			let stream = ytdl(url, { filter: 'audio', highWaterMark: 48000 })
+			var stream = ytdl(url, { filter: 'audio', highWaterMark: 48000 })
+			var connection = message.member.voiceChannel.connection
+			var sd = connection.playStream(stream, streamOptions)
 
-			stream.on('response', res => {
-				var connection = message.member.voiceChannel.connection
-				let sd = connection.playStream(stream, streamOptions)
-				sd.on('error', err => {
-					message.reply('playStream error')
-					sd.end()
-					stream.destroy()
-				})
-				sd.on('end', err => {
-					sd.end()
-					stream.destroy()
-				})
-
-				message.reply('Playing: ' + queueNames[0])
-				queueIds = _.drop(queueIds, 1)
-				queueNames = _.drop(queueNames, 1)
+			var xhr = new XMLHttpRequest()
+			xhr.open('GET', 'http://youtube.com/get_video_info?video_id=' + queueIds[0])
+			xhr.responseType = 'json'
+			xhr.onload(data => {
+				console.log(data)
 			})
-		} else {
+			xhr.send()
+
+			message.reply('Playing: ' + queueNames[0])
+			queueIds = _.drop(queueIds, 1)
+			queueNames = _.drop(queueNames, 1)
+		}
+		else {
 			message.reply('No songs queued.')
 		}
 	}

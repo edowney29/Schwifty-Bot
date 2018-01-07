@@ -1,3 +1,4 @@
+const dotenv = require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const socketIO = require('socket.io')
@@ -10,6 +11,11 @@ const uuidv1 = require('uuid/v1')
 
 const discord = require('./app/discordbot.js')
 //const enemyAI = require('./app/modules/enemyAI.js')
+
+if (dotenv.error)
+  throw dotenv.error
+else
+  console.log(dotenv.parsed)
 
 const PORT = process.env.PORT || 5000
 const INDEX = path.join(__dirname, 'index.html')
