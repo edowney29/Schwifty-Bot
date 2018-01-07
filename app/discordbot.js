@@ -32,7 +32,7 @@ client.on('message', message => {
 		if (message.member.voiceChannel) {
 			message.member.voiceChannel.join()
 		} else {
-			message.reply('You must be in a voice channel!')
+			message.reply('You must be in a voice channel.')
 		}
 	}
 
@@ -72,8 +72,8 @@ client.on('message', message => {
 			queueIds = _.drop(queueIds, 1)
 			queueNames = _.drop(queueNames, 1)
 		}
-		else if (message.member.voiceChannel.connection) {
-			message.reply('Join a voice channel first.')
+		else if (!message.member.voiceChannel.connection) {
+			message.reply('You must be in a voice channel.')
 		}
 		else {
 			message.reply('No songs queued.')
