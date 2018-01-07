@@ -1,6 +1,7 @@
 const discord = require('discord.js')
 const random = require('random-js')
-const moment = require('moment-timezone')
+const moment_tz = require('moment-timezone')
+const moment = require('moment')
 const _ = require('lodash')
 const ytdl = require('ytdl-core')
 const googleapis = require('googleapis')
@@ -162,27 +163,34 @@ client.on('message', message => {
 		var tz = msg[index + 2]
 		var zone = getZone(tz)
 
+		/*
 		var now = new Date()
 		// create date object with user inputted time in timezone
-		var date = moment.tz(now.getFullYear() + '-' +
+		var date = moment_tz.tz(now.getFullYear() + '-' +
 			(now.getMonth() < 10 ? '0' : '') + now.getMonth() + '-' +
 			(now.getDate() < 10 ? '0' : '') + now.getDate() + ' ' +
 			(hour < 10 ? '0' : '') + hour + ':' +
 			(minutes < 10 ? '0' : '') + minutes,
 			zone)
+		*/
+
+		var now = moment({ years: 2010, months: 10, date: 10, hours: hour + 12, minutes: minutes })
+		var date = moment_tz.tz(now.toISOString(), zone);
 
 		if (zone == null) {
 			message.reply('Unknown Timezone')
 			return
+		} else {
+			console.log(date)
 		}
 
 		// tz mutates date, does not return new one
 		message.reply(
-			'\n' + date.tz('America/New_York').zoneAbbr() + ':\t' + date.format('h:mm') +
-			'\n' + date.tz('America/Chicago').zoneAbbr() + ':\t' + date.format('h:mm') +
-			'\n' + date.tz('America/Denver').zoneAbbr() + ':\t' + date.format('h:mm') +
-			'\n' + date.tz('America/Los_Angeles').zoneAbbr() + ':\t' + date.format('h:mm') +
-			'\n' + date.tz('Europe/Dublin').zoneAbbr() + ':\t' + date.format('h:mm')
+			'\n' + date.tz('America/New_York').zoneAbbr() + ':\t' + date.format('h:mm a') +
+			'\n' + date.tz('America/Chicago').zoneAbbr() + ':\t' + date.format('h:mm a') +
+			'\n' + date.tz('America/Denver').zoneAbbr() + ':\t' + date.format('h:mm a') +
+			'\n' + date.tz('America/Los_Angeles').zoneAbbr() + ':\t' + date.format('h:mm a') +
+			'\n' + date.tz('Europe/Dublin').zoneAbbr() + ':\t' + date.format('h:mm a')
 		)
 	}
 
