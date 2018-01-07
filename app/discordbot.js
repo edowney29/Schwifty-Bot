@@ -5,6 +5,8 @@ const moment = require('moment')
 const _ = require('lodash')
 const ytdl = require('ytdl-core')
 const googleapis = require('googleapis')
+const request = require('request')
+const fs = require('fs')
 
 const client = new discord.Client()
 const DISCORD_KEY = process.env.DISCORD_KEY
@@ -35,24 +37,43 @@ client.on('message', message => {
 	}
 
 	if (_.includes(string, '!play')) {
-		if (queueIds.length > 0 && message.member.voiceChannel.connection) {
+		if (queueIds.length > 0) {
 			var url = 'https://www.youtube.com/watch?v=' + queueIds[0]
-			var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
-			var stream = ytdl(url, { filter: 'audio', highWaterMark: 48000 })
-			var connection = message.member.voiceChannel.connection
-			var sd = connection.playStream(stream, streamOptions)
+			// var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
+			// var stream = ytdl(url, { filter: 'audio', highWaterMark: 48000 })
+			// var connection = message.member.voiceChannel.connection
+			// var sd = connection.playStream(stream, streamOptions)
 
-			var xhr = new XMLHttpRequest()
-			xhr.open('GET', 'http://youtube.com/get_video_info?video_id=' + queueIds[0])
-			xhr.responseType = 'json'
-			xhr.onload(data => {
-				console.log(data)
+			// 'http://youtube.com/get_video_info?video_id=' + queueIds[0]
+			ytdl.getInfo(url, (err, info) => {
+				if (err) throw err
+				var audioFormats = ytdl.filterFormats(info.formats, 'audioonly');
+				var file = audioFormats[0].url
+				var stream = fs.createReadStream(
+					request
+						.get(file)
+						.on('error', err => {
+							console.log(err)
+							message.reply('Error getting file!')
+						})
+				)
+				stream.on('end', () => {
+					var connection = message.member.voiceChannel.connection
+					var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
+					var sd = connection.playStream(stream, streamOptions)
+				})
+				stream.on('error', () => {
+					console.log(err)
+					message.reply('Error streaming!')
+				})
 			})
-			xhr.send()
 
 			message.reply('Playing: ' + queueNames[0])
 			queueIds = _.drop(queueIds, 1)
 			queueNames = _.drop(queueNames, 1)
+		}
+		else if (message.member.voiceChannel.connection) {
+			message.reply('Join a voice channel first.')
 		}
 		else {
 			message.reply('No songs queued.')
@@ -105,9 +126,6 @@ client.on('message', message => {
 						})
 						queueIds.push(id)
 						queueNames.push(name)
-
-						console.log(_.toString(queueNames))
-						console.log(_.toString(queueIds))
 						message.reply('Song queued: https://www.youtube.com/watch?v=' + id)
 					}
 				})
