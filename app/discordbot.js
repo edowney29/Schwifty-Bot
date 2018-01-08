@@ -57,17 +57,11 @@ client.on('message', message => {
 					})
 					.on('end', () => {
 						var stream = fs.createReadStream('./public/' + message.member.guild + '.' + audioFormats[0].container)
-						stream.on('error', () => {
-							console.log(err)
-							message.reply('Error streaming!')
-						})
-						stream.on('end', () => {
-							var connection = message.member.voiceChannel.connection
-							var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
-							var sd = connection.playStream(stream, streamOptions)
-						})
+						var connection = message.member.voiceChannel.connection
+						var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
+						var sd = connection.playStream(stream, streamOptions)
 					})
-					.pipe(fs.createWriteStream('./public' + message.member.guild + '.' + audioFormats[0].container))
+					.pipe(fs.createWriteStream('./public/' + message.member.guild + '.' + audioFormats[0].container))
 			})
 
 			message.reply('Playing: ' + queueNames[0])
