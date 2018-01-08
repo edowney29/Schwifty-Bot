@@ -56,6 +56,7 @@ client.on('message', message => {
 							console.log(err)
 							message.reply('Error getting file!')
 						})
+						.pipe(fs.creatWriteStream('./song.' + audioFormats[0].container))
 				)
 				stream.on('end', () => {
 					var connection = message.member.voiceChannel.connection
