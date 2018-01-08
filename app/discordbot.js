@@ -7,6 +7,7 @@ const ytdl = require('ytdl-core')
 const googleapis = require('googleapis')
 const request = require('request')
 const fs = require('fs')
+var stream = require('stream');
 
 const client = new discord.Client()
 const DISCORD_KEY = process.env.DISCORD_KEY
@@ -29,6 +30,7 @@ client.on('message', message => {
 	}
 
 	if (_.includes(string, '!join')) {
+		message.delete()
 		if (message.member.voiceChannel) {
 			message.member.voiceChannel.join()
 		} else {
@@ -37,14 +39,9 @@ client.on('message', message => {
 	}
 
 	if (_.includes(string, '!play')) {
+		message.delete()
 		if (queueIds.length > 0) {
 			var url = 'https://www.youtube.com/watch?v=' + queueIds[0]
-			// var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
-			// var stream = ytdl(url, { filter: 'audio', highWaterMark: 48000 })
-			// var connection = message.member.voiceChannel.connection
-			// var sd = connection.playStream(stream, streamOptions)
-
-			// 'http://youtube.com/get_video_info?video_id=' + queueIds[0]
 			ytdl.getInfo(url, (err, info) => {
 				if (err) throw err
 				var audioFormats = ytdl.filterFormats(info.formats, 'audioonly');
@@ -56,23 +53,21 @@ client.on('message', message => {
 						message.reply('Error getting file!')
 					})
 					.on('end', () => {
-						var stream = fs.createReadStream('./public/' + message.member.guild + '.' + audioFormats[0].container)
-						stream.on('error', () => {
+						var streamOptions = { seek: 0, volume: 0.5, passes: 1, bitrate: 64 * 1024 }
+						var connection = message.member.voiceChannel.connection
+						var sd = connection.playFile('./public/song.' + audioFormats[0].container, streamOptions)
+						sd.on('error', err => {
 							console.log(err)
 							message.reply('Error streaming!')
 						})
-						stream.on('readable', () => {
-							var connection = message.member.voiceChannel.connection
-							var streamOptions = { seek: 0, volume: 1, passes: 1, bitrate: 48000 }
-							var sd = connection.playStream(stream, streamOptions)
+						sd.on('start', () => {
+							message.reply('Playing: ' + queueNames[0])
+							queueIds = _.drop(queueIds, 1)
+							queueNames = _.drop(queueNames, 1)
 						})
 					})
-					.pipe(fs.createWriteStream('./public/' + message.member.guild + '.' + audioFormats[0].container))
+					.pipe(fs.createWriteStream('./public/song.' + audioFormats[0].container))
 			})
-
-			message.reply('Playing: ' + queueNames[0])
-			queueIds = _.drop(queueIds, 1)
-			queueNames = _.drop(queueNames, 1)
 		}
 		else if (!message.member.voiceChannel.connection) {
 			message.reply('You must be in a voice channel.')
@@ -82,7 +77,26 @@ client.on('message', message => {
 		}
 	}
 
+	if (_.includes(string, '!resume')) {
+		message.delete()
+		if (message.member.voiceChannel.connection.dispatcher) {
+			var dispatcher = message.member.voiceChannel.connection.dispatcher
+			if (dispatcher.paused)
+				dispatcher.resume()
+		}
+	}
+
+	if (_.includes(string, '!pause')) {
+		message.delete()
+		if (message.member.voiceChannel.connection.dispatcher) {
+			var dispatcher = message.member.voiceChannel.connection.dispatcher
+			if (!dispatcher.paused)
+				dispatcher.pause()
+		}
+	}
+
 	if (_.includes(string, '!queue')) {
+		message.delete()
 		var msg = _.split(string, ' ')
 		msg = _.drop(msg, 1)
 		msg = _.join(msg, ' ')
@@ -136,13 +150,15 @@ client.on('message', message => {
 	}
 
 	if (_.includes(string, '!check')) {
-		var str = _.join(queueNames, '\n')
+		message.delete()
+		var str = queueNames.length + ' songs queued\n' + _.join(queueNames, '\n')
 		message.reply(str)
 	}
 
 	if (_.includes(string, '!remove')) {
+		message.delete()
 		if (queueIds.length > 0) {
-			message.reply('Song remove: ' + queueNames[queueNames.length - 1])
+			message.reply('Song removed: ' + queueNames[queueNames.length - 1])
 			queueIds = _.drop(queueIds, 1)
 			queueNames = _.drop(queueNames, 1)
 		}
@@ -249,4 +265,8 @@ function getZone(zone) {
 			return null
 			break
 	}
+}
+
+function editMessage(message) {
+
 }
