@@ -4,6 +4,8 @@ const _ = require('lodash')
 const kmeans = require('node-kmeans')
 const uuidv1 = require('uuid/v1')
 
+const enemyAI = require('./mmo/enemyAI.js')
+
 const MONGO_URI = process.env.MONGODB_URI
 
 var database, io
@@ -219,7 +221,7 @@ function startServer() {
 	setInterval(() => {
 		if (ready) {
 			io.emit('time', new Date().toTimeString())
-			//enemyUpdate()
+			enemyUpdate()
 
 			if (counter == 100) {
 				setDatabase()
@@ -278,4 +280,53 @@ function setDatabase() {
 				})
 		}
 	})
+}
+
+function enemyUpdate() {
+	if (enemies.length < 10) {
+		currentEnemy = {
+			username: uuidv1(),
+			positionx: 1452,
+			positiony: -1433,
+			health: 100,
+			target: ''
+		}
+		enemies.push(currentEnemy)
+		console.log(`[SERVER - Spawn Enemy] : ${currentEnemy.username}`)
+	}
+
+	// Enemy AI
+	var enemy = enemies[counter % enemies.length]
+	if (Math.random() >= 0.25) {
+		if (enemy.target == '') {
+			var client = clients[Math.floor(Math.random() * clients.length)]
+			if (!_.includes(client.username, 'kmeans')) {
+				var distance = enemyAI.getDistance(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+				if (distance < 100) {
+					enemy.target = client.username
+				} else {
+					enemy.target = ''
+					var radian = Math.random() * (2 * Math.PI)
+					enemy = enemyAI.checkMove(enemy, radian)
+					//console.log(`[Server - Enemy random] : ${enemy.username} -> ${client.username}`)
+					io.local.emit('enemy-move', enemy.username, enemy.positionx, enemy.positiony, enemy.target)
+				}
+			}
+		}
+		else {
+			var client = _.find(clients, { username: enemy.target })
+			if (client) {
+				var distance = enemyAI.getDistance(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+				if (distance > 200) {
+					enemy.target = ''
+				} else {
+					enemy.target = client.username
+					var radian = enemyAI.getRadian(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+					enemy = enemyAI.checkMove(enemy, radian)
+					//console.log(`[Server - Enemy target] : ${enemy.username} -> ${client.username}`)
+					io.local.emit('enemy-move', enemy.username, enemy.positionx, enemy.positiony, enemy.target)
+				}
+			}
+		}
+	}
 }
