@@ -4,17 +4,22 @@ const _ = require('lodash')
 const kmeans = require('node-kmeans')
 const uuidv1 = require('uuid/v1')
 
-var io;
+const MONGO_URI = process.env.MONGODB_URI
+
+var database, io
+var clients = []
+//var enemies = []
+//var updates = []
+var clusters = []
+var ready = false
+var knum = 1
 
 module.exports.setSocketIO = (_io) => {
-	this.io = _io;
-	var clients = []
-	var enemies = []
-	var updates = []
-	var clusters = []
-	var database
-	var ready = false
-	var knum = 1
+	io = _io
+	startServer()
+}
+
+function startServer() {
 
 	// Used for k-means points
 	for (var i = 0; i < knum; i++) {
@@ -40,14 +45,66 @@ module.exports.setSocketIO = (_io) => {
 		var playerToken = null // Global for each socket connection
 
 		/** PING */
-		socket.on('test', () => {
-			console.log(`[RECV - New connection] : ${socket}`)
-		})
+		socket.on('test', console.log(`[RECV - New connection] : ${socket}`))
 
 		/** NETWORK MENU */
 		socket.on('player-reg', playerReg(username, email, pass))
+		socket.on('player-login', playerLogin(username))
+		socket.on('menu-disconnect', () => { socket.disconnect('true') })
 
-		socket.on('player-login', (username) => {
+		/** NETWORK PLAY */
+		socket.on('start-up', startUp(username))
+		socket.on('player-message', message(username, message))
+		socket.on('player-attack', playerAttack(username, attacking))
+
+		/** SOCKET HANDLERS */
+		socket.on('connecting', () => { console.log(`[RECV - New connection] : ${socket}`) })
+		socket.on('disconnect', disconnect(reason))
+		socket.on('error', (error) => { console.log(`[RECV - Server error] : ${playerToken} : ${error}`) })
+
+		function playerReg(username, email, pass) {
+			var newUser = {
+				username,
+				email,
+				pass,
+				reg: false,
+			}
+			var newMovements = {
+				username,
+				positionx: 1297.0,
+				positiony: -1125,
+			}
+
+			console.log('[RECV - Regsiter] : ' + newUser)
+			var users = database.collection('users')
+			var movements = database.collection('movements')
+
+			users.findOne({
+				$or: [{
+					username: username
+				}, {
+					email: email
+				}]
+			}, (err, doc) => {
+				if (err) {
+					socket.emit('player-menu', 'err')
+				} else if (doc) {
+					socket.emit('player-menu', 'dub')
+				} else {
+					users.insertOne(newUser, (err, res) => {
+						movements.insertOne(newMovements, (err, res) => {
+							if (err) {
+								socket.emit('player-menu', 'err')
+							} else {
+								socket.emit('player-menu', 'good')
+							}
+						})
+					})
+				}
+			})
+		}
+
+		function playerLogin(username) {
 			var pass = true
 			_.forEach(clients, client => {
 				if (username == client.username) {
@@ -71,14 +128,9 @@ module.exports.setSocketIO = (_io) => {
 					}
 				})
 			}
-		})
+		}
 
-		socket.on('menu-disconnect', () => {
-			socket.disconnect('true')
-		})
-
-		/** NETWORK PLAY */
-		socket.on('start-up', (username) => {
+		function startUp(username) {
 			console.log('[RECV - Spawn player] : ' + username)
 			playerToken = username
 			var movements = database.collection('movements')
@@ -114,62 +166,53 @@ module.exports.setSocketIO = (_io) => {
 					clients.push(client)
 				}
 			})
-		})
 
-		socket.on('player-move', (username, positionx, positiony, playerMoving, moveH, moveV, lastmovex, lastmovey, world, zone) => {
-			//console.log('[RECV - Player move] : ' + username)
-			var client = _.find(clients, { username: username })
+			socket.on('player-move', (username, positionx, positiony, playerMoving, moveH, moveV, lastmovex, lastmovey, world, zone) => {
+				//console.log('[RECV - Player move] : ' + username)
+				var client = _.find(clients, { username: username })
 
-			if (client) {
-				client.username = username
-				client.positionx = positionx
-				client.positiony = positiony
-				//client.world = world
-				//client.zone = zone
+				if (client) {
+					client.username = username
+					client.positionx = positionx
+					client.positiony = positiony
+					//client.world = world
+					//client.zone = zone
 
-				io.in(client.room).emit('player-move',
-					username,
-					positionx,
-					positiony,
-					playerMoving,
-					moveH,
-					moveV,
-					lastmovex,
-					lastmovey
-				)
-			}
+					io.in(client.room).emit('player-move',
+						username,
+						positionx,
+						positiony,
+						playerMoving,
+						moveH,
+						moveV,
+						lastmovex,
+						lastmovey
+					)
+				}
 
-			socket.emit('ack-move')
-		})
+				socket.emit('ack-move')
+			})
+		}
 
-		socket.on('player-message', (username, message) => {
+		function message(username, message) {
 			//console.log('[RECV - Message] ' + username + ': ' + message)
 			socket.broadcast.emit('player-message', username, message)
 			socket.emit('player-message', username, message);
-		})
+		}
 
-		socket.on('player-attack', (username, attacking) => {
+		function playerAttack(username, attacking) {
 			//console.log('[RECV - Attack] ' + username + ': ' + attacking)
 			var client = _.find(clients, { username: username })
 			if (client) {
 				io.in(client.room).emit('player-attack', username, attacking)
 			}
-		})
+		}
 
-		/** SOCKET HANDLERS */
-		socket.on('connecting', () => {
-			console.log(`[RECV - New connection] : ${socket}`)
-		})
-
-		socket.on('disconnect', (reason) => {
+		function disconnect(reason) {
 			console.log(`[RECV - Player disconnected] : ${playerToken} : ${reason}`)
 			socket.broadcast.emit('other-player-disconnected', playerToken)
 			_.remove(clients, { username: playerToken })
-		})
-
-		socket.on('error', (error) => {
-			console.log(`[RECV - Server error] : ${playerToken} : ${error}`)
-		})
+		}
 	})
 
 	var counter = 0
@@ -235,50 +278,4 @@ function setDatabase() {
 				})
 		}
 	})
-}
-
-function playerReg(username, email, pass) {
-	var newUser = {
-		username,
-		email,
-		pass,
-		reg: false,
-	}
-	var newMovements = {
-		username,
-		positionx: 1297.0,
-		positiony: -1125,
-	}
-
-	console.log('[RECV - Regsiter] : ' + newUser)
-	var users = database.collection('users')
-	var movements = database.collection('movements')
-
-	users.findOne({
-		$or: [{
-			username: username
-		}, {
-			email: email
-		}]
-	}, (err, doc) => {
-		if (err) {
-			socket.emit('player-menu', 'err')
-		} else if (doc) {
-			socket.emit('player-menu', 'dub')
-		} else {
-			users.insertOne(newUser, (err, res) => {
-				movements.insertOne(newMovements, (err, res) => {
-					if (err) {
-						socket.emit('player-menu', 'err')
-					} else {
-						socket.emit('player-menu', 'good')
-					}
-				})
-			})
-		}
-	})
-}
-
-function playerLogin() {
-
 }
