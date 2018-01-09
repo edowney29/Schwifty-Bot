@@ -2,7 +2,6 @@ const dotenv = require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const socketIO = require('socket.io')
-const MongoClient = require('mongodb').MongoClient
 const path = require('path')
 
 const discord = require('./app/discord/discordbot.js')
@@ -12,10 +11,8 @@ const PORT = process.env.PORT || 3000;
 const INDEX = path.join(__dirname, 'index.html');
 
 const server = express()
+  .use((req, res) => res.sendFile(INDEX))
   .listen(PORT, () => console.log(`Listening on ${PORT}`))
-  .get('/', function (req, res) {
-    res.sendFile(INDEX);
-  })
 
 const io = socketIO(server)
 socket.setSocketIO(io)
