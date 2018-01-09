@@ -4,20 +4,18 @@ const bodyParser = require('body-parser')
 const socketIO = require('socket.io')
 const MongoClient = require('mongodb').MongoClient
 const path = require('path')
-const assert = require('assert')
-const _ = require('lodash')
-const kmeans = require('node-kmeans')
-const uuidv1 = require('uuid/v1')
 
-const discord = require('./app/discordbot.js')
-const socket = require('./app/socketio.js')
+const discord = require('./app/discord/discordbot.js')
+const socket = require('./app/mmo/socketio.js')
 
-const PORT = process.env.PORT || 5000
-const INDEX = path.join(__dirname, 'index.html')
+const PORT = process.env.PORT || 3000;
+const INDEX = path.join(__dirname, 'index.html');
 
 const server = express()
-  .use((req, res) => res.sendFile(INDEX))
   .listen(PORT, () => console.log(`Listening on ${PORT}`))
+  .get('/', function (req, res) {
+    res.sendFile(INDEX);
+  })
 
 const io = socketIO(server)
 socket.setSocketIO(io)

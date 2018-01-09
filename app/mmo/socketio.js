@@ -4,19 +4,21 @@ const _ = require('lodash')
 const kmeans = require('node-kmeans')
 const uuidv1 = require('uuid/v1')
 
-const enemyAI = require('./mmo/enemyAI.js')
+const enemyAI = require('./modules/enemyAI.js')
 
 const MONGO_URI = process.env.MONGODB_URI
 
 var database, io
 var clients = []
-//var enemies = []
+var enemies = []
 //var updates = []
 var clusters = []
 var ready = false
 var knum = 1
+var counter = 0
 
 module.exports.setSocketIO = (_io) => {
+	console.log(_io)
 	io = _io
 	startServer()
 }
@@ -217,7 +219,6 @@ function startServer() {
 		}
 	})
 
-	var counter = 0
 	setInterval(() => {
 		if (ready) {
 			io.emit('time', new Date().toTimeString())
