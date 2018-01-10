@@ -21,29 +21,33 @@ client.on('ready', () => {
 })
 
 client.on('message', message => {
+	console.log(message.content)
 	var string = _.toLower(message.content)
-	console.log(string)
 
 	if (_.includes(string, 'ping')) {
 		message.reply('pong')
 	}
 
 	if (_.includes(string, '!join')) {
-		message.delete()
 		if (message.member.voiceChannel) {
 			message.member.voiceChannel.join()
+			message.delete()
 		} else {
 			message.reply('You must be in a voice channel.')
+			message.delete()
 		}
 	}
 
 	if (_.includes(string, '!play')) {
-		message.delete()
 		if (queueIds.length > 0) {
-			var url = 'https://www.youtube.com/watch?v=' + queueIds[0]
+			var url = 'http://www.youtube.com/watch?v=' + queueIds[0]
+			console.log(url)
 			ytdl.getInfo(url, (err, info) => {
-				if (err) console.log(err)
-				else {
+				if (err) {
+					console.log(err)
+					message.reply('Error video unavailable!')
+					message.delete()
+				} else {
 					var audioFormats = ytdl.filterFormats(info.formats, 'audioonly');
 					var fileurl = audioFormats[0].url
 					request
@@ -51,19 +55,22 @@ client.on('message', message => {
 						.on('error', err => {
 							console.log(err)
 							message.reply('Error getting file!')
+							message.delete()
 						})
 						.on('end', () => {
-							var streamOptions = { seek: 0, volume: 0.5, passes: 1, bitrate: 64 * 1024 }
+							var streamOptions = { seek: 0, volume: 0.2, passes: 1, bitrate: 64 * 1024 }
 							var connection = message.member.voiceChannel.connection
 							var sd = connection.playFile('./public/song.' + audioFormats[0].container, streamOptions)
 							sd.on('error', err => {
 								console.log(err)
 								message.reply('Error streaming!')
+								message.delete()
 							})
 							sd.on('start', () => {
 								message.reply('Playing: ' + queueNames[0])
 								queueIds = _.drop(queueIds, 1)
 								queueNames = _.drop(queueNames, 1)
+								message.delete()
 							})
 						})
 						.pipe(fs.createWriteStream('./public/song.' + audioFormats[0].container))
@@ -97,7 +104,6 @@ client.on('message', message => {
 	}
 
 	if (_.includes(string, '!queue')) {
-		message.delete()
 		var msg = _.split(string, ' ')
 		msg = _.drop(msg, 1)
 		msg = _.join(msg, ' ')
@@ -116,6 +122,7 @@ client.on('message', message => {
 			if (err) {
 				console.log(err);
 				message.reply('youtube.search.list error')
+				message.delete()
 			}
 			else if (res1) {
 				var ids = []
@@ -131,6 +138,7 @@ client.on('message', message => {
 					if (err) {
 						console.log(err);
 						message.reply('youtube.videos.list error')
+						message.delete()
 					}
 					else if (res2) {
 						var views = 0, id = '', name = ''
@@ -143,7 +151,8 @@ client.on('message', message => {
 						})
 						queueIds.push(id)
 						queueNames.push(name)
-						message.reply('Song queued: https://www.youtube.com/watch?v=' + id)
+						message.reply('Song queued: http://www.youtube.com/watch?v=' + id)
+						message.delete()
 					}
 				})
 			}
@@ -154,14 +163,15 @@ client.on('message', message => {
 		message.delete()
 		var str = queueNames.length + ' songs queued\n' + _.join(queueNames, '\n')
 		message.reply(str)
+		message.delete()
 	}
 
 	if (_.includes(string, '!remove')) {
-		message.delete()
 		if (queueIds.length > 0) {
 			message.reply('Song removed: ' + queueNames[queueNames.length - 1])
 			queueIds = _.drop(queueIds, 1)
 			queueNames = _.drop(queueNames, 1)
+			message.delete()
 		}
 	}
 
@@ -266,8 +276,4 @@ function getZone(zone) {
 			return null
 			break
 	}
-}
-
-function editMessage(message) {
-
 }
