@@ -43,7 +43,7 @@ client.on('message', message => {
 		if (queueIds.length > 0) {
 			var url = 'https://www.youtube.com/watch?v=' + queueIds[0]
 			ytdl.getInfo(url, (err, info) => {
-				if (err) throw err
+				if (err) console.log(err)
 				var audioFormats = ytdl.filterFormats(info.formats, 'audioonly');
 				var fileurl = audioFormats[0].url
 				request
