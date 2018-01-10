@@ -7,7 +7,6 @@ const ytdl = require('ytdl-core')
 const googleapis = require('googleapis')
 const request = require('request')
 const fs = require('fs')
-var stream = require('stream');
 
 const client = new discord.Client()
 const DISCORD_KEY = process.env.DISCORD_KEY
@@ -44,29 +43,31 @@ client.on('message', message => {
 			var url = 'https://www.youtube.com/watch?v=' + queueIds[0]
 			ytdl.getInfo(url, (err, info) => {
 				if (err) console.log(err)
-				var audioFormats = ytdl.filterFormats(info.formats, 'audioonly');
-				var fileurl = audioFormats[0].url
-				request
-					.get(fileurl)
-					.on('error', err => {
-						console.log(err)
-						message.reply('Error getting file!')
-					})
-					.on('end', () => {
-						var streamOptions = { seek: 0, volume: 0.5, passes: 1, bitrate: 64 * 1024 }
-						var connection = message.member.voiceChannel.connection
-						var sd = connection.playFile('./public/song.' + audioFormats[0].container, streamOptions)
-						sd.on('error', err => {
+				else {
+					var audioFormats = ytdl.filterFormats(info.formats, 'audioonly');
+					var fileurl = audioFormats[0].url
+					request
+						.get(fileurl)
+						.on('error', err => {
 							console.log(err)
-							message.reply('Error streaming!')
+							message.reply('Error getting file!')
 						})
-						sd.on('start', () => {
-							message.reply('Playing: ' + queueNames[0])
-							queueIds = _.drop(queueIds, 1)
-							queueNames = _.drop(queueNames, 1)
+						.on('end', () => {
+							var streamOptions = { seek: 0, volume: 0.5, passes: 1, bitrate: 64 * 1024 }
+							var connection = message.member.voiceChannel.connection
+							var sd = connection.playFile('./public/song.' + audioFormats[0].container, streamOptions)
+							sd.on('error', err => {
+								console.log(err)
+								message.reply('Error streaming!')
+							})
+							sd.on('start', () => {
+								message.reply('Playing: ' + queueNames[0])
+								queueIds = _.drop(queueIds, 1)
+								queueNames = _.drop(queueNames, 1)
+							})
 						})
-					})
-					.pipe(fs.createWriteStream('./public/song.' + audioFormats[0].container))
+						.pipe(fs.createWriteStream('./public/song.' + audioFormats[0].container))
+				}
 			})
 		}
 		else if (!message.member.voiceChannel.connection) {
