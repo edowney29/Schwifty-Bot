@@ -1,6 +1,5 @@
 const dotenv = require('dotenv').config()
 const express = require('express')
-const bodyParser = require('body-parser')
 const socketIO = require('socket.io')
 const path = require('path')
 
