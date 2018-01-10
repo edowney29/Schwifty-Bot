@@ -38,7 +38,7 @@ client.on('message', message => {
 		}
 	}
 
-	if (_.includes(string, '!play')) {
+	if (_.includes(string, '!next')) {
 		if (queueIds.length > 0) {
 			var url = 'http://www.youtube.com/watch?v=' + queueIds[0]
 			console.log(url)
@@ -103,7 +103,7 @@ client.on('message', message => {
 		}
 	}
 
-	if (_.includes(string, '!queue')) {
+	if (_.includes(string, '!play')) {
 		var msg = _.split(string, ' ')
 		msg = _.drop(msg, 1)
 		msg = _.join(msg, ' ')
