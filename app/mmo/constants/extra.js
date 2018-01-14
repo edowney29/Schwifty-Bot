@@ -80,3 +80,43 @@ function enemyUpdate() {
   }
 }
 */
+
+/*
+// Used for k-means points
+for (var i = 0; i < knum; i++) {
+	var fakes = {
+		username: 'kmeans point: ' + (i + 1),
+		positionx: (Math.random() * 1000),
+		positiony: (Math.random() * 1000),
+		socket: null,
+		room: 'start'
+	}
+	clients.push(fakes)
+}
+
+function getCluster() {
+	let vectors = new Array()
+	for (let i = 0; i < clients.length; i++) {
+		vectors[i] = [clients[i].positionx, clients[i].positiony]
+	}
+	kmeans.clusterize(vectors, {
+		k: knum
+	}, (err, res) => {
+		if (err) console.error(err)
+		//else console.log(res)
+		clusters = res
+		_.forEach(clusters, cluster => {
+			for (var i = 0; i < cluster.clusterInd.length; i++) {
+				var client = _.find(clients, {
+					username: clients[cluster.clusterInd[i]].username,
+				})
+				if (client.socket) {
+					client.socket.leaveAll()
+					client.socket.join(cluster.centroid.toString())
+					client.room = cluster.centroid.toString()
+				}
+			}
+		})
+	})
+}
+*/
