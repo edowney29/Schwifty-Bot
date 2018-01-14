@@ -1,3 +1,5 @@
+import { Message } from 'discord.js';
+
 const discord = require('discord.js')
 const random = require('random-js')
 const moment_tz = require('moment-timezone')
@@ -24,125 +26,26 @@ client.on('message', message => {
 	console.log(message.content)
 	var string = _.toLower(message.content)
 
-	if (_.includes(string, 'ping')) {
-		message.reply('pong')
-	}
-
 	if (_.includes(string, '!join')) {
+		message.delete()
 		if (message.member.voiceChannel) {
 			message.member.voiceChannel.join()
-			message.delete()
 		} else {
 			message.reply('You must be in a voice channel.')
-			message.delete()
-		}
-	}
-
-	if (_.includes(string, '!next')) {
-		if (queueIds.length > 0) {
-			var url = 'http://www.youtube.com/watch?v=' + queueIds[0]
-			console.log(url)
-			ytdl.getInfo(url, (err, info) => {
-				if (err) {
-					console.log(err)
-					message.reply('Error video unavailable!')
-					message.delete()
-				} else {
-					var audioFormats = ytdl.filterFormats(info.formats, 'audioonly');
-					var fileurl = audioFormats[0].url
-					request
-						.get(fileurl)
-						.on('error', err => {
-							console.log(err)
-							message.reply('Error getting file!')
-							message.delete()
-						})
-						.on('end', () => {
-							var streamOptions = { seek: 0, volume: 0.2, passes: 1, bitrate: 64 * 1024 }
-							var connection = message.member.voiceChannel.connection
-							var sd = connection.playFile('./public/song.' + audioFormats[0].container, streamOptions)
-							sd.on('error', err => {
-								console.log(err)
-								message.reply('Error streaming!')
-								message.delete()
-							})
-							sd.on('start', () => {
-								message.reply('Playing: ' + queueNames[0])
-								queueIds = _.drop(queueIds, 1)
-								queueNames = _.drop(queueNames, 1)
-								message.delete()
-							})
-						})
-						.pipe(fs.createWriteStream('./public/song.' + audioFormats[0].container))
-				}
-			})
-		}
-		else if (!message.member.voiceChannel.connection) {
-			message.reply('You must be in a voice channel.')
-		}
-		else {
-			message.reply('No songs queued.')
-		}
-	}
-
-	if (_.includes(string, '!resume')) {
-		message.delete()
-		if (message.member.voiceChannel.connection.dispatcher) {
-			var dispatcher = message.member.voiceChannel.connection.dispatcher
-			if (dispatcher.paused)
-				dispatcher.resume()
-		}
-	}
-
-	if (_.includes(string, '!pause')) {
-		message.delete()
-		if (message.member.voiceChannel.connection.dispatcher) {
-			var dispatcher = message.member.voiceChannel.connection.dispatcher
-			if (!dispatcher.paused)
-				dispatcher.pause()
 		}
 	}
 
 	if (_.includes(string, '!play')) {
-		var msg = _.split(string, ' ')
-		msg = _.drop(msg, 1)
-		msg = _.join(msg, ' ')
-
-		var youtube = googleapis.youtube({
-			version: 'v3',
-			auth: GOOGLE_KEY
-		})
-
-		youtube.search.list({
-			part: 'snippet',
-			q: msg,
-			maxResults: 50,
-			type: 'video'
-		}, (err, res1) => {
-			if (err) {
-				console.log(err);
-				message.reply('youtube.search.list error')
-				message.delete()
-			}
-			else if (res1) {
-				var ids = []
-				_.forEach(res1.items, item => {
-					ids.push(item.id.videoId)
-				})
-				var idstring = _.join(ids, ',')
-
-				youtube.videos.list({
-					id: idstring,
-					part: 'snippet,contentDetails,statistics'
-				}, (err, res2) => {
-					if (err) {
-						console.log(err);
-						message.reply('youtube.videos.list error')
-						message.delete()
-					}
-					else if (res2) {
+		message.delete()
+		var videoTitle = _.split(string, ' ')
+		videoTitle = _.drop(videoTitle, 1)
+		videoTitle = _.join(videoTitle, ' ')
+		searchVideos(videoTitle)
+			.then(videos => {
+				listVideos(videos)
+					.then(list => {
 						var views = 0, id = '', name = ''
-						_.forEach(res2.items, item => {
+						_.forEach(list.items, item => {
 							if (views < parseInt(item.statistics.viewCount)) {
 								views = parseInt(item.statistics.viewCount)
 								id = item.id
@@ -151,27 +54,59 @@ client.on('message', message => {
 						})
 						queueIds.push(id)
 						queueNames.push(name)
-						message.reply('Song queued: http://www.youtube.com/watch?v=' + id)
-						message.delete()
-					}
-				})
+						message.reply(`Song queued: http://www.youtube.com/watch?v=${id}`)
+
+						if (!message.member.voiceChannel.connection.dispatcher) {
+							var url = `http://www.youtube.com/watch?v=${queueIds[0]}`
+							playSong(message, url)
+						}
+					})
+			})
+	}
+
+	if (_.includes(string, '!next')) {
+		message.delete()
+		if (queueIds.length > 0) {
+			var url = `http://www.youtube.com/watch?v=${queueIds[0]}`
+			var dispatcher = message.member.voiceChannel.connection.dispatcher
+			if (dispatcher) {
+				dispatcher.end()
 			}
-		})
+			playSong(message, url)
+		}
+		else {
+			message.reply('No songs queued.')
+		}
+	}
+
+	if (_.includes(string, '!resume')) {
+		message.delete()
+		var dispatcher = message.member.voiceChannel.connection.dispatcher
+		if (dispatcher.paused) {
+			dispatcher.resume()
+		}
+	}
+
+	if (_.includes(string, '!pause')) {
+		message.delete()
+		var dispatcher = message.member.voiceChannel.connection.dispatcher
+		if (!dispatcher.paused) {
+			dispatcher.pause()
+		}
 	}
 
 	if (_.includes(string, '!check')) {
 		message.delete()
-		var str = queueNames.length + ' songs queued\n' + _.join(queueNames, '\n')
+		var str = `${queueNames.length} songs queued \n${_.join(queueNames, '\n')}`
 		message.reply(str)
-		message.delete()
 	}
 
 	if (_.includes(string, '!remove')) {
+		message.delete()
 		if (queueIds.length > 0) {
-			message.reply('Song removed: ' + queueNames[queueNames.length - 1])
+			message.reply(`Song removed:  + ${queueNames[queueNames.length - 1]}`)
 			queueIds = _.drop(queueIds, 1)
 			queueNames = _.drop(queueNames, 1)
-			message.delete()
 		}
 	}
 
@@ -276,4 +211,82 @@ function getZone(zone) {
 			return null
 			break
 	}
+}
+
+function searchVideos(videoTitle) {
+	new Promise((resolve, reject) => {
+		var youtube = googleapis.youtube({
+			version: 'v3',
+			auth: GOOGLE_KEY
+		})
+
+		youtube.search.list({
+			part: 'snippet',
+			q: videoTitle,
+			maxResults: 50,
+			type: 'video'
+		}, (err, res) => {
+			if (err) {
+				reject(err)
+			}
+			else {
+				resolve(res)
+			}
+		})
+	})
+}
+
+function listVideos(videos) {
+	new Promise((resolve, reject) => {
+		var ids = []
+		_.forEach(videos.items, item => {
+			ids.push(item.id.videoId)
+		})
+		var idstring = _.join(ids, ',')
+
+		youtube.videos.list({
+			id: idstring,
+			part: 'snippet,contentDetails,statistics'
+		}, (err, res) => {
+			if (err) {
+				reject(err)
+			}
+			else {
+				resolve(res)
+			}
+		})
+	})
+}
+
+function playSong(message, url) {
+	ytdl.getInfo(url, (err, info) => {
+		if (err) {
+			console.log(err)
+			return
+		}
+		else {
+			var audioFormats = ytdl.filterFormats(info.formats, 'audioonly');
+			var fileurl = audioFormats[0].url
+			request
+				.get(fileurl)
+				.on('error', err => {
+					console.log(err)
+					return
+				})
+				.on('end', () => {
+					var streamOptions = { seek: 0, volume: 0.2, passes: 1, bitrate: 64 * 1024 }
+					var connection = message.member.voiceChannel.connection
+					var sd = connection.playFile(`./public/${message.guild}.${audioFormats[0].container}`, streamOptions)
+					sd.on('error', err => {
+						console.log(err)
+					})
+					sd.on('start', () => {
+						message.reply('Playing: ' + queueNames[0])
+						queueIds = _.drop(queueIds, 1)
+						queueNames = _.drop(queueNames, 1)
+					})
+				})
+				.pipe(fs.createWriteStream(`./public/${message.guild}.${audioFormats[0].container}`))
+		}
+	})
 }
