@@ -1,5 +1,3 @@
-import { Message } from 'discord.js';
-
 const discord = require('discord.js')
 const random = require('random-js')
 const moment_tz = require('moment-timezone')
@@ -58,6 +56,10 @@ client.on('message', message => {
 
 						if (!message.member.voiceChannel.connection.dispatcher) {
 							var url = `http://www.youtube.com/watch?v=${queueIds[0]}`
+							var dispatcher = message.member.voiceChannel.connection.dispatcher
+							if (dispatcher) {
+								dispatcher.end()
+							}
 							playSong(message, url)
 						}
 					})
