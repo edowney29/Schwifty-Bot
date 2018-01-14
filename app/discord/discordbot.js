@@ -73,11 +73,11 @@ client.on('message', message => {
 						var dispatcher = message.guild.voiceConnection.dispatcher
 						if (!dispatcher) {
 							var url = `http://www.youtube.com/watch?v=${id}`
-							playSong(message, url, index)
+							playSong(message, url)
 								.then(() => {
 									message.reply('Playing: ' + servers[index].queue.names[0])
-									servers[index].queue.ids = _.drop(servers[index].queue.ids, 1)
-									servers[index].queue.names = _.drop(servers[index].queue.names, 1)
+									_.drop(servers[index].queue.ids, 1)
+									_.drop(servers[index].queue.names, 1)
 								})
 						}
 					})
@@ -92,11 +92,11 @@ client.on('message', message => {
 			if (dispatcher) {
 				dispatcher.end()
 			}
-			playSong(message, url, server)
+			playSong(message, url)
 				.then(() => {
 					message.reply('Playing: ' + servers[index].queue.names[0])
-					servers[index].queue.ids = _.drop(servers[index].queue.ids, 1)
-					servers[index].queue.names = _.drop(servers[index].queue.names, 1)
+					_.drop(servers[index].queue.ids, 1)
+					_.drop(servers[index].queue.names, 1)
 				})
 		}
 		else {
@@ -279,7 +279,7 @@ function listVideos(videos) {
 	})
 }
 
-function playSong(message, url, index) {
+function playSong(message, url) {
 	return new Promise((resolve, reject) => {
 		ytdl.getInfo(url, (e, info) => {
 			if (e) {
