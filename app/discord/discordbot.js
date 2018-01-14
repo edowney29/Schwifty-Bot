@@ -293,20 +293,19 @@ function playSong(message, url) {
 				.on('end', () => {
 					var streamOptions = { seek: 0, volume: 0.2, passes: 1, bitrate: 64 * 1024 }
 					var connection = message.member.voiceChannel.connection
-					var sd = connection.playFile(`./public/${message.guild}.${audioFormats[0].container}`, streamOptions)
+					var sd = connection.playFile(`./public/${message.guild.id}.${audioFormats[0].container}`, streamOptions)
 					sd.on('error', error => {
 						console.log(error)
 						return
 					})
 					sd.on('end', () => {
-						console.log('END')
+						message.reply('!next')
 					})
 					sd.on('start', () => {
 						console.log('START')
 					})
 				})
-				.pipe(fs.createWriteStream(`./public/${message.guild}.${audioFormats[0].container}`))
+				.pipe(fs.createWriteStream(`./public/${message.guild.id}.${audioFormats[0].container}`))
 		}
 	})
-})
 }
