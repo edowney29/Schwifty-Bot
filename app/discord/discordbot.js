@@ -38,7 +38,6 @@ client.on('message', message => {
 	console.log(`[${message.guild.id}] ${message.member.id}: ${message.content}`)
 
 	if (_.includes(string, '!join')) {
-		message.delete()
 		if (message.member.voiceChannel) {
 			if (message.member.voiceChannel.connection) {
 				message.member.voiceChannel.connection.disconnect()
@@ -50,7 +49,6 @@ client.on('message', message => {
 	}
 
 	if (_.includes(string, '!play')) {
-		message.delete()
 		var videoTitle = _.split(string, ' ')
 		videoTitle = _.drop(videoTitle, 1)
 		videoTitle = _.join(videoTitle, ' ')
@@ -73,27 +71,48 @@ client.on('message', message => {
 						var dispatcher = message.guild.voiceConnection.dispatcher
 						if (!dispatcher) {
 							var url = `http://www.youtube.com/watch?v=${id}`
-							playSong(message, url)
-							message.reply('Playing: ' + servers[index].queue.names[0])
-							_.drop(servers[index].queue.ids, 1)
-							_.drop(servers[index].queue.names, 1)
+							getInfo(url)
+								.then(audioFormats => {
+									playSong(message, audioFormats)
+										.then(sd => {
+											sd.on('end', () => {
+												message.reply('!next')
+											})
+											sd.on('start', () => {
+												message.reply('Playing: ' + servers[index].queue.names[0])
+												servers[index].queue.ids = _.drop(servers[index].queue.ids, 1)
+												servers[index].queue.names = _.drop(servers[index].queue.names, 1)
+											})
+										})
+								})
 						}
 					})
 			})
 	}
 
 	if (_.includes(string, '!next')) {
-		message.delete()
 		if (servers[index].queue.ids.length > 0) {
 			var url = `http://www.youtube.com/watch?v=${servers[index].queue.ids[0]}`
 			var dispatcher = message.guild.voiceConnection.dispatcher
 			if (dispatcher) {
-				dispatcher.end()
+				if (!dispatcher.destroyed) {
+					dispatcher.end()
+				}
+				getInfo(url)
+					.then(audioFormats => {
+						playSong(message, audioFormats)
+							.then(sd => {
+								sd.on('end', () => {
+									message.reply('!next')
+								})
+								sd.on('start', () => {
+									message.reply('Playing: ' + servers[index].queue.names[0])
+									servers[index].queue.ids = _.drop(servers[index].queue.ids, 1)
+									servers[index].queue.names = _.drop(servers[index].queue.names, 1)
+								})
+							})
+					})
 			}
-			playSong(message, url)
-			message.reply('Playing: ' + servers[index].queue.names[0])
-			_.drop(servers[index].queue.ids, 1)
-			_.drop(servers[index].queue.names, 1)
 		}
 		else {
 			message.reply('No songs queued.')
@@ -101,7 +120,6 @@ client.on('message', message => {
 	}
 
 	if (_.includes(string, '!resume')) {
-		message.delete()
 		var dispatcher = message.guild.voiceConnection.dispatcher
 		if (dispatcher.paused) {
 			dispatcher.resume()
@@ -109,7 +127,6 @@ client.on('message', message => {
 	}
 
 	if (_.includes(string, '!pause')) {
-		message.delete()
 		var dispatcher = message.guild.voiceConnection.dispatcher
 		if (!dispatcher.paused) {
 			dispatcher.pause()
@@ -117,13 +134,11 @@ client.on('message', message => {
 	}
 
 	if (_.includes(string, '!check')) {
-		message.delete()
 		var str = `${servers[index].queue.names.length} songs queued \n${_.join(servers[index].queue.names, '\n')}`
 		message.reply(str)
 	}
 
 	if (_.includes(string, '!remove')) {
-		message.delete()
 		var num = servers[index].queue.ids.length
 		if (num > 0) {
 			message.reply(`Song removed:  + ${servers[index].queue.names[num - 1]}`)
@@ -275,37 +290,34 @@ function listVideos(videos) {
 	})
 }
 
-function playSong(message, url) {
-	ytdl.getInfo(url, (e, info) => {
-		if (e) {
-			console.log(e)
-			return
-		}
-		else {
-			var audioFormats = ytdl.filterFormats(info.formats, 'audioonly');
-			var fileurl = audioFormats[0].url
-			request
-				.get(fileurl)
-				.on('error', err => {
-					console.log(err)
-					return
-				})
-				.on('end', () => {
-					var streamOptions = { seek: 0, volume: 0.2, passes: 1, bitrate: 64 * 1024 }
-					var connection = message.member.voiceChannel.connection
-					var sd = connection.playFile(`./public/${message.guild.id}.${audioFormats[0].container}`, streamOptions)
-					sd.on('error', error => {
-						console.log(error)
-						return
-					})
-					sd.on('end', () => {
-						message.reply('!next')
-					})
-					sd.on('start', () => {
-						console.log('START')
-					})
-				})
-				.pipe(fs.createWriteStream(`./public/${message.guild.id}.${audioFormats[0].container}`))
-		}
+function getInfo(url) {
+	return new Promise((resolve, reject) => {
+		ytdl.getInfo(url, (err, info) => {
+			if (err) {
+				console.log(err)
+				reject(err)
+			}
+			else {
+				resolve(ytdl.filterFormats(info.formats, 'audioonly'))
+			}
+		})
+	})
+}
+
+function playSong(message, audioFormats) {
+	var fileurl = audioFormats[0].url
+	return new Promise((resolve, reject) => {
+		request
+			.get(fileurl)
+			.on('error', err => {
+				console.log(err)
+				reject(err)
+			})
+			.on('end', () => {
+				var streamOptions = { seek: 0, volume: 0.2, passes: 1, bitrate: 64 * 1024 }
+				var connection = message.member.voiceChannel.connection
+				resolve(connection.playFile(`./public/${message.guild.id}.${audioFormats[0].container}`, streamOptions))
+			})
+			.pipe(fs.createWriteStream(`./public/${message.guild.id}.${audioFormats[0].container}`))
 	})
 }
