@@ -74,11 +74,9 @@ client.on('message', message => {
 						if (!dispatcher) {
 							var url = `http://www.youtube.com/watch?v=${id}`
 							playSong(message, url)
-								.then(() => {
-									message.reply('Playing: ' + servers[index].queue.names[0])
-									_.drop(servers[index].queue.ids, 1)
-									_.drop(servers[index].queue.names, 1)
-								})
+							message.reply('Playing: ' + servers[index].queue.names[0])
+							_.drop(servers[index].queue.ids, 1)
+							_.drop(servers[index].queue.names, 1)
 						}
 					})
 			})
@@ -93,11 +91,9 @@ client.on('message', message => {
 				dispatcher.end()
 			}
 			playSong(message, url)
-				.then(() => {
-					message.reply('Playing: ' + servers[index].queue.names[0])
-					_.drop(servers[index].queue.ids, 1)
-					_.drop(servers[index].queue.names, 1)
-				})
+			message.reply('Playing: ' + servers[index].queue.names[0])
+			_.drop(servers[index].queue.ids, 1)
+			_.drop(servers[index].queue.names, 1)
 		}
 		else {
 			message.reply('No songs queued.')
@@ -280,36 +276,37 @@ function listVideos(videos) {
 }
 
 function playSong(message, url) {
-	return new Promise((resolve, reject) => {
-		ytdl.getInfo(url, (e, info) => {
-			if (e) {
-				console.log(e)
-				reject(e)
-			}
-			else {
-				var audioFormats = ytdl.filterFormats(info.formats, 'audioonly');
-				var fileurl = audioFormats[0].url
-				request
-					.get(fileurl)
-					.on('error', err => {
-						console.log(err)
+	ytdl.getInfo(url, (e, info) => {
+		if (e) {
+			console.log(e)
+			return
+		}
+		else {
+			var audioFormats = ytdl.filterFormats(info.formats, 'audioonly');
+			var fileurl = audioFormats[0].url
+			request
+				.get(fileurl)
+				.on('error', err => {
+					console.log(err)
+					return
+				})
+				.on('end', () => {
+					var streamOptions = { seek: 0, volume: 0.2, passes: 1, bitrate: 64 * 1024 }
+					var connection = message.member.voiceChannel.connection
+					var sd = connection.playFile(`./public/${message.guild}.${audioFormats[0].container}`, streamOptions)
+					sd.on('error', error => {
+						console.log(error)
+						return
 					})
-					.on('end', () => {
-						var streamOptions = { seek: 0, volume: 0.2, passes: 1, bitrate: 64 * 1024 }
-						var connection = message.member.voiceChannel.connection
-						var sd = connection.playFile(`./public/${message.guild}.${audioFormats[0].container}`, streamOptions)
-						sd.on('error', error => {
-							reject(error)
-						})
-						sd.on('end', () => {
-							console.log('END')
-						})
-						sd.on('start', () => {
-							resolve()
-						})
+					sd.on('end', () => {
+						console.log('END')
 					})
-					.pipe(fs.createWriteStream(`./public/${message.guild}.${audioFormats[0].container}`))
-			}
-		})
+					sd.on('start', () => {
+						console.log('START')
+					})
+				})
+				.pipe(fs.createWriteStream(`./public/${message.guild}.${audioFormats[0].container}`))
+		}
 	})
+})
 }
