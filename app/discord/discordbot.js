@@ -305,8 +305,8 @@ function getInfo(url) {
 }
 
 function playSong(message, audioFormats) {
-	var fileurl = audioFormats[0].url
 	return new Promise((resolve, reject) => {
+		var fileurl = audioFormats[0].url
 		request
 			.get(fileurl)
 			.on('error', err => {
