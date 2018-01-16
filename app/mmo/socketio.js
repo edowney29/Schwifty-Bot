@@ -184,16 +184,17 @@ function startServer() {
 
 	setInterval(() => {
 		io.emit('time', new Date().toTimeString())
-		enemyUpdate()
+		//enemyUpdate()
 
 		if (counter == 200) {
-			setDatabase()
+			//setDatabase()
 			counter = 0
 		}
 		counter++
 	}, 50)
 }
 
+/*
 function setDatabase() {
 	var usersDB = database.collection('users')
 	_.forEach(clients, client => {
@@ -212,7 +213,9 @@ function setDatabase() {
 			})
 	})
 }
+*/
 
+/*
 function enemyUpdate() {
 	if (enemies.length < 10) {
 		currentEnemy = {
@@ -261,6 +264,7 @@ function enemyUpdate() {
 		}
 	}
 }
+*/
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
 function getRandomRange(number) {
