@@ -45,7 +45,6 @@ function startServer() {
 
 		function playerRegister(json) {
 			// username, email, passhash, salt, status, token, date
-			console.log(json)
 			var data = JSON.parse(json)
 
 			var newUser = {
