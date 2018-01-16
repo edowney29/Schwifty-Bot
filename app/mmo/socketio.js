@@ -38,10 +38,10 @@ function startServer() {
 		socket.on('player-attack', playerAttack)
 
 		/** SOCKET EVENTS */
-		socket.on('test', () => { return })
-		socket.on('connecting', () => { console.log(`[RECV - New connection] : ${socket}`) })
+		socket.on('test', () => { console.log('[TEST]') })
+		socket.on('connecting', () => { console.log(`[CONNECTING]`) })
 		socket.on('disconnect', disconnect)
-		socket.on('error', (error) => { console.log(`[RECV - Server error] : ${playerToken} : ${error}`) })
+		socket.on('error', (error) => { console.log(`[ERROR] : ${playerToken} : ${error}`) })
 
 		function playerRegister(json) {
 			// username, email, passhash, salt, status, token, date
@@ -77,9 +77,8 @@ function startServer() {
 			// username, email, passhash, salt, status, token, date
 			var data = JSON.parse(json)
 
-			var client = _.find(clients, { username: data.username })
-			// Is client already logged in?
-			if (client) {
+			var index = _.findIndex(clients, { username: data.username })
+			if (index >= 0) {
 				var json = jsonify.User(null, null, null, null, null, 'logged')
 				socket.emit('player-menu', json)
 				return
@@ -174,7 +173,7 @@ function startServer() {
 			// reason
 			var index = _.findIndex(clients, { token: playerToken })
 			if (index >= 0) {
-				console.log(`[RECV - Player disconnected] : ${clients[index].username} : ${reason}`)
+				console.log(`[DISCONNECT] : ${clients[index].username} : ${reason}`)
 				var json = jsonify.User(clients[index].username, null, null, null, null)
 				socket.broadcast.emit('other-player-disconnected', json)
 				_.remove(clients, { token: playerToken })
