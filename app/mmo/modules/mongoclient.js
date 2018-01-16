@@ -27,7 +27,7 @@ module.exports.playerRegister = (newUser) => {
             if (err) reject('error')
             if (doc) reject('duplicate')
             else {
-                usersDB.insertOne(newUser, (err, res) => {
+                users.insertOne(newUser, (err, res) => {
                     if (err) reject('error')
                     resolve('registered')
                 })
