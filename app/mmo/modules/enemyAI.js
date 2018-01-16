@@ -5,6 +5,7 @@ module.exports.checkMove = checkMove
 module.exports.getDistance = getDistance
 module.exports.getRadian = getRadian
 module.exports.atan2_approximation2 = atan2_approximation2
+module.exports.getRandomRange = getRandomRange
 
 function getDistance(x1, y1, x2, y2) {
 	var distance = 0.0
@@ -68,4 +69,13 @@ function atan2_approximation2(x, y) {
 		if (y < 0.0) return atan - PI_FLOAT
 	}
 	return atan
+}
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+function getRandomRange(number) {
+	var min = number - 100
+	var max = number + 100
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
 }

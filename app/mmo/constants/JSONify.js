@@ -1,5 +1,3 @@
-const uuidv1 = require('uuid/v1')
-
 module.exports.User = (username, email, passhash, salt, status) => {
     var json = {
         username,
