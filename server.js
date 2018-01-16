@@ -4,8 +4,8 @@ const socketIO = require('socket.io')
 const path = require('path')
 const _ = require('lodash')
 
-const discord = require('./app/discord/discordbot.js')
-const socket = require('./app/mmo/socketio.js')
+const discord = require('./app/discord/discordbot')
+const socket = require('./app/mmo/socketio')
 
 const PORT = process.env.PORT || 3000;
 const INDEX = _.join(__dirname, 'index.html')
