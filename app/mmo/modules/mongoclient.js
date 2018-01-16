@@ -2,15 +2,14 @@ const MongoClient = require('mongodb').MongoClient
 
 const MONGO_URI = process.env.MONGODB_URI
 
-var database, users
+var users
 
 module.exports.setMongoClient = () => {
     return new Promise((resolve, reject) => {
         MongoClient.connect(MONGO_URI, (err, db) => {
             if (err) reject(err)
             console.log('Connected to mongo')
-            database = db
-            setupTables()
+            users = db.collection('users')
             resolve()
         })
     })
@@ -18,7 +17,6 @@ module.exports.setMongoClient = () => {
 
 module.exports.playerRegister = (newUser) => {
     return new Promise((resolve, reject) => {
-        var usersDB = database.collection('users')
         users.findOne({
             $or: [{
                 username: newUser.username
@@ -59,9 +57,4 @@ module.exports.startUp = (username) => {
             if (doc) resolve(doc)
         })
     })
-}
-
-
-function setupTables() {
-    users = database.collection('users')
 }
