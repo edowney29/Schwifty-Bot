@@ -8,7 +8,7 @@ const discord = require('./app/discord/discordbot')
 const socket = require('./app/mmo/socketio')
 
 const PORT = process.env.PORT || 3000;
-const INDEX = _.join(__dirname, 'index.html')
+const INDEX = path.join(__dirname, 'index.html')
 
 const server = express()
   .use((req, res) => res.sendFile(INDEX))
