@@ -38,7 +38,7 @@ function startServer() {
 		socket.on('player-attack', playerAttack)
 
 		/** SOCKET EVENTS */
-		socket.on('test')
+		socket.on('test', () => { return })
 		socket.on('connecting', () => { console.log(`[RECV - New connection] : ${socket}`) })
 		socket.on('disconnect', disconnect)
 		socket.on('error', (error) => { console.log(`[RECV - Server error] : ${playerToken} : ${error}`) })
