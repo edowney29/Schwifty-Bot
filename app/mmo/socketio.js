@@ -34,7 +34,7 @@ function startServer() {
 
 		/** NETWORK PLAY */
 		socket.on('start-up', startUp)
-		socket.on('player-message', message)
+		socket.on('player-message', playerMessage)
 		socket.on('player-attack', playerAttack)
 
 		/** SOCKET EVENTS */
@@ -146,7 +146,7 @@ function startServer() {
 			}
 		}
 
-		function message(json) {
+		function playerMessage(json) {
 			// token, username, message
 			var data = JSON.parse(json)
 
