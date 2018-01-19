@@ -143,7 +143,7 @@ function startServer() {
 
 					data.token = null
 					json = JSON.stringify(data)
-					io.in(client.room).emit('player-move', json)
+					io.in(clients[index].room).emit('player-move', json)
 				}
 			}
 		}
@@ -157,7 +157,7 @@ function startServer() {
 			if (index >= 0) {
 				data.token = null
 				json = JSON.stringify(data)
-				io.in(client.room).emit('player-message', json)
+				io.in(clients[index].room).emit('player-message', json)
 			}
 		}
 
@@ -170,7 +170,7 @@ function startServer() {
 			if (index >= 0) {
 				data.token = null
 				json = JSON.stringify(data)
-				io.in(client.room).emit('player-attack', json)
+				io.in(clients[index].room).emit('player-attack', json)
 			}
 		}
 
