@@ -176,7 +176,7 @@ function startServer() {
 
 		function disconnect(reason) {
 			// reason
-			console.log(`[DISCONNECT] : ${data.username}`)
+			console.log(`[DISCONNECT] : ${playerToken}`)
 
 			var index = _.findIndex(clients, { token: playerToken })
 			if (index >= 0) {
