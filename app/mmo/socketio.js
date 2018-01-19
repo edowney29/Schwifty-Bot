@@ -99,32 +99,31 @@ function startServer() {
 		}
 
 		function startUp(json) {
-			// username, email, positionX, positionY
+			// token, username, email, positionX, positionY
 			var data = JSON.parse(json)
 			console.log(`[START] : ${data.username}`)
 
-			if (playerToken == data.token) {
-				mongo.playerLogin(data.username)
-					.then(doc => {
-						var client = {
-							token: data.token,
-							username: doc.username,
-							email: doc.email,
-							positionX: doc.positionX,
-							positionY: doc.positionY,
-							world: null,
-							zone: null,
-							room: 'start'
-						}
-						var json = jsonify.User(client.username, client.email, client.positionx, client.positiony)
-						socket.join(client.room);
-						socket.emit('start-up', json)
-						clients.push(client)
-					})
-					.catch(err => {
+			playerToken = data.token
+			mongo.playerLogin(data.username)
+				.then(doc => {
+					var client = {
+						token: data.token,
+						username: doc.username,
+						email: doc.email,
+						positionX: doc.positionX,
+						positionY: doc.positionY,
+						world: null,
+						zone: null,
+						room: 'start'
+					}
+					var json = jsonify.User(client.username, client.email, client.positionx, client.positiony)
+					socket.join(client.room);
+					socket.emit('start-up', json)
+					clients.push(client)
+				})
+				.catch(err => {
 
-					})
-			}
+				})
 		}
 
 		function playerMove(json) {
