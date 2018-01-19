@@ -1,5 +1,6 @@
-module.exports.User = (username, email, passhash, salt, status) => {
+module.exports.User = (token, username, email, passhash, salt, status) => {
     var json = {
+        token,
         username,
         email,
         passhash,

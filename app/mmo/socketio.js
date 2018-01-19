@@ -62,12 +62,12 @@ function startServer() {
 
 			mongo.playerRegister(newUser)
 				.then(status => {
-					var json = jsonify.User(null, null, null, null, null, status)
+					var json = jsonify.User(null, null, null, null, null, null, status)
 					socket.emit('player-menu', json)
 					// Add api console log handler
 				})
 				.catch(status => {
-					var json = jsonify.User(null, null, null, null, null, status)
+					var json = jsonify.User(null, null, null, null, null, null, status)
 					socket.emit('player-menu', json)
 					// Add api console log handler
 				})
@@ -80,7 +80,7 @@ function startServer() {
 
 			var index = _.findIndex(clients, { username: data.username })
 			if (index >= 0) {
-				var json = jsonify.User(null, null, null, null, null, 'logged')
+				var json = jsonify.User(null, null, null, null, null, null, 'logged')
 				socket.emit('player-menu', json)
 				return
 			}
@@ -88,12 +88,13 @@ function startServer() {
 			mongo.playerLogin(data.username)
 				.then(doc => {
 					playerToken = uuidv1()
-					var json = jsonify.User(doc.username, doc.email, doc.passhash, doc.salt, 'login')
-					json.token = playerToken;
+					var json = jsonify.User(playerToken, doc.username, doc.email, doc.passhash, doc.salt, 'login')
+
+					console.log(json)
 					socket.emit('player-menu', json)
 				})
 				.catch(status => {
-					var json = jsonify.User(null, null, null, null, status)
+					var json = jsonify.User(null, null, null, null, null, status)
 					socket.emit('player-menu', json)
 				})
 		}
@@ -116,7 +117,7 @@ function startServer() {
 						zone: null,
 						room: 'start'
 					}
-					var json = jsonify.User(client.username, client.email, client.positionx, client.positiony)
+					var json = jsonify.User(null, client.username, null, client.positionx, client.positiony, null)
 					socket.join(client.room);
 					socket.emit('start-up', json)
 					clients.push(client)
@@ -180,7 +181,7 @@ function startServer() {
 			var index = _.findIndex(clients, { token: playerToken })
 			if (index >= 0) {
 				console.log(`[DISCONNECT] : ${clients[index].username} : ${reason}`)
-				var json = jsonify.User(clients[index].username, null, null, null, null)
+				var json = jsonify.User(null, clients[index].username, null, null, null, null)
 				socket.broadcast.emit('other-player-disconnected', json)
 				_.remove(clients, { token: playerToken })
 			}
