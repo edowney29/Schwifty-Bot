@@ -176,32 +176,22 @@ client.on('message', message => {
 		var index = msg.indexOf('TZ')
 
 		var time = msg[index + 1].split(':')
-		var hour = parseInt(time[0])
+		var hours = parseInt(time[0])
 		var minutes = parseInt(time[1])
 
 		var tz = msg[index + 2]
 		var zone = getZone(tz)
 
-		/*
-		var now = new Date()
-		// create date object with user inputted time in timezone
-		var date = moment_tz.tz(now.getFullYear() + '-' +
-			(now.getMonth() < 10 ? '0' : '') + now.getMonth() + '-' +
-			(now.getDate() < 10 ? '0' : '') + now.getDate() + ' ' +
-			(hour < 10 ? '0' : '') + hour + ':' +
-			(minutes < 10 ? '0' : '') + minutes,
-			zone)
-		*/
-
-		var now = moment({ years: 2010, months: 10, date: 10, hours: hour + 12, minutes: minutes })
-		var date = moment_tz.tz(now.toISOString(), zone);
-
 		if (zone == null) {
 			message.reply('Unknown Timezone')
 			return
-		} else {
-			console.log(date)
 		}
+
+		// create date object with user inputted time in timezone
+		var now = moment_tz.tz(moment().utc(), zone)
+		var date = moment(now)
+		date.set('hours', hours + 12)
+		date.set('minutes', minutes)
 
 		// tz mutates date, does not return new one
 		message.reply(
