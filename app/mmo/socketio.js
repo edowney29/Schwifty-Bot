@@ -39,13 +39,13 @@ function startServer() {
 
 		/** SOCKET EVENTS */
 		socket.on('test', () => { console.log('[TEST]') })
-		socket.on('connecting', () => { console.log(`[CONNECTING]`) })
 		socket.on('disconnect', disconnect)
 		socket.on('error', (error) => { console.log(`[ERROR] : ${playerToken} : ${error}`) })
 
 		function playerRegister(json) {
 			// username, email, passhash, salt, status, token, date
 			var data = JSON.parse(json)
+			console.log(`[REGISTER] : ${data.username}`)
 
 			var newUser = {
 				username: data.username,
@@ -76,6 +76,7 @@ function startServer() {
 		function playerLogin(json) {
 			// username, email, passhash, salt, status, token, date
 			var data = JSON.parse(json)
+			console.log(`[LOGIN] : ${data.username}`)
 
 			var index = _.findIndex(clients, { username: data.username })
 			if (index >= 0) {
@@ -100,6 +101,7 @@ function startServer() {
 		function startUp(json) {
 			// username, email, positionX, positionY
 			var data = JSON.parse(json)
+			console.log(`[START] : ${data.username}`)
 
 			if (playerToken == data.token) {
 				mongo.playerLogin(data.username)
@@ -128,6 +130,7 @@ function startServer() {
 		function playerMove(json) {
 			// token, username, positionX, positionY, playerMoving, moveH, moveV, lastMoveX, lastMoveY, world, zone
 			var data = JSON.parse(json)
+			console.log(`[MOVE] : ${data.username}`)
 
 			if (playerToken == data.token) {
 				var index = _.findIndex(clients, { token: token })
@@ -148,6 +151,7 @@ function startServer() {
 		function playerMessage(json) {
 			// token, username, message
 			var data = JSON.parse(json)
+			console.log(`[MESSAGE] : ${data.username}`)
 
 			var index = _.findIndex(clients, { token: data.token })
 			if (index >= 0) {
@@ -160,6 +164,7 @@ function startServer() {
 		function playerAttack(json) {
 			// token, username, attacking
 			var data = JSON.parse(json)
+			console.log(`[ATTACK] : ${data.username}`)
 
 			var index = _.findIndex(clients, { token: data.token })
 			if (index >= 0) {
@@ -171,6 +176,8 @@ function startServer() {
 
 		function disconnect(reason) {
 			// reason
+			console.log(`[DISCONNECT] : ${data.username}`)
+
 			var index = _.findIndex(clients, { token: playerToken })
 			if (index >= 0) {
 				console.log(`[DISCONNECT] : ${clients[index].username} : ${reason}`)
