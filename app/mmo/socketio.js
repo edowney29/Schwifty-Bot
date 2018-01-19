@@ -134,7 +134,7 @@ function startServer() {
 			console.log(`[MOVE] : ${data.username}`)
 
 			if (playerToken == data.token) {
-				var index = _.findIndex(clients, { token: token })
+				var index = _.findIndex(clients, { token: data.token })
 				if (index >= 0) {
 					clients[index].username = data.username
 					clients[index].positionx = data.positionX
