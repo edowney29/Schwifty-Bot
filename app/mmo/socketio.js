@@ -34,6 +34,7 @@ function startServer() {
 
 		/** NETWORK PLAY */
 		socket.on('start-up', startUp)
+		socket.on('player-move', playerMove)
 		socket.on('player-message', playerMessage)
 		socket.on('player-attack', playerAttack)
 
