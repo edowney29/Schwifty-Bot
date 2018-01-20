@@ -121,15 +121,19 @@ client.on('message', message => {
 
 	if (_.includes(string, '!resume')) {
 		var dispatcher = message.guild.voiceConnection.dispatcher
-		if (dispatcher.paused) {
-			dispatcher.resume()
+		if (dispatcher) {
+			if (dispatcher.paused) {
+				dispatcher.resume()
+			}
 		}
 	}
 
 	if (_.includes(string, '!pause')) {
 		var dispatcher = message.guild.voiceConnection.dispatcher
-		if (!dispatcher.paused) {
-			dispatcher.pause()
+		if (dispatcher) {
+			if (!dispatcher.paused) {
+				dispatcher.pause()
+			}
 		}
 	}
 
