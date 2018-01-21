@@ -2,3 +2,5 @@
 *.env
 *.bin
 */node_modules
+*.webm
+*.mp3
