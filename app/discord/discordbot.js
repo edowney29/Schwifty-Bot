@@ -7,6 +7,7 @@ const ytdl = require('ytdl-core')
 const googleapis = require('googleapis')
 const request = require('request')
 const fs = require('fs')
+const levenshtein = require('fast-levenshtein')
 
 const DISCORD_KEY = process.env.DISCORD_KEY
 const GOOGLE_KEY = process.env.GOOGLE_KEY
@@ -56,14 +57,17 @@ client.on('message', message => {
 			.then(videos => {
 				listVideos(videos)
 					.then(list => {
-						var views = 0, id = '', name = ''
+
+						var score = 0, id = '', name = ''
 						_.forEach(list.items, item => {
-							if (views < parseInt(item.statistics.viewCount)) {
-								views = parseInt(item.statistics.viewCount)
+							var s = levenshtein.get(videoTitle, item.snippet.localized.title)
+							if (s > score) {
+								score = s
 								id = item.id
-								name = item.snippet.title
+								name = item.snippet.localized.title
 							}
 						})
+
 						servers[index].queue.ids.push(id)
 						servers[index].queue.names.push(name)
 						message.reply(`Song queued: http://www.youtube.com/watch?v=${id}`)
@@ -76,7 +80,7 @@ client.on('message', message => {
 									playSong(message, audioFormats)
 										.then(sd => {
 											sd.on('end', () => {
-												message.reply('!next')
+												//message.reply('!next')
 											})
 											sd.on('start', () => {
 												message.reply('Playing: ' + servers[index].queue.names[0])
@@ -249,7 +253,7 @@ function searchVideos(videoTitle) {
 		youtube.search.list({
 			part: 'snippet',
 			q: videoTitle,
-			maxResults: 50,
+			maxResults: 10,
 			type: 'video'
 		}, (err, res) => {
 			if (err) {
@@ -292,6 +296,7 @@ function getInfo(url) {
 				reject(err)
 			}
 			else {
+
 				resolve(ytdl.filterFormats(info.formats, 'audioonly'))
 			}
 		})
