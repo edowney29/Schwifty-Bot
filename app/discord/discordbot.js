@@ -50,95 +50,102 @@ client.on('message', message => {
 	}
 
 	if (_.includes(string, '!play')) {
-		var videoTitle = _.split(string, ' ')
-		videoTitle = _.drop(videoTitle, 1)
-		videoTitle = _.join(videoTitle, ' ')
-		searchVideos(videoTitle)
-			.then(videos => {
-				listVideos(videos)
-					.then(list => {
+		if (message.member.voiceChannel) {
+			var videoTitle = _.split(string, ' ')
+			videoTitle = _.drop(videoTitle, 1)
+			videoTitle = _.join(videoTitle, ' ')
+			searchVideos(videoTitle)
+				.then(videos => {
+					listVideos(videos)
+						.then(list => {
 
-						var score = 0, id = '', name = ''
-						_.forEach(list.items, item => {
-							var s = levenshtein.get(videoTitle, item.snippet.localized.title)
-							if (s > score) {
-								score = s
-								id = item.id
-								name = item.snippet.localized.title
+							var score = 0, id = '', name = ''
+							_.forEach(list.items, item => {
+								var s = levenshtein.get(videoTitle, item.snippet.localized.title)
+								if (s > score) {
+									score = s
+									id = item.id
+									name = item.snippet.localized.title
+								}
+							})
+
+							servers[index].queue.ids.push(id)
+							servers[index].queue.names.push(name)
+							message.reply(`Song queued: http://www.youtube.com/watch?v=${id}`)
+
+							var dispatcher = message.guild.voiceConnection.dispatcher
+							if (!dispatcher) {
+								var url = `http://www.youtube.com/watch?v=${id}`
+								getInfo(url)
+									.then(audioFormats => {
+										playSong(message, audioFormats)
+											.then(sd => {
+												sd.on('end', () => {
+													//message.reply('!next')
+												})
+												sd.on('start', () => {
+													message.reply('Playing: ' + servers[index].queue.names[0])
+													servers[index].queue.ids = _.drop(servers[index].queue.ids, 1)
+													servers[index].queue.names = _.drop(servers[index].queue.names, 1)
+												})
+											})
+									})
 							}
 						})
-
-						servers[index].queue.ids.push(id)
-						servers[index].queue.names.push(name)
-						message.reply(`Song queued: http://www.youtube.com/watch?v=${id}`)
-
-						var dispatcher = message.guild.voiceConnection.dispatcher
-						if (!dispatcher) {
-							var url = `http://www.youtube.com/watch?v=${id}`
-							getInfo(url)
-								.then(audioFormats => {
-									playSong(message, audioFormats)
-										.then(sd => {
-											sd.on('end', () => {
-												//message.reply('!next')
-											})
-											sd.on('start', () => {
-												message.reply('Playing: ' + servers[index].queue.names[0])
-												servers[index].queue.ids = _.drop(servers[index].queue.ids, 1)
-												servers[index].queue.names = _.drop(servers[index].queue.names, 1)
-											})
-										})
-								})
-						}
-					})
-			})
+				})
+		}
 	}
 
 	if (_.includes(string, '!next')) {
-		if (servers[index].queue.ids.length > 0) {
-			var url = `http://www.youtube.com/watch?v=${servers[index].queue.ids[0]}`
-			var dispatcher = message.guild.voiceConnection.dispatcher
-			if (dispatcher) {
-				if (!dispatcher.destroyed) {
-					dispatcher.end()
+		if (message.member.voiceChannel) {
+			if (servers[index].queue.ids.length > 0) {
+				var url = `http://www.youtube.com/watch?v=${servers[index].queue.ids[0]}`
+				var dispatcher = message.guild.voiceConnection.dispatcher
+				if (dispatcher) {
+					if (!dispatcher.destroyed) {
+						dispatcher.end()
+					}
+					getInfo(url)
+						.then(audioFormats => {
+							playSong(message, audioFormats)
+								.then(sd => {
+									sd.on('end', () => {
+										//message.reply('!next')
+									})
+									sd.on('start', () => {
+										message.reply('Playing: ' + servers[index].queue.names[0])
+										servers[index].queue.ids = _.drop(servers[index].queue.ids, 1)
+										servers[index].queue.names = _.drop(servers[index].queue.names, 1)
+									})
+								})
+						})
 				}
-				getInfo(url)
-					.then(audioFormats => {
-						playSong(message, audioFormats)
-							.then(sd => {
-								sd.on('end', () => {
-									message.reply('!next')
-								})
-								sd.on('start', () => {
-									message.reply('Playing: ' + servers[index].queue.names[0])
-									servers[index].queue.ids = _.drop(servers[index].queue.ids, 1)
-									servers[index].queue.names = _.drop(servers[index].queue.names, 1)
-								})
-							})
-					})
 			}
-		}
-		else {
-			message.reply('No songs queued.')
 		}
 	}
 
 	if (_.includes(string, '!resume')) {
-		var dispatcher = message.guild.voiceConnection.dispatcher
-		if (dispatcher) {
-			if (dispatcher.paused) {
-				dispatcher.resume()
+		if (message.member.voiceChannel) {
+			var dispatcher = message.guild.voiceConnection.dispatcher
+			if (dispatcher) {
+				if (dispatcher.paused) {
+					dispatcher.resume()
+				}
 			}
 		}
+		message.delete()
 	}
 
 	if (_.includes(string, '!pause')) {
-		var dispatcher = message.guild.voiceConnection.dispatcher
-		if (dispatcher) {
-			if (!dispatcher.paused) {
-				dispatcher.pause()
+		if (message.member.voiceChannel) {
+			var dispatcher = message.guild.voiceConnection.dispatcher
+			if (dispatcher) {
+				if (!dispatcher.paused) {
+					dispatcher.pause()
+				}
 			}
 		}
+		message.delete()
 	}
 
 	if (_.includes(string, '!check')) {
