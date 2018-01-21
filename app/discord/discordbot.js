@@ -58,42 +58,32 @@ client.on('message', message => {
 				.then(videos => {
 					listVideos(videos)
 						.then(list => {
-
-							var score = 0, id = '', name = ''
-							_.forEach(list.items, item => {
-								var s = levenshtein.get(videoTitle, item.snippet.localized.title)
-								if (s > score) {
-									score = s
-									id = item.id
-									name = item.snippet.localized.title
-								}
-							})
-
-							servers[index].queue.ids.push(id)
-							servers[index].queue.names.push(name)
-							message.reply(`Song queued: http://www.youtube.com/watch?v=${id}`)
-
-							var dispatcher = message.guild.voiceConnection.dispatcher
-							if (!dispatcher) {
-								var url = `http://www.youtube.com/watch?v=${id}`
-								getInfo(url)
-									.then(audioFormats => {
-										playSong(message, audioFormats)
-											.then(sd => {
-												sd.on('end', () => {
-													//message.reply('!next')
-												})
-												sd.on('start', () => {
-													message.reply('Playing: ' + servers[index].queue.names[0])
-													servers[index].queue.ids = _.drop(servers[index].queue.ids, 1)
-													servers[index].queue.names = _.drop(servers[index].queue.names, 1)
-												})
+							sortSongSearch(index, list)
+								.then(score => {
+									var url = `http://www.youtube.com/watch?v=${servers[index].queue.ids.length - 1}`
+									message.reply(`Song queued: ${url} [${score * 100}% match]`)
+									var dispatcher = message.guild.voiceConnection.dispatcher
+									if (!dispatcher) {
+										getInfo(url)
+											.then(audioFormats => {
+												playSong(message, audioFormats)
+													.then(sd => {
+														sd.on('end', () => {
+															//message.reply('!next')
+														})
+														sd.on('start', () => {
+															message.reply('Playing: ' + servers[index].queue.names[0])
+															servers[index].queue.ids = _.drop(servers[index].queue.ids, 1)
+															servers[index].queue.names = _.drop(servers[index].queue.names, 1)
+														})
+													})
 											})
-									})
-							}
+									}
+								})
 						})
 				})
 		}
+		message.delete()
 	}
 
 	if (_.includes(string, '!next')) {
@@ -122,6 +112,7 @@ client.on('message', message => {
 				}
 			}
 		}
+		message.delete()
 	}
 
 	if (_.includes(string, '!resume')) {
@@ -151,6 +142,7 @@ client.on('message', message => {
 	if (_.includes(string, '!check')) {
 		var str = `${servers[index].queue.names.length} songs queued \n${_.join(servers[index].queue.names, '\n')}`
 		message.reply(str)
+		message.delete()
 	}
 
 	if (_.includes(string, '!remove')) {
@@ -160,6 +152,7 @@ client.on('message', message => {
 			_.drop(servers[index].queue.ids, 1)
 			_.drop(servers[index].queue.names, 1)
 		}
+		message.delete()
 	}
 
 	if (_.includes(string, 'magic') && _.includes(string, 'conch')) {
@@ -325,5 +318,29 @@ function playSong(message, audioFormats) {
 				resolve(connection.playFile(`./public/${message.guild.id}.${audioFormats[0].container}`, streamOptions))
 			})
 			.pipe(fs.createWriteStream(`./public/${message.guild.id}.${audioFormats[0].container}`))
+	})
+}
+
+function sortSongSearch(index, list) {
+	return new Promise((resolve, reject) => {
+		var score = 0, id = '', name = ''
+		_.forEach(list.items, item => {
+			var s = levenshtein.get(videoTitle, item.snippet.localized.title)
+			if (s > score) {
+				score = s
+				id = item.id
+				name = item.snippet.localized.title
+			}
+		})
+
+		if (s > 0) {
+			servers[index].queue.ids.push(id)
+			servers[index].queue.names.push(name)
+			resolve(s)
+		}
+		else {
+			reject(s)
+		}
+
 	})
 }
