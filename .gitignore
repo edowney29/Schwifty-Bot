@@ -1,3 +1,4 @@
 *.tlog
 *.env
 *.bin
+*/node_modules
