@@ -60,7 +60,7 @@ client.on('message', message => {
 						.then(list => {
 							sortSongSearch(index, videoTitle, list)
 								.then(score => {
-									var url = `http://www.youtube.com/watch?v=${servers[index].queue.ids.length - 1}`
+									var url = `http://www.youtube.com/watch?v=${servers[index].queue.ids[servers[index].queue.ids.length - 1]}`
 									message.reply(`Song queued: ${url} [${score}% match]`)
 									var dispatcher = message.guild.voiceConnection.dispatcher
 									if (!dispatcher) {
