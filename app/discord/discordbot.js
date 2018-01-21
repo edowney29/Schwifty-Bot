@@ -58,10 +58,10 @@ client.on('message', message => {
 				.then(videos => {
 					listVideos(videos)
 						.then(list => {
-							sortSongSearch(index, list)
+							sortSongSearch(index, videoTitle, list)
 								.then(score => {
 									var url = `http://www.youtube.com/watch?v=${servers[index].queue.ids.length - 1}`
-									message.reply(`Song queued: ${url} [${score * 100}% match]`)
+									message.reply(`Song queued: ${url} [${score}% match]`)
 									var dispatcher = message.guild.voiceConnection.dispatcher
 									if (!dispatcher) {
 										getInfo(url)
@@ -83,7 +83,6 @@ client.on('message', message => {
 						})
 				})
 		}
-		message.delete()
 	}
 
 	if (_.includes(string, '!next')) {
@@ -112,7 +111,6 @@ client.on('message', message => {
 				}
 			}
 		}
-		message.delete()
 	}
 
 	if (_.includes(string, '!resume')) {
@@ -124,7 +122,6 @@ client.on('message', message => {
 				}
 			}
 		}
-		message.delete()
 	}
 
 	if (_.includes(string, '!pause')) {
@@ -136,23 +133,24 @@ client.on('message', message => {
 				}
 			}
 		}
-		message.delete()
 	}
 
 	if (_.includes(string, '!check')) {
-		var str = `${servers[index].queue.names.length} songs queued \n${_.join(servers[index].queue.names, '\n')}`
-		message.reply(str)
-		message.delete()
+		if (message.member.voiceChannel) {
+			var str = `${servers[index].queue.names.length} songs queued \n${_.join(servers[index].queue.names, '\n')}`
+			message.reply(str)
+		}
 	}
 
 	if (_.includes(string, '!remove')) {
-		var num = servers[index].queue.ids.length
-		if (num > 0) {
-			message.reply(`Song removed:  + ${servers[index].queue.names[num - 1]}`)
-			_.drop(servers[index].queue.ids, 1)
-			_.drop(servers[index].queue.names, 1)
+		if (message.member.voiceChannel) {
+			var num = servers[index].queue.ids.length
+			if (num > 0) {
+				message.reply(`Song removed:  + ${servers[index].queue.names[num - 1]}`)
+				_.drop(servers[index].queue.ids, 1)
+				_.drop(servers[index].queue.names, 1)
+			}
 		}
-		message.delete()
 	}
 
 	if (_.includes(string, 'magic') && _.includes(string, 'conch')) {
@@ -321,7 +319,7 @@ function playSong(message, audioFormats) {
 	})
 }
 
-function sortSongSearch(index, list) {
+function sortSongSearch(index, videoTitle, list) {
 	return new Promise((resolve, reject) => {
 		var score = 0, id = '', name = ''
 		_.forEach(list.items, item => {
@@ -333,13 +331,13 @@ function sortSongSearch(index, list) {
 			}
 		})
 
-		if (s > 0) {
+		if (score > 0) {
 			servers[index].queue.ids.push(id)
 			servers[index].queue.names.push(name)
-			resolve(s)
+			resolve(score)
 		}
 		else {
-			reject(s)
+			reject(score)
 		}
 
 	})
