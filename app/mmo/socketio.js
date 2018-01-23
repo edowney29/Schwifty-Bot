@@ -41,9 +41,9 @@ function startServer() {
 		/** SOCKET EVENTS */
 		socket.on('test', () => { console.log('[TEST]') })
 		socket.on('disconnect', disconnect)
-		socket.on('error', (error) => { console.log(`[ERROR] : ${playerToken} : ${error}`) })
+		socket.on('error', error => { console.log(`[ERROR] : ${playerToken} : ${error}`) })
 
-		function playerRegister(json) {
+		var playerRegister = async (json) => {
 			// username, email, passhash, salt, status, token, date
 			var data = JSON.parse(json)
 			console.log(`[REGISTER] : ${data.username}`)
@@ -61,20 +61,20 @@ function startServer() {
 				updatedAt: Date.now().toString()
 			}
 
-			mongo.playerRegister(newUser)
-				.then(status => {
-					var json = jsonify.User(null, null, null, null, null, null, status)
-					socket.emit('player-menu', json)
-					// Add api console log handler
-				})
-				.catch(status => {
-					var json = jsonify.User(null, null, null, null, null, null, status)
-					socket.emit('player-menu', json)
-					// Add api console log handler
-				})
+			try {
+				var status = await mongo.playerRegister(newUser)
+				var json = jsonify.User(null, null, null, null, null, null, status)
+				socket.emit('player-menu', json)
+				// Add api console log handler
+			}
+			catch (err) {
+				var json = jsonify.User(null, null, null, null, null, null, err)
+				socket.emit('player-menu', json)
+				// Add api console log handler
+			}
 		}
 
-		function playerLogin(json) {
+		var playerLogin = async (json) => {
 			// username, email, passhash, salt, status, token, date
 			var data = JSON.parse(json)
 			console.log(`[LOGIN] : ${data.username}`)
@@ -86,49 +86,46 @@ function startServer() {
 				return
 			}
 
-			mongo.playerLogin(data.username)
-				.then(doc => {
-					playerToken = uuidv1()
-					var json = jsonify.User(playerToken, doc.username, doc.email, doc.passhash, doc.salt, 'login')
-
-					console.log(json)
-					socket.emit('player-menu', json)
-				})
-				.catch(status => {
-					var json = jsonify.User(null, null, null, null, null, status)
-					socket.emit('player-menu', json)
-				})
+			try {
+				var doc = await mongo.playerLogin(data.username)
+				playerToken = uuidv1()
+				var json = jsonify.User(playerToken, doc.username, doc.email, doc.passhash, doc.salt, 'login')
+				socket.emit('player-menu', json)
+			} catch (status) {
+				var json = jsonify.User(null, null, null, null, null, status)
+				socket.emit('player-menu', json)
+			}
 		}
 
-		function startUp(json) {
+		var startUp = async (json) => {
 			// token, username, email, positionX, positionY
 			var data = JSON.parse(json)
 			console.log(`[START] : ${data.username}`)
-
 			playerToken = data.token
-			mongo.playerLogin(data.username)
-				.then(doc => {
-					var client = {
-						token: data.token,
-						username: doc.username,
-						email: doc.email,
-						positionX: doc.positionX,
-						positionY: doc.positionY,
-						world: null,
-						zone: null,
-						room: 'start'
-					}
-					var json = jsonify.User(null, client.username, null, client.positionx, client.positiony, null)
-					socket.join(client.room);
-					socket.emit('start-up', json)
-					clients.push(client)
-				})
-				.catch(err => {
+			
+			try {
+				var doc = await mongo.playerLogin(data.username)
+				var client = {
+					token: data.token,
+					username: doc.username,
+					email: doc.email,
+					positionX: doc.positionX,
+					positionY: doc.positionY,
+					world: null,
+					zone: null,
+					room: 'start'
+				}
+				var json = jsonify.User(null, client.username, null, client.positionx, client.positiony, null)
+				socket.join(client.room);
+				socket.emit('start-up', json)
+				clients.push(client)
+			}
+			catch (err) {
 
-				})
+			}
 		}
 
-		function playerMove(json) {
+		var playerMove = async (json) => {
 			// token, username, positionX, positionY, playerMoving, moveH, moveV, lastMoveX, lastMoveY, world, zone
 			var data = JSON.parse(json)
 			console.log(`[MOVE] : ${data.username}`)
@@ -149,7 +146,7 @@ function startServer() {
 			}
 		}
 
-		function playerMessage(json) {
+		var playerMessage = async (json) => {
 			// token, username, message
 			var data = JSON.parse(json)
 			console.log(`[MESSAGE] : ${data.username}`)
@@ -162,7 +159,7 @@ function startServer() {
 			}
 		}
 
-		function playerAttack(json) {
+		var playerAttack = async (json) => {
 			// token, username, attacking
 			var data = JSON.parse(json)
 			console.log(`[ATTACK] : ${data.username}`)
@@ -175,7 +172,7 @@ function startServer() {
 			}
 		}
 
-		function disconnect(reason) {
+		var disconnect = async (reason) => {
 			// reason
 			console.log(`[DISCONNECT] : ${playerToken}`)
 
@@ -183,7 +180,7 @@ function startServer() {
 			if (index >= 0) {
 				console.log(`[DISCONNECT] : ${clients[index].username} : ${reason}`)
 				var json = jsonify.User(null, clients[index].username, null, null, null, null)
-				socket.broadcast.emit('other-player-disconnected', json)
+				socket.broadcast.emit('player-disconnect', json)
 				_.remove(clients, { token: playerToken })
 			}
 		}
