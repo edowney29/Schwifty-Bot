@@ -3,21 +3,13 @@ const random = require('random-js')
 const moment_tz = require('moment-timezone')
 const moment = require('moment')
 const _ = require('lodash')
-const ytdl = require('ytdl-core')
-const googleapis = require('googleapis')
-const request = require('request')
-const fs = require('fs')
-const levenshtein = require('fast-levenshtein')
+
+const helper = require('./bot-helper')
 
 const DISCORD_KEY = process.env.DISCORD_KEY
-const GOOGLE_KEY = process.env.GOOGLE_KEY
-
 const client = new discord.Client()
 const engine = random.engines.mt19937().autoSeed()
-const youtube = googleapis.youtube({
-	version: 'v3',
-	auth: GOOGLE_KEY
-})
+
 
 var servers = []
 
@@ -54,61 +46,56 @@ client.on('message', message => {
 			var videoTitle = _.split(string, ' ')
 			videoTitle = _.drop(videoTitle, 1)
 			videoTitle = _.join(videoTitle, ' ')
-			searchVideos(videoTitle)
-				.then(videos => {
-					listVideos(videos)
-						.then(list => {
-							sortSongSearch(index, videoTitle, list)
-								.then(score => {
-									var url = `http://www.youtube.com/watch?v=${servers[index].queue.ids[servers[index].queue.ids.length - 1]}`
-									message.reply(`Song queued: ${url} [${score}% match]`)
-									var dispatcher = message.guild.voiceConnection.dispatcher
-									if (!dispatcher) {
-										getInfo(url)
-											.then(audioFormats => {
-												playSong(message, audioFormats)
-													.then(sd => {
-														sd.on('end', () => {
-															//message.reply('!next')
-														})
-														sd.on('start', () => {
-															message.reply('Playing: ' + servers[index].queue.names[0])
-															servers[index].queue.ids = _.drop(servers[index].queue.ids, 1)
-															servers[index].queue.names = _.drop(servers[index].queue.names, 1)
-														})
-													})
-											})
-									}
+
+			queueSong(videoTitle, index)
+				.then(obj => {
+					servers[index].queue.ids.push(obj.id)
+					servers[index].queue.names.push(obj.name)
+					var url = `http://www.youtube.com/watch?v=${servers[index].queue.ids[servers[index].queue.ids.length - 1]}`
+					message.reply(`Song queued: ${url} [${obj.score}% match]`)
+
+					var dispatcher = message.guild.voiceConnection.dispatcher
+					if (!dispatcher) {
+						downloadSong(message.guild.id, url)
+							.then(container => {
+								var connection = message.guild.voiceConnection
+								var streamOptions = { seek: 0, volume: 0.2, passes: 1, bitrate: 64 * 1024 }
+								var streamDispatcher = connection.playFile(`./public/${message.guild.id}.${container}`, streamOptions)
+								streamDispatcher.on('end', reason => {
+									//message.reply('!next')
 								})
-						})
+								streamDispatcher.on('start', () => {
+									message.reply('Playing: ' + servers[index].queue.names[0])
+									servers[index].queue.ids = _.drop(servers[index].queue.ids, 1)
+									servers[index].queue.names = _.drop(servers[index].queue.names, 1)
+								})
+								streamDispatcher.on('error', error => console.log(error))
+							})
+					}
 				})
 		}
 	}
 
 	if (_.includes(string, '!next')) {
-		if (message.member.voiceChannel) {
-			if (servers[index].queue.ids.length > 0) {
-				var url = `http://www.youtube.com/watch?v=${servers[index].queue.ids[0]}`
-				var dispatcher = message.guild.voiceConnection.dispatcher
-				if (dispatcher) {
-					if (!dispatcher.destroyed) {
-						dispatcher.end()
-					}
-					getInfo(url)
-						.then(audioFormats => {
-							playSong(message, audioFormats)
-								.then(sd => {
-									sd.on('end', () => {
-										//message.reply('!next')
-									})
-									sd.on('start', () => {
-										message.reply('Playing: ' + servers[index].queue.names[0])
-										servers[index].queue.ids = _.drop(servers[index].queue.ids, 1)
-										servers[index].queue.names = _.drop(servers[index].queue.names, 1)
-									})
-								})
+		if (message.member.voiceChannel && servers[index].queue.ids.length > 0) {
+			var url = `http://www.youtube.com/watch?v=${servers[index].queue.ids[servers[index].queue.ids.length - 1]}`
+			var dispatcher = message.guild.voiceConnection.dispatcher
+			if (!dispatcher) {
+				downloadSong(message.guild.id, url)
+					.then(container => {
+						var connection = message.guild.voiceConnection
+						var streamOptions = { seek: 0, volume: 0.2, passes: 1, bitrate: 64 * 1024 }
+						var streamDispatcher = connection.playFile(`./public/${message.guild.id}.${container}`, streamOptions)
+						streamDispatcher.on('end', reason => {
+							//message.reply('!next')
 						})
-				}
+						streamDispatcher.on('start', () => {
+							message.reply('Playing: ' + servers[index].queue.names[0])
+							servers[index].queue.ids = _.drop(servers[index].queue.ids, 1)
+							servers[index].queue.names = _.drop(servers[index].queue.names, 1)
+						})
+						streamDispatcher.on('error', error => console.log(error))
+					})
 			}
 		}
 	}
@@ -213,7 +200,7 @@ client.on('message', message => {
 
 client.login(DISCORD_KEY)
 
-function getZone(zone) {
+var getZone = (zone) => {
 	switch (zone) {
 		case 'EDT':
 		case 'EST':
@@ -246,99 +233,25 @@ function getZone(zone) {
 	}
 }
 
-function searchVideos(videoTitle) {
-	return new Promise((resolve, reject) => {
-		youtube.search.list({
-			part: 'snippet',
-			q: videoTitle,
-			maxResults: 10,
-			type: 'video'
-		}, (err, res) => {
-			if (err) {
-				reject(err)
-			}
-			else {
-				resolve(res)
-			}
-		})
-	})
+var queueSong = async (videoTitle, index) => {
+	try {
+		var videos = await helper.searchVideos(videoTitle)
+		var list = await helper.listVideos(videos)
+		return await helper.sortSongSearch(index, videoTitle, list)
+	}
+	catch (err) {
+		console.log(err)
+		return err
+	}
 }
 
-function listVideos(videos) {
-	return new Promise((resolve, reject) => {
-		var ids = []
-		_.forEach(videos.items, item => {
-			ids.push(item.id.videoId)
-		})
-		var idstring = _.join(ids, ',')
-
-		youtube.videos.list({
-			id: idstring,
-			part: 'snippet,contentDetails,statistics'
-		}, (err, res) => {
-			if (err) {
-				reject(err)
-			}
-			else {
-				resolve(res)
-			}
-		})
-	})
-}
-
-function getInfo(url) {
-	return new Promise((resolve, reject) => {
-		ytdl.getInfo(url, (err, info) => {
-			if (err) {
-				console.log(err)
-				reject(err)
-			}
-			else {
-
-				resolve(ytdl.filterFormats(info.formats, 'audioonly'))
-			}
-		})
-	})
-}
-
-function playSong(message, audioFormats) {
-	return new Promise((resolve, reject) => {
-		var fileurl = audioFormats[0].url
-		request
-			.get(fileurl)
-			.on('error', err => {
-				console.log(err)
-				reject(err)
-			})
-			.on('end', () => {
-				var streamOptions = { seek: 0, volume: 0.2, passes: 1, bitrate: 64 * 1024 }
-				var connection = message.member.voiceChannel.connection
-				resolve(connection.playFile(`./public/${message.guild.id}.${audioFormats[0].container}`, streamOptions))
-			})
-			.pipe(fs.createWriteStream(`./public/${message.guild.id}.${audioFormats[0].container}`))
-	})
-}
-
-function sortSongSearch(index, videoTitle, list) {
-	return new Promise((resolve, reject) => {
-		var score = 0, id = '', name = ''
-		_.forEach(list.items, item => {
-			var s = levenshtein.get(videoTitle, item.snippet.localized.title)
-			if (s > score) {
-				score = s
-				id = item.id
-				name = item.snippet.localized.title
-			}
-		})
-
-		if (score > 0) {
-			servers[index].queue.ids.push(id)
-			servers[index].queue.names.push(name)
-			resolve(score)
-		}
-		else {
-			reject(score)
-		}
-
-	})
+var downloadSong = async (guildID, url) => {
+	try {
+		var audioFormats = await helper.getInfo(url)
+		return await helper.downloadSong(guildID, audioFormats)
+	}
+	catch (err) {
+		console.log(err)
+		return err
+	}
 }

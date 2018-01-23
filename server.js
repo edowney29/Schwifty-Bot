@@ -4,7 +4,7 @@ const socketIO = require('socket.io')
 const path = require('path')
 const _ = require('lodash')
 
-const discord = require('./app/discord/discordbot')
+const discord = require('./app/discord/bot-discord')
 const socket = require('./app/mmo/socketio')
 
 const PORT = process.env.PORT || 3000;
