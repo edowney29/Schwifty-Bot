@@ -10,18 +10,18 @@ var clients = []
 var enemies = []
 var counter = 0
 
-module.exports.setSocketIO = (_io) => {
-	io = _io
-	mongo.setMongoClient()
-		.then(() => {
-			startServer()
-		})
-		.catch(err => {
-			throw err
-		})
+module.exports.setSocketIO = async (_io) => {
+	try {
+		var server = await mongo.setMongoClient()
+		io = _io
+		startServer()
+	}
+	catch (err) {
+		throw err
+	}
 }
 
-function startServer() {
+var startServer = () => {
 
 	io.on('connect', (socket) => {
 		// Global for each socket connection
@@ -102,7 +102,7 @@ function startServer() {
 			var data = JSON.parse(json)
 			console.log(`[START] : ${data.username}`)
 			playerToken = data.token
-			
+
 			try {
 				var doc = await mongo.playerLogin(data.username)
 				var client = {
