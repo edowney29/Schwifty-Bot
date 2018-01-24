@@ -12,7 +12,7 @@ var counter = 0
 
 module.exports.setSocketIO = async (_io) => {
 	try {
-		var server = await mongo.setMongoClient()
+		await mongo.setMongoClient()
 		io = _io
 		startServer()
 	}
@@ -21,7 +21,7 @@ module.exports.setSocketIO = async (_io) => {
 	}
 }
 
-var startServer = () => {
+const startServer = () => {
 
 	io.on('connect', socket => {
 		// Global for each socket connection
