@@ -23,27 +23,27 @@ module.exports.setSocketIO = async (_io) => {
 
 var startServer = () => {
 
-	io.on('connect', (socket) => {
+	io.on('connect', socket => {
 		// Global for each socket connection
 		var playerToken = null
 
 		/** NETWORK MENU */
-		socket.on('player-register', playerRegister)
-		socket.on('player-login', playerLogin)
+		socket.on('player-register', playerRegister(json))
+		socket.on('player-login', playerLogin(json))
 		socket.on('menu-disconnect', () => { socket.disconnect('true') })
 
 		/** NETWORK PLAY */
-		socket.on('start-up', startUp)
-		socket.on('player-move', playerMove)
-		socket.on('player-message', playerMessage)
-		socket.on('player-attack', playerAttack)
+		socket.on('start-up', startUp(json))
+		socket.on('player-move', playerMove(json))
+		socket.on('player-message', playerMessage(json))
+		socket.on('player-attack', playerAttack(json))
 
 		/** SOCKET EVENTS */
 		socket.on('test', () => { console.log('[TEST]') })
-		socket.on('disconnect', disconnect)
+		socket.on('disconnect', disconnect(reson))
 		socket.on('error', error => { console.log(`[ERROR] : ${playerToken} : ${error}`) })
 
-		var playerRegister = async (json) => {
+		const playerRegister = async (json) => {
 			// username, email, passhash, salt, status, token, date
 			var data = JSON.parse(json)
 			console.log(`[REGISTER] : ${data.username}`)
@@ -74,7 +74,7 @@ var startServer = () => {
 			}
 		}
 
-		var playerLogin = async (json) => {
+		const playerLogin = async (json) => {
 			// username, email, passhash, salt, status, token, date
 			var data = JSON.parse(json)
 			console.log(`[LOGIN] : ${data.username}`)
@@ -97,7 +97,7 @@ var startServer = () => {
 			}
 		}
 
-		var startUp = async (json) => {
+		const startUp = async (json) => {
 			// token, username, email, positionX, positionY
 			var data = JSON.parse(json)
 			console.log(`[START] : ${data.username}`)
@@ -125,7 +125,7 @@ var startServer = () => {
 			}
 		}
 
-		var playerMove = async (json) => {
+		const playerMove = async (json) => {
 			// token, username, positionX, positionY, playerMoving, moveH, moveV, lastMoveX, lastMoveY, world, zone
 			var data = JSON.parse(json)
 			console.log(`[MOVE] : ${data.username}`)
@@ -146,7 +146,7 @@ var startServer = () => {
 			}
 		}
 
-		var playerMessage = async (json) => {
+		const playerMessage = async (json) => {
 			// token, username, message
 			var data = JSON.parse(json)
 			console.log(`[MESSAGE] : ${data.username}`)
@@ -159,7 +159,7 @@ var startServer = () => {
 			}
 		}
 
-		var playerAttack = async (json) => {
+		const playerAttack = async (json) => {
 			// token, username, attacking
 			var data = JSON.parse(json)
 			console.log(`[ATTACK] : ${data.username}`)
@@ -172,7 +172,7 @@ var startServer = () => {
 			}
 		}
 
-		var disconnect = async (reason) => {
+		const disconnect = async (reason) => {
 			// reason
 			console.log(`[DISCONNECT] : ${playerToken}`)
 
