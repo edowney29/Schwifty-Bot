@@ -7,11 +7,12 @@ const _ = require('lodash')
 const helper = require('./bot-helper')
 
 const DISCORD_KEY = process.env.DISCORD_KEY
-const client = new discord.Client()
 const engine = random.engines.mt19937().autoSeed()
-
+const client = new discord.Client()
 
 var servers = []
+
+client.user.setActivity('you from your facecam', 'WATCHING')
 
 client.on('message', message => {
 	var index = _.findIndex(servers, { id: message.guild.id })
