@@ -28,19 +28,19 @@ const startServer = () => {
 		var playerToken = null
 
 		/** NETWORK MENU */
-		socket.on('player-register', playerRegister(json))
-		socket.on('player-login', playerLogin(json))
+		socket.on('player-register', playerRegister)
+		socket.on('player-login', playerLogin)
 		socket.on('menu-disconnect', () => { socket.disconnect('true') })
 
 		/** NETWORK PLAY */
-		socket.on('start-up', startUp(json))
-		socket.on('player-move', playerMove(json))
-		socket.on('player-message', playerMessage(json))
-		socket.on('player-attack', playerAttack(json))
+		socket.on('start-up', startUp)
+		socket.on('player-move', playerMove)
+		socket.on('player-message', playerMessage)
+		socket.on('player-attack', playerAttack)
 
 		/** SOCKET EVENTS */
 		socket.on('test', () => { console.log('[TEST]') })
-		socket.on('disconnect', disconnect(reson))
+		socket.on('disconnect', disconnect)
 		socket.on('error', error => { console.log(`[ERROR] : ${playerToken} : ${error}`) })
 
 		async function playerRegister(json) {
