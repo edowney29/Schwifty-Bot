@@ -12,7 +12,9 @@ const client = new discord.Client()
 
 var servers = []
 
-client.user.setActivity('you from your facecam', 'WATCHING')
+client.on('ready', () => {
+	client.user.setActivity('the game of life')
+})
 
 client.on('message', message => {
 	var index = _.findIndex(servers, { id: message.guild.id })
