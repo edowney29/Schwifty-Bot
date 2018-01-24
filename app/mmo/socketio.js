@@ -43,7 +43,7 @@ const startServer = () => {
 		socket.on('disconnect', disconnect(reson))
 		socket.on('error', error => { console.log(`[ERROR] : ${playerToken} : ${error}`) })
 
-		const playerRegister = async (json) => {
+		async function playerRegister(json) {
 			// username, email, passhash, salt, status, token, date
 			var data = JSON.parse(json)
 			console.log(`[REGISTER] : ${data.username}`)
@@ -74,7 +74,7 @@ const startServer = () => {
 			}
 		}
 
-		const playerLogin = async (json) => {
+		async function playerLogin(json) {
 			// username, email, passhash, salt, status, token, date
 			var data = JSON.parse(json)
 			console.log(`[LOGIN] : ${data.username}`)
@@ -97,7 +97,7 @@ const startServer = () => {
 			}
 		}
 
-		const startUp = async (json) => {
+		async function startUp(json) {
 			// token, username, email, positionX, positionY
 			var data = JSON.parse(json)
 			console.log(`[START] : ${data.username}`)
@@ -125,7 +125,7 @@ const startServer = () => {
 			}
 		}
 
-		const playerMove = async (json) => {
+		async function playerMove(json) {
 			// token, username, positionX, positionY, playerMoving, moveH, moveV, lastMoveX, lastMoveY, world, zone
 			var data = JSON.parse(json)
 			console.log(`[MOVE] : ${data.username}`)
@@ -146,7 +146,7 @@ const startServer = () => {
 			}
 		}
 
-		const playerMessage = async (json) => {
+		async function playerMessage(json) {
 			// token, username, message
 			var data = JSON.parse(json)
 			console.log(`[MESSAGE] : ${data.username}`)
@@ -159,7 +159,7 @@ const startServer = () => {
 			}
 		}
 
-		const playerAttack = async (json) => {
+		async function playerAttack(json) {
 			// token, username, attacking
 			var data = JSON.parse(json)
 			console.log(`[ATTACK] : ${data.username}`)
@@ -172,7 +172,7 @@ const startServer = () => {
 			}
 		}
 
-		const disconnect = async (reason) => {
+		async function disconnect(reason) {
 			// reason
 			console.log(`[DISCONNECT] : ${playerToken}`)
 
