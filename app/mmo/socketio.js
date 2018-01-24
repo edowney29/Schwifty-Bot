@@ -125,7 +125,7 @@ const startServer = () => {
 			}
 		}
 
-		async function playerMove(json) {
+		function playerMove(json) {
 			// token, username, positionX, positionY, playerMoving, moveH, moveV, lastMoveX, lastMoveY, world, zone
 			var data = JSON.parse(json)
 			console.log(`[MOVE] : ${data.username}`)
@@ -146,7 +146,7 @@ const startServer = () => {
 			}
 		}
 
-		async function playerMessage(json) {
+		function playerMessage(json) {
 			// token, username, message
 			var data = JSON.parse(json)
 			console.log(`[MESSAGE] : ${data.username}`)
@@ -159,7 +159,7 @@ const startServer = () => {
 			}
 		}
 
-		async function playerAttack(json) {
+		function playerAttack(json) {
 			// token, username, attacking
 			var data = JSON.parse(json)
 			console.log(`[ATTACK] : ${data.username}`)
@@ -172,7 +172,7 @@ const startServer = () => {
 			}
 		}
 
-		async function disconnect(reason) {
+		function disconnect(reason) {
 			// reason
 			console.log(`[DISCONNECT] : ${playerToken}`)
 
