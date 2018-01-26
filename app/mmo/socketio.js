@@ -56,7 +56,8 @@ const startServer = () => {
 				registered: false,
 				positionx: 1297,
 				positiony: -1125,
-				health: 100,
+				world: null,
+				zone: null,
 				createdAt: Date.now().toString(),
 				updatedAt: Date.now().toString()
 			}
@@ -81,7 +82,7 @@ const startServer = () => {
 
 			var index = _.findIndex(clients, { username: data.username })
 			if (index >= 0) {
-				var json = jsonify.User(null, null, null, null, null, null, 'logged')
+				var json = jsonify.User(null, null, null, null, null, 'logged')
 				socket.emit('player-menu', json)
 				return
 			}
@@ -111,11 +112,11 @@ const startServer = () => {
 					email: doc.email,
 					positionX: doc.positionX,
 					positionY: doc.positionY,
-					world: null,
-					zone: null,
+					world: doc.world,
+					zone: doc.zone,
 					room: 'start'
 				}
-				var json = jsonify.User(null, client.username, null, client.positionx, client.positiony, null)
+				var json = jsonify.Move(client.username, client.positionX, client.positionY, 0, 0, 0, 0, client.world, client.zone)
 				socket.join(client.room);
 				socket.emit('start-up', json)
 				clients.push(client)
@@ -126,7 +127,7 @@ const startServer = () => {
 		}
 
 		function playerMove(json) {
-			// token, username, positionX, positionY, playerMoving, moveH, moveV, lastMoveX, lastMoveY, world, zone
+			// token, username, positionX, positionY, moveH, moveV, lastMoveX, lastMoveY, world, zone
 			var data = JSON.parse(json)
 			console.log(`[MOVE] : ${data.username}`)
 
@@ -138,8 +139,8 @@ const startServer = () => {
 					clients[index].positiony = data.positionY
 					clients[index].world = data.world
 					clients[index].zone = data.zone
-
 					data.token = null
+
 					json = JSON.stringify(data)
 					io.in(clients[index].room).emit('player-move', json)
 				}
@@ -190,15 +191,15 @@ const startServer = () => {
 		io.emit('time', new Date().toTimeString())
 		//enemyUpdate()
 
-		if (counter == 200) {
-			//setDatabase()
+		if (counter == 1000) {
+			setDatabase()
 			counter = 0
 		}
 		counter++
-	}, 50)
+	}, 10)
 }
 
-/*
+
 function setDatabase() {
 	var usersDB = database.collection('users')
 	_.forEach(clients, client => {
@@ -217,7 +218,6 @@ function setDatabase() {
 			})
 	})
 }
-*/
 
 /*
 function enemyUpdate() {
@@ -247,7 +247,8 @@ function enemyUpdate() {
 					var radian = Math.random() * (2 * Math.PI)
 					enemy = enemyAI.checkMove(enemy, radian)
 					//console.log(`[Server - Enemy random] : ${enemy.username} -> ${client.username}`)
-					io.local.emit('enemy-move', enemy.username, enemy.positionx, enemy.positiony, enemy.target)
+					var json = jsonify.Move()
+					io.local.emit('enemy-move', enemy.username, enemy.positionx, enemy.positiony)
 				}
 			}
 		}
@@ -262,7 +263,7 @@ function enemyUpdate() {
 					var radian = enemyAI.getRadian(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
 					enemy = enemyAI.checkMove(enemy, radian)
 					//console.log(`[Server - Enemy target] : ${enemy.username} -> ${client.username}`)
-					io.local.emit('enemy-move', enemy.username, enemy.positionx, enemy.positiony, enemy.target)
+					io.local.emit('enemy-move', enemy.username, enemy.positionx, enemy.positiony)
 				}
 			}
 		}

@@ -1,13 +1,14 @@
 const nodemailer = require('nodemailer')
 
 module.exports.emailWithPromise = emailWithPromise
+module.exports.validateEmail = validateEmail
 
-var emailWithPromise = (user, teamname) => {
-  let email = user.email;
-  let password = user.password;
-  let userrole = user.userrole;
+const emailWithPromise = (user, teamname) => {
+  var email = user.email;
+  var password = user.password;
+  var userrole = user.userrole;
 
-  let transporter = nodemailer.createTransport({
+  var transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: '465',
     secure: true,
@@ -47,4 +48,9 @@ var emailWithPromise = (user, teamname) => {
       }
     });
   });
+}
+
+const validateEmail = (email) => {
+  var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
 }

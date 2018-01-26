@@ -2,9 +2,14 @@ const MongoClient = require('mongodb').MongoClient
 
 const MONGO_URI = process.env.MONGODB_URI
 
+module.exports.setMongoClient = setMongoClient
+module.exports.playerRegister = playerRegister
+module.exports.playerLogin = playerLogin
+module.exports.startUp = startUp
+
 var users
 
-module.exports.setMongoClient = () => {
+const setMongoClient = () => {
     return new Promise((resolve, reject) => {
         MongoClient.connect(MONGO_URI, (err, db) => {
             if (err) reject(err)
@@ -15,7 +20,7 @@ module.exports.setMongoClient = () => {
     })
 }
 
-module.exports.playerRegister = (newUser) => {
+const playerRegister = (newUser) => {
     return new Promise((resolve, reject) => {
         users.findOne({
             $or: [{
@@ -36,7 +41,7 @@ module.exports.playerRegister = (newUser) => {
     })
 }
 
-module.exports.playerLogin = (username) => {
+const playerLogin = (username) => {
     return new Promise((resolve, reject) => {
         users.findOne({
             username: username
@@ -48,7 +53,7 @@ module.exports.playerLogin = (username) => {
     })
 }
 
-module.exports.startUp = (username) => {
+const startUp = (username) => {
     return new Promise((resolve, reject) => {
         users.findOne({
             username: data.username,
