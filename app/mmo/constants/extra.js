@@ -120,3 +120,19 @@ function getCluster() {
 	})
 }
 */
+
+/*
+const validateEmail = (email) => {
+  var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  return re.test(String(email).toLowerCase())
+}
+
+const validateUsername = (username) => {
+  return username.length > 3 && username.length < 17 ? true : false
+}
+
+const validatePassword = (password) => {
+  var re = /^(?=.*[\d])(?=.*[A-Z])(?=.*[a-z])(?=.*[!@#$%^&*])[\w!@#$%^&*]{8,}$/
+  return re.test(String(email).toLowerCase())
+}
+*/

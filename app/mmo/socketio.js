@@ -199,24 +199,23 @@ const startServer = () => {
 	}, 10)
 }
 
-
 function setDatabase() {
-	var usersDB = database.collection('users')
+	var success = 0, errors = 0, promises = []
 	_.forEach(clients, client => {
-		usersDB.updateOne({
-			username: client.username,
-		}, {
-				username: client.username,
-				positionx: client.positionx,
-				positiony: client.positiony,
-			}, (err, res) => {
-				if (err) {
-					console.log(`[SERVER - Error]: ${err}`)
-				} else {
-					console.log(`[RECV - Update database]: ${client.username}`)
-				}
+		var p = mongo.setDatabase(client)
+			.then(() => {
+				success += 1
 			})
+			.catch(err => {
+				console.log(err)
+				errors += 1
+			})
+		promises.push(p)
 	})
+	Promise.all(promises)
+		.then(() => {
+			console.log(`Successful: ${success} --- Errors: ${errors}`)
+		})
 }
 
 /*
