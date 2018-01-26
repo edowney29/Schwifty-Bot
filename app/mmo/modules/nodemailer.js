@@ -1,9 +1,6 @@
 const nodemailer = require('nodemailer')
 
-module.exports.emailWithPromise = emailWithPromise
-module.exports.validateEmail = validateEmail
-
-const emailWithPromise = (user, teamname) => {
+module.exports.emailWithPromise = (user, teamname) => {
   var email = user.email;
   var password = user.password;
   var userrole = user.userrole;

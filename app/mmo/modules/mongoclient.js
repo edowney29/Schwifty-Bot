@@ -3,15 +3,9 @@ const _ = require('lodash')
 
 const MONGO_URI = process.env.MONGODB_URI
 
-module.exports.setMongoClient = setMongoClient
-module.exports.playerRegister = playerRegister
-module.exports.playerLogin = playerLogin
-module.exports.startUp = startUp
-module.exports.setDatabase = setDatabase
-
 var users
 
-const setMongoClient = () => {
+module.exports.setMongoClient = () => {
     return new Promise((resolve, reject) => {
         MongoClient.connect(MONGO_URI, (err, db) => {
             if (err)
@@ -25,7 +19,7 @@ const setMongoClient = () => {
     })
 }
 
-const playerRegister = (newUser) => {
+module.exports.playerRegister = (newUser) => {
     return new Promise((resolve, reject) => {
         users.findOne({
             $or: [{
@@ -50,7 +44,7 @@ const playerRegister = (newUser) => {
     })
 }
 
-const playerLogin = (username) => {
+module.exports.playerLogin = (username) => {
     return new Promise((resolve, reject) => {
         users.findOne({
             username: username
@@ -65,7 +59,7 @@ const playerLogin = (username) => {
     })
 }
 
-const startUp = (username) => {
+module.exports.startUp = (username) => {
     return new Promise((resolve, reject) => {
         users.findOne({
             username: data.username,
@@ -78,7 +72,7 @@ const startUp = (username) => {
     })
 }
 
-const setDatabase = (client) => {
+module.exports.setDatabase = (client) => {
     return new Promise((resolve, reject) => {
         users.updateOne({
             username: client.username,
