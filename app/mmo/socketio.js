@@ -90,6 +90,7 @@ const startServer = () => {
 					var doc = await mongo.playerLogin(data.username)
 					playerToken = uuidv1()
 					var json = jsonify.User(playerToken, doc.username, doc.email, doc.passhash, doc.salt, 'login')
+					console.log(json)
 					socket.emit('player-menu', json)
 				} catch (status) {
 					var json = jsonify.User(null, null, null, null, null, status)
