@@ -202,7 +202,7 @@ function setDatabase() {
 	var success = 0, errors = 0, promises = []
 	_.forEach(clients, client => {
 		var p = mongo.setDatabase(client)
-			.then(() => {
+			.then(doc => {
 				success += 1
 			})
 			.catch(err => {
@@ -214,7 +214,7 @@ function setDatabase() {
 	Promise.all(promises)
 		.then(() => {
 			console.log(`Successful: ${success} --- Errors: ${errors}`)
-			console.log(clients)
+			//console.log(clients)
 		})
 }
 

@@ -59,32 +59,22 @@ module.exports.playerLogin = (username) => {
     })
 }
 
-module.exports.startUp = (username) => {
-    return new Promise((resolve, reject) => {
-        users.findOne({
-            username: data.username,
-        }, (err, doc) => {
-            if (err)
-                reject('error')
-            if (doc)
-                resolve(doc)
-        })
-    })
-}
-
 module.exports.setDatabase = (client) => {
     return new Promise((resolve, reject) => {
-        users.updateOne({
-            username: client.username,
-        }, {
+        users.findAndModify({
+            query: { 
+                username: client.username 
+            },
+            update: {
                 username: client.username,
                 positionx: client.positionx,
                 positiony: client.positiony,
-            }, (err, res) => {
-                if (err)
-                    reject(err)
-                else
-                    resolve()
-            })
+            }
+        }, (err, doc) => {
+            if (err)
+                reject(err)
+            else
+                resolve(doc)
+        })
     })
 }
