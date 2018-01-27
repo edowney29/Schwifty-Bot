@@ -62,8 +62,8 @@ module.exports.playerLogin = (username) => {
 module.exports.setDatabase = (client) => {
     return new Promise((resolve, reject) => {
         users.findAndModify({
-            query: { 
-                username: client.username 
+            query: {
+                username: client.username
             },
             update: {
                 username: client.username,
