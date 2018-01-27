@@ -90,7 +90,7 @@ const startServer = () => {
 					var doc = await mongo.playerLogin(data.username)
 					playerToken = uuidv1()
 					var json = jsonify.User(playerToken, doc.username, doc.email, doc.passhash, doc.salt, 'login')
-					console.log(json)
+					console.log(doc)
 					socket.emit('player-menu', json)
 				} catch (status) {
 					var json = jsonify.User(null, null, null, null, null, status)
@@ -192,7 +192,6 @@ const startServer = () => {
 
 		if (counter == 1000) {
 			setDatabase()
-			console.log(clients)
 			counter = 0
 		}
 		counter++
@@ -215,6 +214,7 @@ function setDatabase() {
 	Promise.all(promises)
 		.then(() => {
 			console.log(`Successful: ${success} --- Errors: ${errors}`)
+			console.log(clients)
 		})
 }
 
