@@ -135,8 +135,8 @@ const startServer = () => {
 			var index = _.findIndex(clients, { token: data.token })
 			if (playerToken == data.token && index >= 0) {
 				clients[index].username = data.username
-				clients[index].positionx = data.positionX
-				clients[index].positiony = data.positionY
+				clients[index].positionX = data.positionX
+				clients[index].positionY = data.positionY
 				clients[index].world = data.world
 				clients[index].zone = data.zone
 				data.token = null

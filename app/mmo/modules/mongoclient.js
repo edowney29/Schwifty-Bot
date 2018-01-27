@@ -67,8 +67,8 @@ module.exports.setDatabase = (client) => {
             },
             update: {
                 username: client.username,
-                positionx: client.positionx,
-                positiony: client.positiony,
+                positionX: client.positionX,
+                positionY: client.positionY,
             }
         }, (err, doc) => {
             if (err)
