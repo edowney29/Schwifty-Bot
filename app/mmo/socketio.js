@@ -193,6 +193,7 @@ const startServer = () => {
 
 		if (counter == 1000) {
 			setDatabase()
+			console.log(clients)
 			counter = 0
 		}
 		counter++
