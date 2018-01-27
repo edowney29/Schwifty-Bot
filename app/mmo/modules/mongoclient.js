@@ -61,20 +61,20 @@ module.exports.playerLogin = (username) => {
 
 module.exports.setDatabase = (client) => {
     return new Promise((resolve, reject) => {
-        users.findAndModify({
-            query: {
-                username: client.username
-            },
-            update: {
-                username: client.username,
-                positionX: client.positionX,
-                positionY: client.positionY,
-            }
-        }, (err, doc) => {
-            if (err)
-                reject(err)
-            else
-                resolve(doc)
-        })
+        users.update({
+            username: client.username
+        }, {
+                $set: {
+                    username: client.username,
+                    positionX: client.positionX,
+                    positionY: client.positionY,
+                    updatedAt: Date.now().toString()
+                }
+            }, (err, doc) => {
+                if (err)
+                    reject(err)
+                else
+                    resolve(doc)
+            })
     })
 }

@@ -26,6 +26,7 @@ const startServer = () => {
 	io.on('connect', socket => {
 		// Global for each socket connection
 		var playerToken = null
+		console.log('New connection')
 
 		/** NETWORK MENU */
 		socket.on('player-register', playerRegister)
