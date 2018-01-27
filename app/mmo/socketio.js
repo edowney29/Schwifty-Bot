@@ -54,8 +54,8 @@ const startServer = () => {
 				passhash: data.passhash,
 				salt: data.salt,
 				registered: false,
-				positionx: 1297,
-				positiony: -1125,
+				positionX: 1297,
+				positionY: -1125,
 				world: null,
 				zone: null,
 				createdAt: Date.now().toString(),
@@ -84,17 +84,17 @@ const startServer = () => {
 			if (index >= 0) {
 				var json = jsonify.User(null, null, null, null, null, 'logged')
 				socket.emit('player-menu', json)
-				return
 			}
-
-			try {
-				var doc = await mongo.playerLogin(data.username)
-				playerToken = uuidv1()
-				var json = jsonify.User(playerToken, doc.username, doc.email, doc.passhash, doc.salt, 'login')
-				socket.emit('player-menu', json)
-			} catch (status) {
-				var json = jsonify.User(null, null, null, null, null, status)
-				socket.emit('player-menu', json)
+			else {
+				try {
+					var doc = await mongo.playerLogin(data.username)
+					playerToken = uuidv1()
+					var json = jsonify.User(playerToken, doc.username, doc.email, doc.passhash, doc.salt, 'login')
+					socket.emit('player-menu', json)
+				} catch (status) {
+					var json = jsonify.User(null, null, null, null, null, status)
+					socket.emit('player-menu', json)
+				}
 			}
 		}
 
@@ -131,19 +131,17 @@ const startServer = () => {
 			var data = JSON.parse(json)
 			console.log(`[MOVE] : ${data.username}`)
 
-			if (playerToken == data.token) {
-				var index = _.findIndex(clients, { token: data.token })
-				if (index >= 0) {
-					clients[index].username = data.username
-					clients[index].positionx = data.positionX
-					clients[index].positiony = data.positionY
-					clients[index].world = data.world
-					clients[index].zone = data.zone
-					data.token = null
+			var index = _.findIndex(clients, { token: data.token })
+			if (playerToken == data.token && index >= 0) {
+				clients[index].username = data.username
+				clients[index].positionx = data.positionX
+				clients[index].positiony = data.positionY
+				clients[index].world = data.world
+				clients[index].zone = data.zone
+				data.token = null
 
-					json = JSON.stringify(data)
-					io.in(clients[index].room).emit('player-move', json)
-				}
+				json = JSON.stringify(data)
+				io.in(clients[index].room).emit('player-move', json)
 			}
 		}
 
