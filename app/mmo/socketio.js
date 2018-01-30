@@ -226,8 +226,8 @@ function enemyUpdate() {
 	if (enemies.length < 10) {
 		currentEnemy = {
 			username: uuidv1(),
-			positionX: getRandomRange(1452),
-			positionY: getRandomRange(-1433),
+			positionX: enemyAI.getRandomRange(1452),
+			positionY: enemyAI.getRandomRange(-1433),
 			//health: 100,
 			zone: '',
 			world: '',
