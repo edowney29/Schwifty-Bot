@@ -26,3 +26,16 @@ module.exports.Move = (username, positionX, positionY, moveH, moveV, lastMoveX, 
 
     return JSON.stringify(json)
 }
+
+module.exports.EnemyMove = (username, positionX, positionY, world, zone, target) => {
+    var json = {
+        username,
+        positionX,
+        positionY,
+        world,
+        zone,
+        target
+    }
+
+    return JSON.stringify(json)
+}

@@ -20,31 +20,12 @@ function getRadian(x1, y1, x2, y2) {
 	return radian
 }
 
+
 function checkMove(enemy, radian) {
 	var movex = Math.cos(radian) * (Math.random(100 - 50) + 50)
 	var movey = Math.sin(radian) * (Math.random(100 - 50) + 50)
 	enemy.positionx += movex
 	enemy.positiony += movey
-	if (enemy.positionx < 1245) {
-		enemy.positionx = 1245
-		enemy.target = ''
-		checkMove(enemy, radian + Math.PI / 2)
-	}
-	else if (enemy.positionx > 1602) {
-		enemy.positionx = 1602
-		enemy.target = ''
-		checkMove(enemy, radian + Math.PI / 2)
-	}
-	else if (enemy.positiony > -1309) {
-		enemy.positiony = -1309
-		enemy.target = ''
-		checkMove(enemy, radian + Math.PI / 2)
-	}
-	else if (enemy.positiony < -1568) {
-		enemy.positiony = -1568
-		enemy.target = ''
-		checkMove(enemy, radian + Math.PI / 2)
-	}
 	return enemy
 }
 
@@ -79,3 +60,28 @@ function getRandomRange(number) {
 	max = Math.floor(max);
 	return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
 }
+
+/*
+// End of move area (bounce back)
+// Needs to be changed to have zones and worlds	
+if (enemy.positionx < 1245) {
+	enemy.positionx = 1245
+	enemy.target = ''
+	checkMove(enemy, radian + Math.PI / 2)
+}
+else if (enemy.positionx > 1602) {
+	enemy.positionx = 1602
+	enemy.target = ''
+	checkMove(enemy, radian + Math.PI / 2)
+}
+else if (enemy.positiony > -1309) {
+	enemy.positiony = -1309
+	enemy.target = ''
+	checkMove(enemy, radian + Math.PI / 2)
+}
+else if (enemy.positiony < -1568) {
+	enemy.positiony = -1568
+	enemy.target = ''
+	checkMove(enemy, radian + Math.PI / 2)
+}
+*/	
