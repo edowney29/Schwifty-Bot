@@ -22,10 +22,10 @@ function getRadian(x1, y1, x2, y2) {
 
 
 function checkMove(enemy, radian) {
-	var movex = Math.cos(radian) * 100 //(Math.random(100 - 50) + 50)
-	var movey = Math.sin(radian) * 100 //(Math.random(100 - 50) + 50)
-	enemy.positionx += movex
-	enemy.positiony += movey
+	var moveX = Math.cos(radian) * 100 //(Math.random(100 - 50) + 50)
+	var moveY = Math.sin(radian) * 100 //(Math.random(100 - 50) + 50)
+	enemy.positionX += moveX
+	enemy.positionY += moveY
 	return enemy
 }
 
@@ -64,23 +64,23 @@ function getRandomRange(number) {
 /*
 // End of move area (bounce back)
 // Needs to be changed to have zones and worlds	
-if (enemy.positionx < 1245) {
-	enemy.positionx = 1245
+if (enemy.positionX < 1245) {
+	enemy.positionX = 1245
 	enemy.target = ''
 	checkMove(enemy, radian + Math.PI / 2)
 }
-else if (enemy.positionx > 1602) {
-	enemy.positionx = 1602
+else if (enemy.positionX > 1602) {
+	enemy.positionX = 1602
 	enemy.target = ''
 	checkMove(enemy, radian + Math.PI / 2)
 }
-else if (enemy.positiony > -1309) {
-	enemy.positiony = -1309
+else if (enemy.positionY > -1309) {
+	enemy.positionY = -1309
 	enemy.target = ''
 	checkMove(enemy, radian + Math.PI / 2)
 }
-else if (enemy.positiony < -1568) {
-	enemy.positiony = -1568
+else if (enemy.positionY < -1568) {
+	enemy.positionY = -1568
 	enemy.target = ''
 	checkMove(enemy, radian + Math.PI / 2)
 }
