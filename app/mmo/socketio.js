@@ -256,7 +256,7 @@ function enemyUpdate() {
 				enemy = enemyAI.checkMove(enemy, radian)
 				var json = jsonify.EnemyMove(enemy.username, enemy.positionX, enemy.positionY, null, null, enemy.target)
 				io.local.emit('enemy-move', json)
-				console.log(`[Server - Enemy random] : ${enemy.username} -> ${client.username}`)
+				//console.log(`[Server - Enemy random] : ${enemy.username} -> ${client.username}`)
 			}
 		}
 	}
@@ -272,7 +272,7 @@ function enemyUpdate() {
 				enemy = enemyAI.checkMove(enemy, radian)
 				var json = jsonify.EnemyMove(enemy.username, enemy.positionX, enemy.positionY, null, null, enemy.target)
 				io.local.emit('enemy-move', json)
-				console.log(`[Server - Enemy target] : ${enemy.username} -> ${client.username}`)
+				//console.log(`[Server - Enemy target] : ${enemy.username} -> ${client.username}`)
 			}
 		}
 	}
