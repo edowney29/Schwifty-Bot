@@ -255,7 +255,7 @@ function enemyUpdate() {
 		})
 
 		if (client) {
-			var radian = enemyAI.getRadian(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+			var radian = enemyAI.getRadian(enemy.positionX, enemy.positionY, client.positionX, client.positionY)
 			enemy = enemyAI.checkMove(enemy, radian)
 			var json = jsonify.EnemyMove(enemy.username, enemy.positionX, enemy.positionY, null, null, enemy.target)
 			io.local.emit('enemy-move', json)
@@ -273,14 +273,14 @@ function enemyUpdate() {
 	else {
 		var client = _.find(clients, { username: enemy.target })
 		if (client) {
-			var distance = enemyAI.getDistance(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+			var distance = enemyAI.getDistance(enemy.positionX, enemy.positionY, client.positionX, client.positionY)
 			if (distance > 200) {
 				enemy.target = null
 			}
 		}
 
 		if (enemy.target) {
-			var radian = enemyAI.getRadian(enemy.positionx, enemy.positiony, player.positionx, player.positiony)
+			var radian = enemyAI.getRadian(enemy.positionX, enemy.positionY, player.positionX, player.positionY)
 			enemy = enemyAI.checkMove(enemy, radian)
 			var json = jsonify.EnemyMove(enemy.username, enemy.positionX, enemy.positionY, null, null, enemy.target)
 			io.local.emit('enemy-move', json)
