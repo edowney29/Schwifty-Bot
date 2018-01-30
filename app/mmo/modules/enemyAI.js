@@ -22,8 +22,8 @@ function getRadian(x1, y1, x2, y2) {
 
 
 function checkMove(enemy, radian) {
-	var movex = Math.cos(radian) * (Math.random(100 - 50) + 50)
-	var movey = Math.sin(radian) * (Math.random(100 - 50) + 50)
+	var movex = Math.cos(radian) * 100 //(Math.random(100 - 50) + 50)
+	var movey = Math.sin(radian) * 100 //(Math.random(100 - 50) + 50)
 	enemy.positionx += movex
 	enemy.positiony += movey
 	return enemy

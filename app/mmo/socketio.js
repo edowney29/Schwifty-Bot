@@ -192,12 +192,13 @@ const startServer = () => {
 		enemyUpdate()
 
 		// Every 10 seconds
-		if (counter == 1000) {
+		if (counter == 100) {
 			setDatabase()
 			counter = 0
 		}
+
 		counter++
-	}, 10)
+	}, 100)
 }
 
 function setDatabase() {
@@ -223,15 +224,14 @@ function setDatabase() {
 
 function enemyUpdate() {
 	// Spawn 10 enemies always
-	if (enemies.length < 10) {
+	while (enemies.length < 10) {
 		currentEnemy = {
 			username: uuidv1(),
 			positionX: enemyAI.getRandomRange(1452),
 			positionY: enemyAI.getRandomRange(-1433),
-			//health: 100,
-			zone: '',
-			world: '',
-			target: ''
+			zone: null,
+			world: null,
+			target: null
 		}
 		enemies.push(currentEnemy)
 		console.log(`[SERVER - Spawn Enemy] : ${currentEnemy.username}`)
@@ -244,36 +244,54 @@ function enemyUpdate() {
 	 * 
 	 */
 	var enemy = enemies[counter % enemies.length] // Better enemy select?
-	if (enemy.target == '') {
-		var client = clients[Math.floor(Math.random() * clients.length)]
-		if (client) {
-			var distance = enemyAI.getDistance(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-			if (distance < 100) {
-				enemy.target = client.username
-			} else {
-				enemy.target = ''
-				var radian = Math.random() * (2 * Math.PI)
-				enemy = enemyAI.checkMove(enemy, radian)
-				var json = jsonify.EnemyMove(enemy.username, enemy.positionX, enemy.positionY, null, null, enemy.target)
-				io.local.emit('enemy-move', json)
-				//console.log(`[Server - Enemy random] : ${enemy.username} -> ${client.username}`)
+	if (enemy.target == null) {
+		var closest = 100, client = null
+		_.forEach(clients, c => {
+			var distance = enemyAI.getDistance(enemy.positionX, enemy.positionY, c.positionX, c.positionY)
+			if (distance > closest) {
+				enemy.target = c.username
+				player = c
 			}
+		})
+
+		if (client) {
+			var radian = enemyAI.getRadian(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
+			enemy = enemyAI.checkMove(enemy, radian)
+			var json = jsonify.EnemyMove(enemy.username, enemy.positionX, enemy.positionY, null, null, enemy.target)
+			io.local.emit('enemy-move', json)
+			console.log(`[Server - Enemy move] : ${json}`)
+		}
+		else {
+			var radian = Math.random() * (2 * Math.PI)
+			enemy = enemyAI.checkMove(enemy, radian)
+			var json = jsonify.EnemyMove(enemy.username, enemy.positionX, enemy.positionY, null, null, enemy.target)
+			io.local.emit('enemy-move', json)
+			console.log(`[Server - Enemy move] : ${json}`)
 		}
 	}
+
 	else {
 		var client = _.find(clients, { username: enemy.target })
 		if (client) {
 			var distance = enemyAI.getDistance(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
 			if (distance > 200) {
-				enemy.target = ''
-			} else {
-				enemy.target = client.username
-				var radian = enemyAI.getRadian(enemy.positionx, enemy.positiony, client.positionx, client.positiony)
-				enemy = enemyAI.checkMove(enemy, radian)
-				var json = jsonify.EnemyMove(enemy.username, enemy.positionX, enemy.positionY, null, null, enemy.target)
-				io.local.emit('enemy-move', json)
-				//console.log(`[Server - Enemy target] : ${enemy.username} -> ${client.username}`)
+				enemy.target = null
 			}
+		}
+
+		if (enemy.target) {
+			var radian = enemyAI.getRadian(enemy.positionx, enemy.positiony, player.positionx, player.positiony)
+			enemy = enemyAI.checkMove(enemy, radian)
+			var json = jsonify.EnemyMove(enemy.username, enemy.positionX, enemy.positionY, null, null, enemy.target)
+			io.local.emit('enemy-move', json)
+			console.log(`[Server - Enemy move] : ${json}`)
+		}
+		else {
+			var radian = Math.random() * (2 * Math.PI)
+			enemy = enemyAI.checkMove(enemy, radian)
+			var json = jsonify.EnemyMove(enemy.username, enemy.positionX, enemy.positionY, null, null, enemy.target)
+			io.local.emit('enemy-move', json)
+			console.log(`[Server - Enemy move] : ${json}`)
 		}
 	}
 }
