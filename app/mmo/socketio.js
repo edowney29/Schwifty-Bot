@@ -189,7 +189,7 @@ const startServer = () => {
 
 	setInterval(() => {
 		io.emit('time', new Date().toTimeString())
-		//enemyUpdate()
+		enemyUpdate()
 
 		// Every 10 seconds
 		if (counter == 1000) {
