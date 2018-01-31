@@ -78,16 +78,18 @@ module.exports.getInfo = (url) => {
 }
 
 module.exports.downloadSong = (guildID, audioFormats) => {
-    var fileurl = audioFormats[0].url
-    return request
-        .get(fileurl)
-        .on('error', error => {
-            console.log(error)
-            reject(error)
-        })
-        .pipe(fs.createWriteStream(`./public/${guildID}.${audioFormats[0].container}`)
-            .on('finish', () => {
-                resolve(audioFormats[0].container)
+    return new Promise((resolve, reject) => {
+        var fileurl = audioFormats[1].url
+        request
+            .get(fileurl)
+            .on('error', error => {
+                console.log(error)
+                reject(error)
             })
-        )
+            .pipe(fs.createWriteStream(`./public/${guildID}.${audioFormats[0].container}`)
+                .on('finish', () => {
+                    resolve(audioFormats[0].container)
+                })
+            )
+    })
 }
