@@ -1,6 +1,5 @@
 const fs = require('fs')
 const googleapis = require('googleapis')
-const levenshtein = require('fast-levenshtein')
 const ytdl = require('ytdl-core')
 const request = require('request')
 const _ = require('lodash')

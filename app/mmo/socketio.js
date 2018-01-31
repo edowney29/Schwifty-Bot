@@ -234,7 +234,7 @@ function enemyUpdate() {
 			target: null
 		}
 		enemies.push(currentEnemy)
-		console.log(`[SERVER - Spawn Enemy] : ${currentEnemy.username}`)
+		//console.log(`[SERVER - Spawn Enemy] : ${currentEnemy.username}`)
 	}
 
 	/**
