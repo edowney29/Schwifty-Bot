@@ -259,14 +259,14 @@ function enemyUpdate() {
 			enemy = enemyAI.checkMove(enemy, radian)
 			var json = jsonify.EnemyMove(enemy.username, enemy.positionX, enemy.positionY, null, null, enemy.target)
 			io.local.emit('enemy-move', json)
-			console.log(`[Server - Enemy move] : ${json}`)
+			//console.log(`[Server - Enemy move] : ${json}`)
 		}
 		else {
 			var radian = Math.random() * (2 * Math.PI)
 			enemy = enemyAI.checkMove(enemy, radian)
 			var json = jsonify.EnemyMove(enemy.username, enemy.positionX, enemy.positionY, null, null, enemy.target)
 			io.local.emit('enemy-move', json)
-			console.log(`[Server - Enemy move] : ${json}`)
+			//console.log(`[Server - Enemy move] : ${json}`)
 		}
 	}
 
@@ -284,14 +284,14 @@ function enemyUpdate() {
 			enemy = enemyAI.checkMove(enemy, radian)
 			var json = jsonify.EnemyMove(enemy.username, enemy.positionX, enemy.positionY, null, null, enemy.target)
 			io.local.emit('enemy-move', json)
-			console.log(`[Server - Enemy move] : ${json}`)
+			//console.log(`[Server - Enemy move] : ${json}`)
 		}
 		else {
 			var radian = Math.random() * (2 * Math.PI)
 			enemy = enemyAI.checkMove(enemy, radian)
 			var json = jsonify.EnemyMove(enemy.username, enemy.positionX, enemy.positionY, null, null, enemy.target)
 			io.local.emit('enemy-move', json)
-			console.log(`[Server - Enemy move] : ${json}`)
+			//console.log(`[Server - Enemy move] : ${json}`)
 		}
 	}
 }

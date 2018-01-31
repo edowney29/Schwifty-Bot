@@ -46,7 +46,8 @@ module.exports.sortSongSearch = (index, videoTitle, list) => {
     return new Promise((resolve, reject) => {
         var score = 0, id = '', name = ''
         _.forEach(list.items, item => {
-            var s = levenshtein.get(videoTitle, item.snippet.localized.title)
+            //var s = levenshtein.get(videoTitle, item.snippet.localized.title)
+            var s = item.statistics.viewCount            
             if (s > score) {
                 score = s
                 id = item.id
