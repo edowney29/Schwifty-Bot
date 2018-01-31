@@ -59,33 +59,7 @@ client.on('message', message => {
 
 					var dispatcher = message.guild.voiceConnection.dispatcher
 					if (!dispatcher) {
-						downloadSong(message.guild.id, url)
-							.then(container => {
-								var connection = message.guild.voiceConnection
-								var streamOptions = { seek: 0, volume: 0.2, passes: 1, bitrate: 64 * 1024 }
-								var streamDispatcher = connection.playFile(`./public/${message.guild.id}.${container}`, streamOptions)
-								streamDispatcher.on('end', reason => {
-									//message.reply('!next')
-								})
-								streamDispatcher.on('start', () => {
-									message.reply('Playing: ' + servers[index].queue.names[0])
-									servers[index].queue.ids = _.drop(servers[index].queue.ids, 1)
-									servers[index].queue.names = _.drop(servers[index].queue.names, 1)
-								})
-								streamDispatcher.on('error', error => console.log(error))
-							})
-					}
-				})
-		}
-	}
-
-	if (_.includes(string, '!next')) {
-		if (message.member.voiceChannel && servers[index].queue.ids.length > 0) {
-			var url = `http://www.youtube.com/watch?v=${servers[index].queue.ids[servers[index].queue.ids.length - 1]}`
-			var dispatcher = message.guild.voiceConnection.dispatcher
-			if (!dispatcher) {
-				downloadSong(message.guild.id, url)
-					.then(container => {
+						var container = downloadSong(message.guild.id, url)
 						var connection = message.guild.voiceConnection
 						var streamOptions = { seek: 0, volume: 0.2, passes: 1, bitrate: 64 * 1024 }
 						var streamDispatcher = connection.playFile(`./public/${message.guild.id}.${container}`, streamOptions)
@@ -98,7 +72,29 @@ client.on('message', message => {
 							servers[index].queue.names = _.drop(servers[index].queue.names, 1)
 						})
 						streamDispatcher.on('error', error => console.log(error))
-					})
+					}
+				})
+		}
+	}
+
+	if (_.includes(string, '!next')) {
+		if (message.member.voiceChannel && servers[index].queue.ids.length > 0) {
+			var url = `http://www.youtube.com/watch?v=${servers[index].queue.ids[servers[index].queue.ids.length - 1]}`
+			var dispatcher = message.guild.voiceConnection.dispatcher
+			if (!dispatcher) {
+				var container = downloadSong(message.guild.id, url)
+				var connection = message.guild.voiceConnection
+				var streamOptions = { seek: 0, volume: 0.2, passes: 1, bitrate: 64 * 1024 }
+				var streamDispatcher = connection.playFile(`./public/${message.guild.id}.${container}`, streamOptions)
+				streamDispatcher.on('end', reason => {
+					//message.reply('!next')
+				})
+				streamDispatcher.on('start', () => {
+					message.reply('Playing: ' + servers[index].queue.names[0])
+					servers[index].queue.ids = _.drop(servers[index].queue.ids, 1)
+					servers[index].queue.names = _.drop(servers[index].queue.names, 1)
+				})
+				streamDispatcher.on('error', error => console.log(error))
 			}
 		}
 	}
@@ -248,13 +244,7 @@ var queueSong = async (videoTitle, index) => {
 	}
 }
 
-var downloadSong = async (guildID, url) => {
-	try {
-		var audioFormats = await helper.getInfo(url)
-		return await helper.downloadSong(guildID, audioFormats)
-	}
-	catch (err) {
-		console.log(err)
-		return err
-	}
+var downloadSong = (guildID, url) => {
+	var audioFormats = await helper.getInfo(url)
+	return helper.downloadSong(guildID, audioFormats)
 }

@@ -46,7 +46,7 @@ module.exports.sortSongSearch = (index, videoTitle, list) => {
         var score = 0, id = '', name = ''
         _.forEach(list.items, item => {
             //var s = levenshtein.get(videoTitle, item.snippet.localized.title)
-            var s = item.statistics.viewCount            
+            var s = item.statistics.viewCount
             if (s > score) {
                 score = s
                 id = item.id
@@ -78,17 +78,16 @@ module.exports.getInfo = (url) => {
 }
 
 module.exports.downloadSong = (guildID, audioFormats) => {
-    return new Promise((resolve, reject) => {
-        var fileurl = audioFormats[0].url
-        request
-            .get(fileurl)
-            .on('error', error => {
-                console.log(error)
-                reject(error)
+    var fileurl = audioFormats[0].url
+    return request
+        .get(fileurl)
+        .on('error', error => {
+            console.log(error)
+            reject(error)
+        })
+        .pipe(fs.createWriteStream(`./public/${guildID}.${audioFormats[0].container}`)
+            .on('finish', () => {
+                resolve(audioFormats[0].container)
             })
-            .pipe(fs.createWriteStream(`./public/${guildID}.${audioFormats[0].container}`)
-                .on('finish', () => {
-                    resolve(audioFormats[0].container)
-                }))
-    })
+        )
 }
