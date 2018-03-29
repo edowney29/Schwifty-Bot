@@ -1,1 +1,3 @@
-# Schwifty-Bot
+# Schwifty Bot
+
+Created by Slayerbeing and Juice
