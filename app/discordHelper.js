@@ -1,9 +1,7 @@
 const fs = require('fs');
 const ytdl = require('ytdl-core');
 const _ = require('lodash');
-const {
-  google,
-} = require('googleapis');
+const { google } = require('googleapis');
 
 const { GOOGLE_KEY } = process.env;
 
@@ -13,14 +11,17 @@ const youtube = google.youtube({
 });
 
 module.exports.searchVideos = videoTitle => new Promise((resolve, reject) => {
-  youtube.search.list({
-    part: 'snippet',
-    q: videoTitle,
-    maxResults: 1,
-    type: 'video',
-  }, (err, res) => {
-    err ? reject(err) : resolve(res.data.items);
-  });
+  youtube.search.list(
+    {
+      part: 'snippet',
+      q: videoTitle,
+      maxResults: 1,
+      type: 'video',
+    },
+    (err, res) => {
+      err ? reject(err) : resolve(res.data.items);
+    },
+  );
 });
 
 module.exports.listVideos = videos => new Promise((resolve, reject) => {
@@ -30,12 +31,15 @@ module.exports.listVideos = videos => new Promise((resolve, reject) => {
   });
 
   const idstring = _.join(ids, ',');
-  youtube.videos.list({
-    id: idstring,
-    part: 'snippet,contentDetails,statistics',
-  }, (err, res) => {
-    err ? reject(err) : resolve(res.data.items);
-  });
+  youtube.videos.list(
+    {
+      id: idstring,
+      part: 'snippet,contentDetails,statistics',
+    },
+    (err, res) => {
+      err ? reject(err) : resolve(res.data.items);
+    },
+  );
 });
 
 module.exports.sortSongSearch = (index, videoTitle, items) => new Promise((resolve, reject) => {
@@ -64,11 +68,15 @@ module.exports.sortSongSearch = (index, videoTitle, items) => new Promise((resol
 });
 
 module.exports.getInfo = url => new Promise((resolve, reject) => {
-  ytdl.getInfo(url, {
-    quality: '360p',
-  }, (err, info) => {
-    err ? reject(err) : resolve(info.formats);
-  });
+  ytdl.getInfo(
+    url,
+    {
+      quality: '360p',
+    },
+    (err, info) => {
+      err ? reject(err) : resolve(info.formats);
+    },
+  );
 });
 
 module.exports.downloadSong = (guildID, audioFormats) => new Promise((resolve, reject) => {
@@ -79,7 +87,12 @@ module.exports.downloadSong = (guildID, audioFormats) => new Promise((resolve, r
     responseType: 'stream',
   })
     .then((res) => {
-      res.data.pipe(fs.createWriteStream(`./public/${guildID}.${audioFormats[0].container}`))
+      res.data
+        .pipe(
+          fs.createWriteStream(
+            `./public/${guildID}.${audioFormats[0].container}`,
+          ),
+        )
         .on('finish', () => {
           resolve(audioFormats[0].container);
         });

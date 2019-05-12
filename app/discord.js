@@ -57,7 +57,9 @@ client.on('message', (message) => {
         .then((obj) => {
           servers[index].queue.ids.push(obj.id);
           servers[index].queue.names.push(obj.name);
-          const url = `http://www.youtube.com/watch?v=${servers[index].queue.ids[servers[index].queue.ids.length - 1]}`;
+          const url = `http://www.youtube.com/watch?v=${
+            servers[index].queue.ids[servers[index].queue.ids.length - 1]
+          }`;
           message.reply(`Song queued: ${url}`);
 
           // Not sure what this did
@@ -73,14 +75,18 @@ client.on('message', (message) => {
                 passes: 1,
                 bitrate: 48 * 1024,
               };
-              const streamDispatcher = connection.playFile(`./public/${message.guild.id}.${container}`, streamOptions);
-              streamDispatcher.on('end', (reason) => {
-
-              });
+              const streamDispatcher = connection.playFile(
+                `./public/${message.guild.id}.${container}`,
+                streamOptions,
+              );
+              streamDispatcher.on('end', (reason) => {});
               streamDispatcher.on('start', () => {
                 message.reply('Playing!');
                 servers[index].queue.ids = _.drop(servers[index].queue.ids, 1);
-                servers[index].queue.names = _.drop(servers[index].queue.names, 1);
+                servers[index].queue.names = _.drop(
+                  servers[index].queue.names,
+                  1,
+                );
               });
               streamDispatcher.on('error', error => console.log(error));
             })
@@ -95,7 +101,9 @@ client.on('message', (message) => {
 
   if (_.includes(string, '!next')) {
     if (message.member.voiceChannel && servers[index].queue.ids.length > 0) {
-      const url = `http://www.youtube.com/watch?v=${servers[index].queue.ids[0]}`;
+      const url = `http://www.youtube.com/watch?v=${
+        servers[index].queue.ids[0]
+      }`;
       // Var dispatcher = message.guild.voiceConnection.dispatcher
       // if (dispatcher) {
       message.guild.voiceConnection.dispatcher.end();
@@ -109,7 +117,10 @@ client.on('message', (message) => {
             passes: 1,
             bitrate: 48 * 1024,
           };
-          const streamDispatcher = connection.playFile(`./public/${message.guild.id}.${container}`, streamOptions);
+          const streamDispatcher = connection.playFile(
+            `./public/${message.guild.id}.${container}`,
+            streamOptions,
+          );
           streamDispatcher.on('end', (reason) => {
             // Message.reply('!next')
           });
@@ -157,7 +168,10 @@ client.on('message', (message) => {
 
   if (_.includes(string, '!check')) {
     if (message.member.voiceChannel) {
-      const str = `${servers[index].queue.names.length} songs queued \n${_.join(servers[index].queue.names, '\n')}`;
+      const str = `${servers[index].queue.names.length} songs queued \n${_.join(
+        servers[index].queue.names,
+        '\n',
+      )}`;
       message.reply(str);
     }
   }
@@ -166,7 +180,9 @@ client.on('message', (message) => {
     if (message.member.voiceChannel) {
       const num = servers[index].queue.ids.length;
       if (num > 0) {
-        message.reply(`Song removed:  + ${servers[index].queue.names[num - 1]}`);
+        message.reply(
+          `Song removed:  + ${servers[index].queue.names[num - 1]}`,
+        );
         servers[index].queue.ids = _.drop(servers[index].queue.ids, 1);
         servers[index].queue.names = _.drop(servers[index].queue.names, 1);
       }
