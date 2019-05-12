@@ -1,31 +1,32 @@
 {
-  "name": "overwatchserver",
-  "version": "1.0.0",
-  "description": "yoloswag420",
+  "name": "schwifty-bot",
+  "version": "2.0.0",
+  "description": "A discord music and management bot",
   "main": "index.html",
   "engines": {
-    "node": "8.7.0"
+    "node": "10.15.3"
   },
   "scripts": {
     "start": "node app.js",
     "heroku-postbuild": "npm install"
   },
-  "author": "Slayerbeing",
+  "author": "Eric Downey",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
-    "discord.js": "^11.3.2",
-    "dotenv": "^5.0.1",
-    "express": "^4.16.3",
-    "googleapis": "^27.0.0",
-    "lodash": "^4.17.5",
-    "moment": "^2.21.0",
-    "moment-timezone": "^0.5.14",
-    "node-opus": "^0.2.7",
-    "path": "^0.12.7",
-    "random-js": "^1.0.8",
-    "socket.io": "^2.0.4",
-    "uws": "^9.14.0",
-    "ytdl-core": "^0.20.2"
+    "discord.js": "^11.5.0",
+    "express": "^4.16.4",
+    "googleapis": "^39.2.0",
+    "lodash": "^4.17.11",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.25",
+    "ytdl-core": "^0.29.1"
+  },
+  "devDependencies": {
+    "eslint": "^5.3.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
+    "eslint-plugin-react": "^7.11.0"
   }
 }
