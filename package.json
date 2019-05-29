@@ -18,6 +18,7 @@
     "express": "^4.17.1",
     "googleapis": "^39.2.0",
     "lodash": "^4.17.11",
+    "node-opus": "^0.3.2",
     "ytdl-core": "^0.29.2"
   },
   "devDependencies": {
