@@ -294,7 +294,7 @@ module.exports = () => {
             if (_.includes(numArray, 20)) {
               message.reply(nat20[Math.floor(Math.random() * nat20.length)]);
             }
-            if (_.every(numArray, num => num == 1)) {
+            if (_.includes(numArray, 1)) {
               message.reply(nat1[Math.floor(Math.random() * nat1.length)]);
             }
           }
