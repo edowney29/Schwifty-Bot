@@ -1,6 +1,7 @@
 const fs = require('fs');
-const ytdl = require('ytdl-core');
 const _ = require('lodash');
+const axios = require('axios');
+const ytdl = require('ytdl-core');
 const { google } = require('googleapis');
 
 const { GOOGLE_KEY } = process.env;
@@ -19,7 +20,10 @@ module.exports.searchVideos = videoTitle => new Promise((resolve, reject) => {
       type: 'video',
     },
     (err, res) => {
-      err ? reject(err) : resolve(res.data.items);
+      if (err) {
+        reject(err);
+      }
+      resolve(res.data.items);
     },
   );
 });
@@ -37,15 +41,18 @@ module.exports.listVideos = videos => new Promise((resolve, reject) => {
       part: 'snippet,contentDetails,statistics',
     },
     (err, res) => {
-      err ? reject(err) : resolve(res.data.items);
+      if (err) {
+        reject(err);
+      }
+      resolve(res.data.items);
     },
   );
 });
 
 module.exports.sortSongSearch = (index, videoTitle, items) => new Promise((resolve, reject) => {
   let score = 0;
-  let id = '';
-  let name = '';
+  let id;
+  let name;
   _.forEach(items, (item) => {
     const s = parseInt(item.statistics.viewCount, 10);
     if (s > score) {
@@ -63,7 +70,7 @@ module.exports.sortSongSearch = (index, videoTitle, items) => new Promise((resol
     };
     resolve(obj);
   } else {
-    reject('No score');
+    reject(new Error('No score'));
   }
 });
 
@@ -74,7 +81,8 @@ module.exports.getInfo = url => new Promise((resolve, reject) => {
       quality: '360p',
     },
     (err, info) => {
-      err ? reject(err) : resolve(info.formats);
+      if (err) reject(err);
+      resolve(info.formats);
     },
   );
 });
@@ -95,7 +103,9 @@ module.exports.downloadSong = (guildID, audioFormats) => new Promise((resolve, r
         )
         .on('finish', () => {
           resolve(audioFormats[0].container);
+        })
+        .on('error', (err) => {
+          reject(err);
         });
-    })
-    .catch(err => console.log(err));
+    });
 });
