@@ -35,7 +35,9 @@ module.exports = () => {
 
     const string = _.toLower(message.content);
     console.log(
-      `[${message.guild.name}] ${message.member.user.username}#${message.member.user.discriminator}: ${message.content}`
+      `[${message.guild.name}] ${message.member.user.username}#${
+        message.member.user.discriminator
+      }: ${message.content}`
     );
 
     if (_.includes(string, "!join")) {
@@ -239,43 +241,59 @@ module.exports = () => {
         "Try asking again.",
         "No.",
         "No.",
-        "No.",
+        "No."
       ];
 
       message.reply(answers[Math.floor(Math.random() * answers.length)]);
     }
 
-    if (_.includes(string, ["d4", "d6", "d8", "d10", "d12", "d20", "d100"])) {
-      const strArray = string.split("d");
-      const str1 = strArray[0].match(/\d+$/)[0];
-      const str2 = strArray[1].match(/\d/)[0];
-      const rolls = Number.isInteger(str1) ? parseInt(str1) : 1;
-      const dice = Number.isInteger(str2) ? parseInt(str2) : 20;
+    if (
+      (_.includes(string, "d4") ||
+        _.includes(string, "d6") ||
+        _.includes(string, "d8") ||
+        _.includes(string, "d10") ||
+        _.includes(string, "d12") ||
+        _.includes(string, "d20") ||
+        _.includes(string, "d100")) &&
+      _.indexOf(string, " ") < 0
+    ) {
+      const strArray = _.split(string, "d");
+      console.log;
+      const rolls = getRolls(strArray[0]);
+      const dice = parseInt(strArray[1].match(/\d+/)[0]);
       const numArray = [];
 
-      let str = "Rolled: ";
-      for (let i = 0; i < rolls; i++) {
-        const number = Math.random() * (dice - 1) + 1;
+      let str = `Rolled: `;
+      if (rolls == 1) {
+        const number = Math.floor(Math.random() * dice) + 1;
         numArray.push(number);
-        str = `${number} `;
-        if (i == rolls - 1) {
-          str += `= `;
-        } else {
-          str += `+ `;
+        str += `${number}`;
+      } else {
+        for (let i = 0; i < rolls; i++) {
+          const number = Math.floor(Math.random() * dice) + 1;
+          numArray.push(number);
+          str += `${number} `;
+          if (i == rolls - 1) {
+            str += `= `;
+          } else {
+            str += `+ `;
+          }
         }
+
+        const sum = numArray.reduce(numSum);
+        str += `${sum}`;
       }
 
-      const sum = numbers.reduce(numSum);
-      str += `${sum}`;
-      
       message
         .reply(str)
         .then(() => {
-          if (numArray.indexOf(20)) {
-            message.reply(nat20[Math.floor(Math.random() * nat20.length)]);
-          }
-          if (_.every(numArray, num => num == 1)) {
-            message.reply(nat1[Math.floor(Math.random() * nat1.length)]);
+          if (dice == 20) {
+            if (_.findIndex(numArray, 20) >= 0) {
+              message.reply(nat20[Math.floor(Math.random() * nat20.length)]);
+            }
+            if (_.every(numArray, num => num == 1)) {
+              message.reply(nat1[Math.floor(Math.random() * nat1.length)]);
+            }
           }
         })
         .catch(err => {
@@ -285,6 +303,11 @@ module.exports = () => {
   });
 
   client.login(DISCORD_KEY);
+};
+
+const getRolls = string => {
+  const number = parseInt(string.match(/\d+$/));
+  return isNaN(number) ? 1 : number;
 };
 
 const numSum = (a, b) => a + b;
