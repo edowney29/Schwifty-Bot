@@ -269,12 +269,12 @@ module.exports = () => {
       let str = `Rolled: `;
       if (rolls == 1) {
         const number = Math.floor(Math.random() * dice) + 1;
-        numArray.push(20);
+        numArray.push(number);
         str += `${number}`;
       } else {
         for (let i = 0; i < rolls; i++) {
           const number = Math.floor(Math.random() * dice) + 1;
-          numArray.push(20);
+          numArray.push(number);
           str += `${number} `;
           if (i == rolls - 1) {
             str += `= `;
