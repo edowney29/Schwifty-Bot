@@ -4,9 +4,11 @@
   "description": "A discord music and management bot",
   "main": "app.js",
   "engines": {
-    "node": "10.16.0"
+    "node": "10.16.0",
+    "npm": "*"
   },
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js"
   },
   "author": "Eric Downey",
