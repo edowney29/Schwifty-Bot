@@ -1,4 +1,4 @@
-/*
+/* Unused
 const getZone = zone => {
   switch (zone) {
     case "EDT":

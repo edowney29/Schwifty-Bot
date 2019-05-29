@@ -84,7 +84,9 @@ module.exports = () => {
                   `./public/${message.guild.id}.${container}`,
                   streamOptions
                 );
-                streamDispatcher.on("end", reason => {});
+                streamDispatcher.on("end", reason => {
+                  console.log(reason);
+                });
                 streamDispatcher.on("start", () => {
                   message.reply("Playing!");
                   servers[index].queue.ids = _.drop(
@@ -130,6 +132,7 @@ module.exports = () => {
               streamOptions
             );
             streamDispatcher.on("end", reason => {
+              console.log(reason);
               // Message.reply('!next')
             });
             streamDispatcher.on("start", () => {
@@ -151,7 +154,7 @@ module.exports = () => {
 
     if (_.includes(string, "!resume")) {
       if (message.member.voiceChannel) {
-        var { dispatcher } = message.guild.voiceConnection;
+        let { dispatcher } = message.guild.voiceConnection;
         if (dispatcher) {
           if (dispatcher.paused) {
             dispatcher.resume();
@@ -165,7 +168,7 @@ module.exports = () => {
 
     if (_.includes(string, "!pause")) {
       if (message.member.voiceChannel) {
-        var { dispatcher } = message.guild.voiceConnection;
+        let { dispatcher } = message.guild.voiceConnection;
         if (dispatcher) {
           if (!dispatcher.paused) {
             dispatcher.pause();
@@ -266,12 +269,12 @@ module.exports = () => {
       let str = `Rolled: `;
       if (rolls == 1) {
         const number = Math.floor(Math.random() * dice) + 1;
-        numArray.push(number);
+        numArray.push(20);
         str += `${number}`;
       } else {
         for (let i = 0; i < rolls; i++) {
           const number = Math.floor(Math.random() * dice) + 1;
-          numArray.push(number);
+          numArray.push(20);
           str += `${number} `;
           if (i == rolls - 1) {
             str += `= `;
@@ -287,8 +290,8 @@ module.exports = () => {
       message
         .reply(str)
         .then(() => {
-          if (dice == 20) {
-            if (_.findIndex(numArray, 20) >= 0) {
+          if (dice == 20 && rolls == 1) {
+            if (_.includes(numArray, 20)) {
               message.reply(nat20[Math.floor(Math.random() * nat20.length)]);
             }
             if (_.every(numArray, num => num == 1)) {
@@ -312,25 +315,22 @@ const getRolls = string => {
 
 const numSum = (a, b) => a + b;
 
-const queueSong = async (videoTitle, index) => {
-  try {
-    const videos = await helper.searchVideos(videoTitle);
-    const list = await helper.listVideos(videos);
-    return await helper.sortSongSearch(index, videoTitle, list);
-  } catch (err) {
-    console.log(err);
-    return err;
-  }
+const queueSong = (videoTitle, index) => {
+  helper.searchVideos(videoTitle).then(videos => {
+    helper.listVideos(videos).then(list => {
+      helper.sortSongSearch(index, videoTitle, list).then(data => {
+        return data;
+      });
+    });
+  });
 };
 
-const downloadSong = async (guildID, url) => {
-  try {
-    const audioFormats = await helper.getInfo(url);
-    return await helper.downloadSong(guildID, audioFormats);
-  } catch (err) {
-    console.log(err);
-    return err;
-  }
+const downloadSong = (guildID, url) => {
+  helper.getInfo(url).then(audioFormats => {
+    helper.downloadSong(guildID, audioFormats).then(data => {
+      return data;
+    });
+  });
 };
 
 const nat20 = [
