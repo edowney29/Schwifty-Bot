@@ -201,6 +201,7 @@ module.exports = () => {
 
     if (_.includes(string, "magic conch")) {
       const answers = [
+        /*
         "Maybe.",
         "Certainly not.",
         "Not in your wildest dreams.",
@@ -226,8 +227,19 @@ module.exports = () => {
         "There is a small chance.",
         "Yes!",
         "Obviously.",
+        "42",
+        */
+        "Maybe someday.",
+        "Nothing.",
+        "Neither.",
+        "Follow the seahorse.",
+        "I don't think so.",
         "No.",
-        "42"
+        "Yes.",
+        "Try asking again.",
+        "No.",
+        "No.",
+        "No.",
       ];
 
       message.reply(answers[Math.floor(Math.random() * answers.length)]);
