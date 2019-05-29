@@ -7,7 +7,7 @@
     "node": "10.16.0"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node app.js"
   },
   "author": "Eric Downey",
   "license": "ISC",
