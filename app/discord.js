@@ -12,7 +12,7 @@ module.exports = () => {
 
   client.on("ready", () => {
     console.log("Ready!");
-    client.user.setActivity("the game of life");
+    //client.user.setActivity("the game of life");
   });
 
   // eslint-disable-next-line complexity
