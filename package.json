@@ -2,13 +2,12 @@
   "name": "schwifty-bot",
   "version": "2.0.0",
   "description": "A discord music and management bot",
-  "main": "index.html",
+  "main": "app.js",
   "engines": {
-    "node": "10.15.3"
+    "node": "10.16.0"
   },
   "scripts": {
-    "start": "node app.js",
-    "heroku-postbuild": "npm install"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Eric Downey",
   "license": "ISC",
