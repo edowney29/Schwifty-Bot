@@ -35,7 +35,7 @@ module.exports = () => {
 
     const string = _.toLower(message.content);
     console.log(
-      `[${message.guild.id}] ${message.member.id}: ${message.content}`
+      `[${message.guild.name}] ${message.member.user.username}#${message.member.user.discriminator}: ${message.content}`
     );
 
     if (_.includes(string, "!join")) {
