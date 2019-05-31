@@ -258,7 +258,8 @@ module.exports = () => {
         _.includes(string, "d12") ||
         _.includes(string, "d20") ||
         _.includes(string, "d100")) &&
-      _.indexOf(string, " ") < 0
+      _.indexOf(string, " ") < 0 &&
+      _.indexOf(string, "http") < 0
     ) {
       const strArray = _.split(string, "d");
       console.log;
