@@ -259,7 +259,7 @@ module.exports = () => {
         _.includes(string, "d20") ||
         _.includes(string, "d100")) &&
       !_.includes(string, " ") &&
-      !_.includes(string, "http")
+      !_.includes(string, ":")
     ) {
       const strArray = _.split(string, "d");
       console.log;
