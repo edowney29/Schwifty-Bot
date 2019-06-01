@@ -36,7 +36,7 @@ module.exports = () => {
     const string = _.toLower(message.content);
     console.log(
       `[${message.guild.name}] ${message.member.user.username}#${
-        message.member.user.discriminator
+      message.member.user.discriminator
       }: ${message.content}`
     );
 
@@ -64,7 +64,7 @@ module.exports = () => {
             servers[index].queue.names.push(obj.name);
             const url = `http://www.youtube.com/watch?v=${
               servers[index].queue.ids[servers[index].queue.ids.length - 1]
-            }`;
+              }`;
             message.reply(`Song queued: ${url}`);
 
             // Not sure what this did
@@ -113,7 +113,7 @@ module.exports = () => {
       if (message.member.voiceChannel && servers[index].queue.ids.length > 0) {
         const url = `http://www.youtube.com/watch?v=${
           servers[index].queue.ids[0]
-        }`;
+          }`;
         // Var dispatcher = message.guild.voiceConnection.dispatcher
         // if (dispatcher) {
         message.guild.voiceConnection.dispatcher.end();
@@ -184,7 +184,7 @@ module.exports = () => {
       if (message.member.voiceChannel) {
         const str = `${
           servers[index].queue.names.length
-        } songs queued \n${_.join(servers[index].queue.names, "\n")}`;
+          } songs queued \n${_.join(servers[index].queue.names, "\n")}`;
         message.reply(str);
       }
     }
@@ -261,48 +261,52 @@ module.exports = () => {
       !_.includes(string, " ") &&
       !_.includes(string, ":")
     ) {
-      const strArray = _.split(string, "d");
-      console.log;
-      const rolls = getRolls(strArray[0]);
-      const dice = parseInt(strArray[1].match(/\d+/)[0]);
-      const numArray = [];
+      try {
+        const strArray = _.split(string, "d");
+        console.log;
+        const rolls = getRolls(strArray[0]);
+        const dice = parseInt(strArray[1].match(/\d+/)[0]);
+        const numArray = [];
 
-      let str = `Rolled: `;
-      if (rolls == 1) {
-        const number = Math.floor(Math.random() * dice) + 1;
-        numArray.push(number);
-        str += `${number}`;
-      } else {
-        for (let i = 0; i < rolls; i++) {
+        let str = `Rolled: `;
+        if (rolls == 1) {
           const number = Math.floor(Math.random() * dice) + 1;
           numArray.push(number);
-          str += `${number} `;
-          if (i == rolls - 1) {
-            str += `= `;
-          } else {
-            str += `+ `;
+          str += `${number}`;
+        } else {
+          for (let i = 0; i < rolls; i++) {
+            const number = Math.floor(Math.random() * dice) + 1;
+            numArray.push(number);
+            str += `${number} `;
+            if (i == rolls - 1) {
+              str += `= `;
+            } else {
+              str += `+ `;
+            }
           }
+
+          const sum = numArray.reduce(numSum);
+          str += `${sum}`;
         }
 
-        const sum = numArray.reduce(numSum);
-        str += `${sum}`;
+        message
+          .reply(str)
+          .then(() => {
+            if (dice == 20 && rolls == 1) {
+              if (_.includes(numArray, 20)) {
+                message.reply(nat20[Math.floor(Math.random() * nat20.length)]);
+              }
+              if (_.includes(numArray, 1)) {
+                message.reply(nat1[Math.floor(Math.random() * nat1.length)]);
+              }
+            }
+          })
+          .catch(err => {
+            console.error(err);
+          });
+      } catch (err) {
+        message.reply('You broke me...');
       }
-
-      message
-        .reply(str)
-        .then(() => {
-          if (dice == 20 && rolls == 1) {
-            if (_.includes(numArray, 20)) {
-              message.reply(nat20[Math.floor(Math.random() * nat20.length)]);
-            }
-            if (_.includes(numArray, 1)) {
-              message.reply(nat1[Math.floor(Math.random() * nat1.length)]);
-            }
-          }
-        })
-        .catch(err => {
-          console.error(err);
-        });
     }
   });
 
