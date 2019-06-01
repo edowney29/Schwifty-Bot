@@ -305,6 +305,7 @@ module.exports = () => {
             console.error(err);
           });
       } catch (err) {
+        console.log(err);
         message.reply('You broke me...');
       }
     }
