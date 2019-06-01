@@ -204,7 +204,7 @@ module.exports = () => {
       }
     }
 
-    if (_.includes(string, "magic conch")) {
+    if (_.includes(string, "magic conch") || _.includes(string, "magic_conch")) {
       const answers = [
         /*
         "Maybe.",
