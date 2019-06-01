@@ -261,13 +261,13 @@ module.exports = () => {
       !_.includes(string, " ") &&
       !_.includes(string, ":")
     ) {
-      try {
-        const strArray = _.split(string, "d");
-        console.log;
-        const rolls = getRolls(strArray[0]);
-        const dice = parseInt(strArray[1].match(/\d+/)[0]);
-        const numArray = [];
+      const strArray = _.split(string, "d");
+      console.log;
+      const rolls = getRolls(strArray[0]);
+      const dice = parseInt(strArray[1].match(/\d+/)[0]);
+      const numArray = [];
 
+      if (rolls < 1000 && _.includes([4, 6, 8, 10, 12, 20, 100], dice)) {
         let str = `Rolled: `;
         if (rolls == 1) {
           const number = Math.floor(Math.random() * dice) + 1;
@@ -304,9 +304,6 @@ module.exports = () => {
           .catch(err => {
             console.error(err);
           });
-      } catch (err) {
-        console.log(err);
-        message.reply('You broke me...');
       }
     }
   });
