@@ -38,7 +38,7 @@ module.exports = () => {
         `[${message.guild.name}] ${message.member.user.username}#${message.member.user.discriminator}: ${message.content}`
       );
 
-      if (_.includes(string, "magic") && _.includes(string, "conch")) {
+      if (_.includes(string, "magic conch")) {
         const answers = [
           // "Maybe.",
           // "Certainly not.",
