@@ -1,7 +1,7 @@
 const discord = require("discord.js");
 const _ = require("lodash");
 
-//const helper = require("./discordHelper");
+// const helper = require("./helper");
 
 const { DISCORD_KEY } = process.env;
 
@@ -13,10 +13,9 @@ module.exports = () => {
 
     client.on("ready", () => {
       console.log("Ready!");
-      //client.user.setActivity("the game of life");
+      // client.user.setActivity("the game of life");
     });
 
-    // eslint-disable-next-line complexity
     client.on("message", message => {
       let index = _.findIndex(servers, {
         id: message.guild.id
@@ -36,41 +35,37 @@ module.exports = () => {
 
       const string = _.toLower(message.content);
       console.log(
-        `[${message.guild.name}] ${message.member.user.username}#${
-          message.member.user.discriminator
-        }: ${message.content}`
+        `[${message.guild.name}] ${message.member.user.username}#${message.member.user.discriminator}: ${message.content}`
       );
 
       if (_.includes(string, "magic") && _.includes(string, "conch")) {
         const answers = [
-          /*
-        "Maybe.",
-        "Certainly not.",
-        "Not in your wildest dreams.",
-        "Nah, fam.",
-        "There is a good chance.",
-        "Quite likely.",
-        "I hope not.",
-        "Without a doubt.",
-        "I hope so.",
-        "Never!",
-        "Fuhgeddaboudit.",
-        "Pfft.",
-        "Very doubtful.",
-        "Sorry, bucko.",
-        "Hell, yes.",
-        "Hell to the no.",
-        "The future is bleak.",
-        "The future is uncertain.",
-        "I would rather not say.",
-        "Who cares?",
-        "Possibly.",
-        "Never, ever, ever.",
-        "There is a small chance.",
-        "Yes!",
-        "Obviously.",
-        "42",
-        */
+          // "Maybe.",
+          // "Certainly not.",
+          // "Not in your wildest dreams.",
+          // "Nah, fam.",
+          // "There is a good chance.",
+          // "Quite likely.",
+          // "I hope not.",
+          // "Without a doubt.",
+          // "I hope so.",
+          // "Never!",
+          // "Fuhgeddaboudit.",
+          // "Pfft.",
+          // "Very doubtful.",
+          // "Sorry, bucko.",
+          // "Hell, yes.",
+          // "Hell to the no.",
+          // "The future is bleak.",
+          // "The future is uncertain.",
+          // "I would rather not say.",
+          // "Who cares?",
+          // "Possibly.",
+          // "Never, ever, ever.",
+          // "There is a small chance.",
+          // "Yes!",
+          // "Obviously.",
+          // "42",
           "Maybe someday.",
           "Nothing.",
           "Neither.",
