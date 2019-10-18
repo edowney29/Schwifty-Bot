@@ -1,5 +1,4 @@
 const discord = require("discord.js");
-const _ = require("lodash");
 
 // const helper = require("./helper");
 
@@ -17,10 +16,7 @@ module.exports = () => {
     });
 
     client.on("message", message => {
-      let index = _.findIndex(servers, {
-        id: message.guild.id
-      });
-
+      let index = servers.findIndex(elem => elem.id === message.guild.id);
       if (index === -1) {
         const server = {
           id: message.guild.id,
@@ -33,12 +29,12 @@ module.exports = () => {
         index = servers.length - 1;
       }
 
-      const string = _.toLower(message.content);
+      const string = message.content.toLowerCase();
       console.log(
         `[${message.guild.name}] ${message.member.user.username}#${message.member.user.discriminator}: ${message.content}`
       );
 
-      if (_.includes(string, "magic conch")) {
+      if (string.includes("magic conch")) {
         const answers = [
           // "Maybe.",
           // "Certainly not.",
@@ -83,54 +79,68 @@ module.exports = () => {
       }
 
       if (
-        (_.includes(string, "d4") ||
-          _.includes(string, "d6") ||
-          _.includes(string, "d8") ||
-          _.includes(string, "d10") ||
-          _.includes(string, "d12") ||
-          _.includes(string, "d20") ||
-          _.includes(string, "d100")) &&
-        !_.includes(string, " ") &&
-        !_.includes(string, ":")
+        (string.includes("d4") ||
+          string.includes("d6") ||
+          string.includes("d8") ||
+          string.includes("d10") ||
+          string.includes("d12") ||
+          string.includes("d20") ||
+          string.includes("d100")) &&
+        !string.includes(" ") &&
+        !string.includes(":")
       ) {
-        const strArray = _.split(string, "d");
-        console.log;
-        const rolls = getRolls(strArray[0]);
-        const dice = parseInt(strArray[1].match(/\d+/)[0]);
-        const numArray = [];
+        const strArray = string
+          .match(/(\d*)(D\d*)((?:[+*-](?:\d+|\([A-Z]*\)))*)(?:\+(D\d*))?/i)
+          .map(String);
 
-        if (rolls < 1000 && _.includes([4, 6, 8, 10, 12, 20, 100], dice)) {
+        let rolls = getNumber(strArray[1], false);
+        let dice = getNumber(strArray[2], true);
+        let plus = getNumber(strArray[3], false);
+        let other = getNumber(strArray[4], true);
+        if (!rolls) rolls = 1;
+
+        const numArray = [];
+        if (rolls <= 100 && [4, 6, 8, 10, 12, 20, 100].includes(dice)) {
           let str = `Rolled: `;
           if (rolls == 1) {
             const number = Math.floor(Math.random() * dice) + 1;
             numArray.push(number);
-            str += `${number}`;
+            const sum = numArray.reduce(numSum);
+            if (plus)
+              str += ` ${sum} (${
+                plus >= 0 ? `+${plus}` : `${plus}`
+              }) = **${sum + plus}**`;
+            else str += `**${sum}**`;
           } else {
             for (let i = 0; i < rolls; i++) {
               const number = Math.floor(Math.random() * dice) + 1;
               numArray.push(number);
               str += `${number} `;
               if (i == rolls - 1) {
-                str += `= `;
+                str += `--> `;
               } else {
-                str += `+ `;
+                str += `- `;
               }
             }
 
             const sum = numArray.reduce(numSum);
-            str += `${sum}`;
+            if (plus)
+              str += ` ${sum} (${
+                plus >= 0 ? `+${plus}` : `${plus}`
+              }) = **${sum + plus}**`;
+            else str += `**${sum}**`;
           }
 
           message
             .reply(str)
             .then(() => {
               if (dice == 20 && rolls == 1) {
-                if (_.includes(numArray, 20)) {
+                if (numArray.includes(20)) {
                   message.reply(
                     nat20[Math.floor(Math.random() * nat20.length)]
                   );
                 }
-                if (_.includes(numArray, 1)) {
+                if (numArray.includes(1)) {
                   message.reply(nat1[Math.floor(Math.random() * nat1.length)]);
                 }
               }
@@ -148,9 +158,11 @@ module.exports = () => {
   }
 };
 
-const getRolls = string => {
-  const number = parseInt(string.match(/\d+$/));
-  return isNaN(number) ? 1 : number;
+const getNumber = (string, parse = false) => {
+  let number = null;
+  if (parse) number = parseInt(string.match(/(|-?\d+)$/));
+  else number = parseInt(string);
+  return isNaN(number) ? null : number;
 };
 
 const numSum = (a, b) => a + b;
@@ -159,10 +171,27 @@ const nat20 = [
   "https://media.giphy.com/media/3oriOiyS3y8fhg7m9i/giphy.gif",
   "https://media.giphy.com/media/meKPRINqUoQXC/giphy.gif",
   "https://media.giphy.com/media/Y91ljrKMxg4mc/giphy.gif",
-  "https://media.giphy.com/media/Zw3oBUuOlDJ3W/giphy.gif"
+  "https://media.giphy.com/media/Zw3oBUuOlDJ3W/giphy.gif",
+  "https://media.giphy.com/media/3oriNPdeu2W1aelciY/giphy.gif",
+  "https://media.giphy.com/media/b09xElu8in7Lq/giphy.gif",
+  "https://media.giphy.com/media/Na33dsU2umStO/giphy.gif",
+  "https://media.giphy.com/media/90F8aUepslB84/giphy.gif",
+  "https://media.giphy.com/media/rmi45iyhIPuRG/giphy.gif",
+  "https://media.giphy.com/media/XreQmk7ETCak0/giphy.gif",
+  "https://media.giphy.com/media/fDbzXb6Cv5L56/giphy.gif",
+  "https://media.giphy.com/media/3o72FcJmLzIdYJdmDe/giphy.gif"
 ];
 
 const nat1 = [
   "https://media.giphy.com/media/aCMuJOsnihkwU/giphy.gif",
-  "https://media.giphy.com/media/EXHHMS9caoxAA/giphy.gif"
+  "https://media.giphy.com/media/EXHHMS9caoxAA/giphy.gif",
+  "https://media.giphy.com/media/wDgw1fJF8hzMY/giphy.gif",
+  "https://media.giphy.com/media/QwZ4DVuJpkJZS/giphy.gif",
+  "https://media.giphy.com/media/aGc9XBGiP9QqY/giphy.gif",
+  "https://media.giphy.com/media/zraj11LOUptNsNDfTv/giphy.gif",
+  "https://media.giphy.com/media/duexIlfr9yYwYE23UA/giphy.gif",
+  "https://media.giphy.com/media/3ePb1CHEjfSRhn6r3c/giphy.gif",
+  "https://media.giphy.com/media/dJEMs13SrsiuA/giphy.gif",
+  "https://media.giphy.com/media/i4gLlAUz2IVIk/giphy.gif",
+  "https://media.giphy.com/media/EFXGvbDPhLoWs/giphy.gif"
 ];
