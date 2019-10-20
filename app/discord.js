@@ -150,6 +150,22 @@ module.exports = () => {
             });
         }
       }
+
+      if (string.includes("/roll")) {
+        const strArr = string.split(" ");
+        if (strArr.length === 1) {
+          message.reply(Math.floor(Math.random() * 100) + 1);
+        } else if (strArr.length === 2) {
+          const max = getNumber(strArr[1]);
+          message.reply(Math.floor(Math.random() * max) + 1);
+        } else if (strArr.length === 3) {
+          const min = getNumber(strArr[1]);
+          const max = getNumber(strArr[2]);
+          message.reply(Math.floor(Math.random() * max) + min);
+        } else {
+          message.reply("oof");
+        }
+      }
     });
 
     client.login(DISCORD_KEY);
