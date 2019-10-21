@@ -184,24 +184,21 @@ const getNumber = (string, parse = false) => {
 const numSum = (a, b) => a + b;
 
 const nat20 = [
-  "https://media.giphy.com/media/3oriOiyS3y8fhg7m9i/giphy.gif",
   "https://media.giphy.com/media/meKPRINqUoQXC/giphy.gif",
-  "https://media.giphy.com/media/Y91ljrKMxg4mc/giphy.gif",
   "https://media.giphy.com/media/Zw3oBUuOlDJ3W/giphy.gif",
-  "https://media.giphy.com/media/3oriNPdeu2W1aelciY/giphy.gif",
   "https://media.giphy.com/media/b09xElu8in7Lq/giphy.gif",
   "https://media.giphy.com/media/Na33dsU2umStO/giphy.gif",
   "https://media.giphy.com/media/90F8aUepslB84/giphy.gif",
   "https://media.giphy.com/media/rmi45iyhIPuRG/giphy.gif",
   "https://media.giphy.com/media/XreQmk7ETCak0/giphy.gif",
   "https://media.giphy.com/media/fDbzXb6Cv5L56/giphy.gif",
-  "https://media.giphy.com/media/3o72FcJmLzIdYJdmDe/giphy.gif"
+  "https://media.giphy.com/media/3o72FcJmLzIdYJdmDe/giphy.gif",
+  "https://media.giphy.com/media/3o7btZTXDFpXjK6d56/giphy.gif",
+  "https://media.giphy.com/media/wijMRo7UZXSqA/giphy.gif"
 ];
 
 const nat1 = [
-  "https://media.giphy.com/media/aCMuJOsnihkwU/giphy.gif",
   "https://media.giphy.com/media/EXHHMS9caoxAA/giphy.gif",
-  "https://media.giphy.com/media/wDgw1fJF8hzMY/giphy.gif",
   "https://media.giphy.com/media/QwZ4DVuJpkJZS/giphy.gif",
   "https://media.giphy.com/media/aGc9XBGiP9QqY/giphy.gif",
   "https://media.giphy.com/media/zraj11LOUptNsNDfTv/giphy.gif",
@@ -209,5 +206,15 @@ const nat1 = [
   "https://media.giphy.com/media/3ePb1CHEjfSRhn6r3c/giphy.gif",
   "https://media.giphy.com/media/dJEMs13SrsiuA/giphy.gif",
   "https://media.giphy.com/media/i4gLlAUz2IVIk/giphy.gif",
-  "https://media.giphy.com/media/EFXGvbDPhLoWs/giphy.gif"
+  "https://media.giphy.com/media/EFXGvbDPhLoWs/giphy.gif",
+  "https://media.giphy.com/media/ONDEDdacIoNjy/giphy.gif",
+  "https://media.giphy.com/media/UEkEipSYMWhoY/giphy.gif",
+  "https://media.giphy.com/media/DsNFJLcZGuEAo/giphy.gif",
+  "https://media.giphy.com/media/I4fvDjTDt7OWQ/giphy.gif",
+  "https://media.giphy.com/media/HlTG1x1rzbTos/giphy.gif",
+  "https://media.giphy.com/media/rGrxMSVaKvo2Y/giphy.gif",
+  "https://media.giphy.com/media/5yaCPstUOV9Kw/giphy.gif",
+  "https://media.giphy.com/media/xTk9ZWZR2J0lNIkkCY/giphy.gif",
+  "https://media.giphy.com/media/kDmsG1ei4P1Yc/giphy.gif",
+  "https://media.giphy.com/media/rW6CpFhDj9lkc/giphy.gif"
 ];
