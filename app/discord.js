@@ -147,7 +147,7 @@ module.exports = () => {
         message.channel.send(
           `${idToMention(message.author.id)} rolls ${roll} (1-${max})`
         );
-        // deathrolls.battle(message.author.id, roll, max, message);
+        deathrolls.updateBattle(message.author.id, roll, max, message);
       } else if (strArr.length === 3) {
         const min = getNumber(strArr[1]);
         const max = getNumber(strArr[2]);
@@ -217,20 +217,18 @@ module.exports = () => {
     }
 
     if (string.includes("/surrender")) {
-      const index = getBattleIndex(message.author.id);
-      if (~index) {
-        deathrolls.battles.splice(index, 1);
-      }
+      message.delete();
+      message.channel.send("fuck off this doesnt do anything yet");
     }
 
     if (string.includes("/give")) {
       message.delete();
-      message.channel.send("oof try again");
+      message.channel.send("fuck off this doesnt do anything yet");
     }
 
     if (string.includes("/leger")) {
       message.delete();
-      message.channel.send("oof try again");
+      message.channel.send("fuck off this doesnt do anything yet");
     }
   });
 

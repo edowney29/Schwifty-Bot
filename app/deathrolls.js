@@ -23,21 +23,6 @@ module.exports.createUser = user => {
     .promise();
 };
 
-module.exports.updateUserBattles = (userid, battleid) => {
-  return ddb
-    .updateItem({
-      TableName: "deathroll-users",
-      Key: {
-        userid
-      },
-      UpdateExpression: "set battleids = list_append(battleids, :battleid)",
-      ExpressionAttributeValues: {
-        ":battleid": battleid
-      }
-    })
-    .promise();
-};
-
 module.exports.createBattle = (offerid, acceptid, message, gold) => {
   return ddb
     .putItem({
