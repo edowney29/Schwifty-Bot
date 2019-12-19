@@ -9,8 +9,6 @@ const ddb = new AWS.DynamoDB({
 
 module.exports.offers = {};
 
-module.exports.battles = {};
-
 module.exports.createUser = user => {
   ddb
     .putItem({
@@ -50,9 +48,9 @@ module.exports.createBattle = (offerid, acceptid, message, gold) => {
         offerid: { S: offerid },
         acceptid: { S: acceptid },
         gold: { N: gold },
+        lastroll: { N: gold * 10 },
         isfirst: { BOOL: true },
-        ispayed: { BOOL: false },
-        lastroll: { N: gold * 10 }
+        ispayed: { BOOL: false }
       }
     })
     .promise();
@@ -69,7 +67,7 @@ module.exports.updateBattle = async (userid, roll, lastroll, message) => {
       },
       KeyConditionExpression: "guilid = :guilid",
       FilterExpression:
-        "lastroll = :lastroll and (offerid = :userid or acceptid = :userid)",
+        "lastroll = :lastroll and lastroll > 1 and (offerid = :userid or acceptid = :userid)",
       ScanIndexForward: false,
       Limit: 1
     })
@@ -79,7 +77,7 @@ module.exports.updateBattle = async (userid, roll, lastroll, message) => {
     const battle = battles.Items[0];
     const isfirst = roll !== 0 ? !battle.isfirst : battle.isfirst;
     await ddb.updateItem({
-      TableName: "deathroll-users",
+      TableName: "deathroll-battles",
       Key: {
         guilid: battle.guildid,
         messageid: battle.messageid
@@ -94,10 +92,3 @@ module.exports.updateBattle = async (userid, roll, lastroll, message) => {
   }
   return null;
 };
-
-setInterval(() => {
-  if (new Date().getHours() === 4) {
-    // 4 am
-    console.log("test");
-  }
-}, 3600000);
