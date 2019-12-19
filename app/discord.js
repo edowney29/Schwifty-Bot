@@ -195,14 +195,12 @@ module.exports = () => {
             .then(botmessage => {
               deathrolls.createUser(user);
               deathrolls.createUser(message.author);
-              return deathrolls.createBattle(
-                user,
-                message.author,
+              deathrolls.createBattle(
+                user.id,
+                message.author.id,
                 botmessage,
-                deathrolls.offers[user.id]
+                deathrolls.offers[message.guild.id][user.id]
               );
-            })
-            .finally(battle => {
               delete deathrolls.offers[message.guild.id][message.author.id];
               delete deathrolls.offers[message.guild.id][user.id];
             });
