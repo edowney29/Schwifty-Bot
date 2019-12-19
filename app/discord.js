@@ -147,7 +147,7 @@ module.exports = () => {
         message.channel.send(
           `${idToMention(message.author.id)} rolls ${roll} (1-${max})`
         );
-        deathrolls.battle(message.author.id, roll, max, message);
+        // deathrolls.battle(message.author.id, roll, max, message);
       } else if (strArr.length === 3) {
         const min = getNumber(strArr[1]);
         const max = getNumber(strArr[2]);
@@ -168,7 +168,7 @@ module.exports = () => {
         message.channel.send(
           `${idToMention(message.author.id)} offers a ${gold} gold deathroll`
         );
-        deathrolls.offers[message.author.id] = gold;
+        deathrolls.offers[message.guild.id][message.author.id] = gold;
       } else {
         message.author.send(
           "```Commands:\n/offer 100\n/accept @SchwiftyBot\n/surrender```"
@@ -184,22 +184,28 @@ module.exports = () => {
         if (!user) {
           message.channel.send(`${message.author.username} no user was found`);
         } else if (deathrolls.offers[user.id]) {
-          // deathrolls.battles.push({
-          //   accept: message.author.id,
-          //   offer: user.id,
-          //   gold: deathrolls.offers[user.id],
-          //   firstroll: true,
-          //   lastroll: null
-          // });
-          message.channel.send(
-            `${idToMention(user.id)} ${
-            deathrolls.offers[user.id]
-            } gold offer was accepted. ${idToMention(
-              message.author.id
-            )} /roll ${deathrolls.offers[user.id] * 10}`
-          );
-          delete deathrolls.offers[message.author.id];
-          delete deathrolls.offers[user.id];
+          message.channel
+            .send(
+              `\`\`\`${idToMention(user.id)} ${
+                deathrolls.offers[user.id]
+              } gold offer was accepted. ${idToMention(
+                message.author.id
+              )} /roll ${deathrolls.offers[user.id] * 10}\`\`\``
+            )
+            .then(botmessage => {
+              deathrolls.createUser(user);
+              deathrolls.createUser(message.author);
+              return deathrolls.createBattle(
+                user,
+                message.author,
+                botmessage,
+                deathrolls.offers[user.id]
+              );
+            })
+            .finally(battle => {
+              delete deathrolls.offers[message.guild.id][message.author.id];
+              delete deathrolls.offers[message.guild.id][user.id];
+            });
         } else {
           message.channel.send(`${user.username} doesn't have any offers`);
         }

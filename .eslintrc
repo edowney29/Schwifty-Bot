@@ -1,14 +1,9 @@
 {
-  "env": {
-    "browser": true,
-    "node": true,
-    "es6": true
-  },
+  "extends": "airbnb",
   "parserOptions": {
-    "ecmaVersion": 6
-  },
-  "extends": "eslint:recommended",
-  "rules": {
-    "no-console": "off"
+    "ecmaVersion": 6,
+    "ecmaFeatures": {
+      "impliedStrict": true
+    }
   }
 }
