@@ -88,7 +88,7 @@ module.exports = () => {
       const numArray = [];
       if (rolls <= 100 && [4, 6, 8, 10, 12, 20, 100].includes(dice)) {
         let str = `Rolled: `;
-        if (rolls == 1) {
+        if (rolls === 1) {
           const number = Math.floor(Math.random() * dice) + 1;
           numArray.push(number);
           const sum = numArray.reduce(numSum);
@@ -101,7 +101,7 @@ module.exports = () => {
             const number = Math.floor(Math.random() * dice) + 1;
             numArray.push(number);
             str += `${number} `;
-            if (i == rolls - 1) {
+            if (i === rolls - 1) {
               str += `--> `;
             } else {
               str += `- `;
@@ -118,7 +118,7 @@ module.exports = () => {
         message
           .reply(str)
           .then(() => {
-            if (dice == 20 && rolls == 1) {
+            if (dice === 20 && rolls === 1) {
               if (numArray.includes(20)) {
                 message.reply(nat20[Math.floor(Math.random() * nat20.length)]);
               }
@@ -133,7 +133,7 @@ module.exports = () => {
       }
     }
 
-    if (string.includes("/roll")) {
+    if (string.includes("/r")) {
       message.delete();
       const strArr = string.split(" ");
       if (strArr.length === 1) {
@@ -160,7 +160,7 @@ module.exports = () => {
       }
     }
 
-    if (string.includes("/offer")) {
+    if (string.includes("/o")) {
       message.delete();
       const strArr = string.split(" ");
       if (strArr.length === 2) {
@@ -168,7 +168,11 @@ module.exports = () => {
         message.channel.send(
           `${idToMention(message.author.id)} offers a ${gold} gold deathroll`
         );
-        deathrolls.offers[message.guild.id][message.author.id] = gold;
+        deathrolls.offers[message.author.id] = {
+          username: message.author.username,
+          guildid: message.guild.id,
+          gold: gold
+        };
       } else {
         message.author.send(
           "```Commands:\n/offer 100\n/accept @SchwiftyBot\n/surrender```"
@@ -176,21 +180,21 @@ module.exports = () => {
       }
     }
 
-    if (string.includes("/accept")) {
+    if (string.includes("/a")) {
       message.delete();
       const strArr = string.split(" ");
       if (strArr.length === 2) {
         const user = getUserFromMention(strArr[1]);
         if (!user) {
           message.channel.send(`${message.author.username} no user was found`);
-        } else if (deathrolls.offers[user.id]) {
+        } else if (deathrolls.offers[user.id].guildid === message.guild.id) {
           message.channel
             .send(
-              `\`\`\`${idToMention(user.id)} ${
-                deathrolls.offers[user.id]
-              } gold offer was accepted. ${idToMention(
-                message.author.id
-              )} /roll ${deathrolls.offers[user.id] * 10}\`\`\``
+              `\`\`\`${user.username}'s ${
+                deathrolls.offers[user.id].gold
+              } gold offer was accepted. ${
+                message.author.username
+              } /roll ${deathrolls.offers[user.id].gold * 10}\`\`\``
             )
             .then(botmessage => {
               deathrolls.createUser(user);
@@ -199,10 +203,10 @@ module.exports = () => {
                 user.id,
                 message.author.id,
                 botmessage,
-                deathrolls.offers[message.guild.id][user.id]
+                deathrolls.offers[user.id].gold
               );
-              delete deathrolls.offers[message.guild.id][message.author.id];
-              delete deathrolls.offers[message.guild.id][user.id];
+              delete deathrolls.offers[user.id];
+              delete deathrolls.offers[message.author.id];
             });
         } else {
           message.channel.send(`${user.username} doesn't have any offers`);

@@ -38,7 +38,7 @@
 //   var tz = msg[index + 2];
 //   var zone = getZone(tz);
 
-//   if (zone == null) {
+//   if (zone === null) {
 //     message.reply("Unknown Timezone");
 //     return;
 //   }
