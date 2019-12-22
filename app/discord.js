@@ -16,9 +16,9 @@ module.exports = () => {
     if (message.author.id === "330539844889477121") return;
 
     const string = message.content.toLowerCase();
-    console.log(
-      `[${message.guild.name}] ${message.member.user.username}#${message.member.user.discriminator}: ${message.content}`
-    );
+    // console.log(
+    //   `[${message.guild.name}] ${message.member.user.username}#${message.member.user.discriminator}: ${message.content}`
+    // );
 
     if (string.includes("magic conch")) {
       const answers = [
@@ -133,7 +133,7 @@ module.exports = () => {
       }
     }
 
-    if (string.includes("/r")) {
+    if (string.includes("/roll")) {
       message.delete();
       const strArr = string.split(" ");
       if (strArr.length === 1) {
@@ -144,10 +144,29 @@ module.exports = () => {
       } else if (strArr.length === 2) {
         const max = getNumber(strArr[1]);
         const roll = Math.floor(Math.random() * max) + 1;
-        message.channel.send(
-          `${idToMention(message.author.id)} rolls ${roll} (1-${max})`
-        );
-        deathrolls.updateBattle(message.author.id, roll, max, message);
+        deathrolls
+          .updateBattle(message.author.id, roll, max, message)
+          .then(battle => {
+            if (battle) {
+              message.channel
+                .fetchMessage(battle.messageid)
+                .then(mes => {
+                  let str = mes.content;
+                  str = str.concat(
+                    `\n> ${message.author.username} rolls ${roll} (1-${max})`
+                  );
+                  mes.edit(str);
+                })
+                .catch(err => {
+                  mes.edit(err);
+                });
+            } else {
+              message.channel.send(
+                `${idToMention(message.author.id)} rolls ${roll} (1-${max})`
+              );
+            }
+          })
+          .catch(err => console.log(err));
       } else if (strArr.length === 3) {
         const min = getNumber(strArr[1]);
         const max = getNumber(strArr[2]);
@@ -160,7 +179,7 @@ module.exports = () => {
       }
     }
 
-    if (string.includes("/o")) {
+    if (string.includes("/offer")) {
       message.delete();
       const strArr = string.split(" ");
       if (strArr.length === 2) {
@@ -175,12 +194,12 @@ module.exports = () => {
         };
       } else {
         message.author.send(
-          "```Commands:\n/offer 100\n/accept @SchwiftyBot\n/surrender```"
+          "Commands:\n/roll 100\n/offer 10\n/accept @SchwiftyBot\n/give @SchwiftyBot 10\n/leger\n/surrender"
         );
       }
     }
 
-    if (string.includes("/a")) {
+    if (string.includes("/accept")) {
       message.delete();
       const strArr = string.split(" ");
       if (strArr.length === 2) {
@@ -190,18 +209,18 @@ module.exports = () => {
         } else if (deathrolls.offers[user.id].guildid === message.guild.id) {
           message.channel
             .send(
-              `\`\`\`${user.username}'s ${
+              `> ${user.username}'s ${
                 deathrolls.offers[user.id].gold
               } gold offer was accepted. ${
                 message.author.username
-              } /roll ${deathrolls.offers[user.id].gold * 10}\`\`\``
+              } /roll ${deathrolls.offers[user.id].gold * 10}`
             )
             .then(botmessage => {
               deathrolls.createUser(user);
               deathrolls.createUser(message.author);
               deathrolls.createBattle(
-                user.id,
-                message.author.id,
+                user,
+                message.author,
                 botmessage,
                 deathrolls.offers[user.id].gold
               );
@@ -213,24 +232,57 @@ module.exports = () => {
         }
       } else {
         message.author.send(
-          "```Commands:\n/offer 100\n/accept @SchwiftyBot\n/surrender```"
+          "Commands:\n/roll 100\n/offer 10\n/accept @SchwiftyBot\n/give @SchwiftyBot 100\n/leger\n/surrender"
         );
       }
     }
 
     if (string.includes("/surrender")) {
       message.delete();
-      message.channel.send("fuck off this doesnt do anything yet");
+      message.channel.send("This doesn't do anything yet :(");
     }
 
     if (string.includes("/give")) {
       message.delete();
-      message.channel.send("fuck off this doesnt do anything yet");
+      message.channel.send("This doesn't do anything yet :(");
     }
 
     if (string.includes("/leger")) {
       message.delete();
-      message.channel.send("fuck off this doesnt do anything yet");
+      deathrolls
+        .fetchRecord(message.author, message)
+        .then(battles => {
+          // let lastKey = battles['LastEvaluatedKey'] || null
+          const wins = [],
+            losses = [];
+          // accept won = 1 and isfrist --- offer won = 1 and !isfirst
+          battles.Items.forEach(item => {
+            const record = deathrolls.itemToObject(item);
+            record.lastroll === 1 &&
+            ((record.acceptid === message.author.id && record.isfirst) ||
+              (record.offerid === message.author.id && !record.isfirst))
+              ? wins.push(record)
+              : losses.push(record);
+          });
+
+          let str = `${idToMention(message.author.id)} here is your leger:`;
+          wins.forEach(win => {
+            str = str.concat(
+              `\n${win.isfirst ? win.offer : win.accept} owes you ${
+                win.gold
+              } gold`
+            );
+          });
+          losses.forEach(loss => {
+            str = str.concat(
+              `\nYou owe ${loss.isfirst ? loss.offer : loss.accept} ${
+                loss.gold
+              } gold`
+            );
+          });
+          message.channel.send(str);
+        })
+        .catch(err => console.log(err));
     }
   });
 

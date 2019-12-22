@@ -17,33 +17,32 @@ module.exports.createUser = user => {
       Item: {
         userid: { S: user.id },
         username: { S: user.username },
-        gold: { N: "1" }
+        gold: { N: "10" },
+        seed: { S: null }
       },
       ConditionExpression: "attribute_not_exists(userid)"
     })
-    .promise()
-    .then(value => console.log(value))
-    .catch(error => console.error(error));
+    .send();
 };
 
-module.exports.createBattle = (offerid, acceptid, message, gold) => {
+module.exports.createBattle = (offer, accept, message, gold) => {
   ddb
     .putItem({
       TableName: "deathroll-battles",
       Item: {
         guildid: { S: message.guild.id },
         messageid: { S: message.id },
-        offerid: { S: offerid },
-        acceptid: { S: acceptid },
+        offer: { S: offer.username },
+        offerid: { S: offer.id },
+        accept: { S: accept.username },
+        acceptid: { S: accept.id },
         gold: { N: gold.toString() },
         lastroll: { N: (gold * 10).toString() },
         isfirst: { BOOL: true },
         ispayed: { BOOL: false }
       }
     })
-    .promise()
-    .then(value => console.log(value))
-    .catch(error => console.error(error));
+    .send();
 };
 
 module.exports.updateBattle = async (userid, roll, lastroll, message) => {
@@ -64,14 +63,14 @@ module.exports.updateBattle = async (userid, roll, lastroll, message) => {
     })
     .promise();
   if (battles.Items.length > 0) {
-    const battle = battles.Items[0];
-    const isfirst = roll !== 0 ? !battle.isfirst : battle.isfirst;
+    const battle = this.itemToObject(battles.Items[0]);
+    const isfirst = !battle.isfirst;
     ddb
       .updateItem({
         TableName: "deathroll-battles",
         Key: {
-          guildid: battle.guildid,
-          messageid: battle.messageid
+          guildid: { S: battle.guildid },
+          messageid: { S: battle.messageid }
         },
         UpdateExpression: "set lastroll = :roll, isfirst = :isfirst",
         ExpressionAttributeValues: {
@@ -85,4 +84,30 @@ module.exports.updateBattle = async (userid, roll, lastroll, message) => {
     return battle;
   }
   return null;
+};
+
+module.exports.fetchRecord = (user, message, lastKey = null) => {
+  return ddb
+    .query({
+      TableName: "deathroll-battles",
+      ExpressionAttributeValues: {
+        ":guildid": { S: message.guild.id },
+        ":userid": { S: user.id },
+        ":one": { N: "1" }
+      },
+      KeyConditionExpression: "guildid = :guildid",
+      FilterExpression:
+        "lastroll = :one and (offerid = :userid or acceptid = :userid)",
+      ScanIndexForward: false,
+      ExclusiveStartKey: lastKey ? { S: lastKey } : null
+    })
+    .promise();
+};
+
+module.exports.itemToObject = item => {
+  return AWS.DynamoDB.Converter.unmarshall(item);
+};
+
+module.exports.objectToItem = object => {
+  return AWS.DynamoDB.Converter.marshall(object);
 };
