@@ -206,7 +206,9 @@ module.exports = () => {
         const user = getUserFromMention(strArr[1]);
         if (!user || !deathrolls.offers[user.id]) {
           message.channel.send(
-            `${message.author.username} no offer or user was found in this channel`
+            `${idToMention(
+              message.author.id
+            )} no offer or user was found in this channel`
           );
         } else if (deathrolls.offers[user.id].guildid === message.guild.id) {
           message.channel
