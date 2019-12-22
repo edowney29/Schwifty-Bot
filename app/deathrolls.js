@@ -18,7 +18,7 @@ module.exports.createUser = user => {
         userid: { S: user.id },
         username: { S: user.username },
         gold: { N: "10" },
-        seed: { S: null }
+        seed: { S: "lol" }
       },
       ConditionExpression: "attribute_not_exists(userid)"
     })
@@ -78,9 +78,7 @@ module.exports.updateBattle = async (userid, roll, lastroll, message) => {
           ":isfirst": { BOOL: isfirst }
         }
       })
-      .promise()
-      .then(value => console.log(value))
-      .catch(error => console.error(error));
+      .send();
     return battle;
   }
   return null;
