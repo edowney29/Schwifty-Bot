@@ -275,7 +275,7 @@ module.exports = () => {
           });
           losses.forEach(loss => {
             str = str.concat(
-              `\nYou owe ${loss.isfirst ? loss.offer : loss.accept} ${
+              `\nYou owe ${!loss.isfirst ? loss.offer : loss.accept} ${
                 loss.gold
               } gold`
             );
