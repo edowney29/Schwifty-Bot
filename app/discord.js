@@ -204,8 +204,10 @@ module.exports = () => {
       const strArr = string.split(" ");
       if (strArr.length === 2) {
         const user = getUserFromMention(strArr[1]);
-        if (!user) {
-          message.channel.send(`${message.author.username} no user was found`);
+        if (!user || !deathrolls.offers[user.id]) {
+          message.channel.send(
+            `${message.author.username} no offer or user was found in this channel`
+          );
         } else if (deathrolls.offers[user.id].guildid === message.guild.id) {
           message.channel
             .send(
