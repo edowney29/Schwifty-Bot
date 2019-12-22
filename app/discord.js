@@ -127,9 +127,7 @@ module.exports = () => {
               }
             }
           })
-          .catch(err => {
-            console.error(err);
-          });
+          .catch(err => console.error(err));
       }
     }
 
@@ -157,9 +155,7 @@ module.exports = () => {
                   );
                   mes.edit(str);
                 })
-                .catch(err => {
-                  console.log(err);
-                });
+                .catch(err => console.log(err));
             } else {
               message.channel.send(
                 `${idToMention(message.author.id)} rolls ${roll} (1-${max})`
