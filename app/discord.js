@@ -158,7 +158,7 @@ module.exports = () => {
                   mes.edit(str);
                 })
                 .catch(err => {
-                  mes.edit(err);
+                  console.log(err);
                 });
             } else {
               message.channel.send(
