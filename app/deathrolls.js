@@ -25,6 +25,21 @@ module.exports.createUser = user => {
     .send();
 };
 
+module.exports.updateGold = (userid, gold) => {
+  ddb
+    .updateItem({
+      TableName: "deathroll-users",
+      Key: {
+        userid: { S: userid }
+      },
+      UpdateExpression: "set gold = gold + :gold",
+      ExpressionAttributeValues: {
+        ":gold": { N: gold.toString() }
+      }
+    })
+    .send();
+};
+
 module.exports.createBattle = (offer, accept, message, gold) => {
   ddb
     .putItem({
@@ -62,6 +77,7 @@ module.exports.updateBattle = async (userid, roll, lastroll, message) => {
       Limit: 1
     })
     .promise();
+
   if (battles.Items.length > 0) {
     const battle = this.itemToObject(battles.Items[0]);
     const isfirst = !battle.isfirst;
@@ -85,7 +101,7 @@ module.exports.updateBattle = async (userid, roll, lastroll, message) => {
 };
 
 module.exports.fetchRecord = (user, message, lastKey = null) => {
-  return ddb
+  const battle = ddb
     .query({
       TableName: "deathroll-battles",
       ExpressionAttributeValues: {
@@ -100,6 +116,17 @@ module.exports.fetchRecord = (user, message, lastKey = null) => {
       ExclusiveStartKey: lastKey ? { S: lastKey } : null
     })
     .promise();
+
+  const _user = ddb
+    .getItem({
+      TableName: "deathroll-users",
+      Key: {
+        userid: { S: user.id }
+      }
+    })
+    .promise();
+
+  return Promise.all([battle, _user]);
 };
 
 module.exports.itemToObject = item => {

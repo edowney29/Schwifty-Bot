@@ -146,6 +146,17 @@ module.exports = () => {
           .updateBattle(message.author.id, roll, max, message)
           .then(battle => {
             if (battle) {
+              if (roll === 1) {
+                deathrolls.updateGold(
+                  message.author.id,
+                  -Math.abs(battle.gold)
+                );
+                const otherid =
+                  message.author.id === battle.offerid
+                    ? battle.offerid
+                    : battle.acceptid;
+                deathrolls.updateGold(otherid, Math.abs(battle.gold));
+              }
               message.channel
                 .fetchMessage(battle.messageid)
                 .then(mes => {
@@ -190,7 +201,7 @@ module.exports = () => {
         };
       } else {
         message.author.send(
-          "Commands:\n/roll 100\n/offer 10\n/accept @SchwiftyBot\n/give @SchwiftyBot 10\n/leger\n/surrender"
+          "```Commands:\n/roll 100\n/offer 10\n/accept @SchwiftyBot\n/balance\n/help```"
         );
       }
     }
@@ -232,27 +243,19 @@ module.exports = () => {
         }
       } else {
         message.author.send(
-          "Commands:\n/roll 100\n/offer 10\n/accept @SchwiftyBot\n/give @SchwiftyBot 100\n/leger\n/surrender"
+          "```Commands:\n/roll 100\n/offer 10\n/accept @SchwiftyBot\n/balance\n/help```"
         );
       }
     }
 
-    if (string.includes("/surrender")) {
-      message.delete();
-      message.channel.send("This doesn't do anything yet :(");
-    }
-
-    if (string.includes("/give")) {
-      message.delete();
-      message.channel.send("This doesn't do anything yet :(");
-    }
-
-    if (string.includes("/leger")) {
+    if (string.includes("/balance")) {
       message.delete();
       deathrolls
         .fetchRecord(message.author, message)
-        .then(battles => {
+        .then(res => {
           // let lastKey = battles['LastEvaluatedKey'] || null
+          const battles = res[0];
+          const user = res[1];
           const wins = [],
             losses = [];
           // accept won = 1 and isfrist --- offer won = 1 and !isfirst
@@ -265,24 +268,33 @@ module.exports = () => {
               : losses.push(record);
           });
 
-          let str = `${idToMention(message.author.id)} here is your leger:`;
+          let str = `${idToMention(message.author.id)} you have ${
+            deathrolls.itemToObject(user.Item)["gold"]
+          } gold`;
           wins.forEach(win => {
             str = str.concat(
-              `\n${win.isfirst ? win.offer : win.accept} owes you ${
-                win.gold
-              } gold`
+              `\nYou won ${win.gold} gold from ${
+                win.isfirst ? win.offer : win.accept
+              }`
             );
           });
           losses.forEach(loss => {
             str = str.concat(
-              `\nYou owe ${!loss.isfirst ? loss.offer : loss.accept} ${
-                loss.gold
-              } gold`
+              `\nYou lost ${loss.gold} gold to ${
+                !loss.isfirst ? loss.offer : loss.accept
+              }`
             );
           });
           message.channel.send(str);
         })
         .catch(err => console.log(err));
+    }
+
+    if (string.includes("/help")) {
+      message.delete();
+      message.channel.send(
+        "```Commands:\n/roll 100\n/offer 10\n/accept @SchwiftyBot\n/balance\n/help```"
+      );
     }
   });
 
