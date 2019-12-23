@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "git pull && npm install &&node app.js"
+    "start": "git pull && npm install && node app.js"
   },
   "author": "Eric Downey",
   "license": "ISC",
