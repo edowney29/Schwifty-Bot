@@ -53,8 +53,7 @@ module.exports.createBattle = (offer, accept, message, gold) => {
         acceptid: { S: accept.id },
         gold: { N: gold.toString() },
         lastroll: { N: (gold * 10).toString() },
-        isfirst: { BOOL: true },
-        ispayed: { BOOL: false }
+        isfirst: { BOOL: true }
       }
     })
     .send();
