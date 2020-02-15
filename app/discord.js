@@ -1,5 +1,5 @@
 const discord = require("discord.js");
-
+const dnd = require("fantasy-content-generator");
 const deathrolls = require("./deathrolls");
 
 const { DISCORD_KEY } = process.env;
@@ -186,115 +186,149 @@ module.exports = () => {
       }
     }
 
-    if (string.includes("/offer")) {
-      message.delete();
-      const strArr = string.split(" ");
-      if (strArr.length === 2) {
-        const gold = getNumber(strArr[1]) || 100;
-        message.channel.send(
-          `${idToMention(message.author.id)} offers a ${gold} gold deathroll`
-        );
-        deathrolls.offers[message.author.id] = {
-          username: message.author.username,
-          guildid: message.guild.id,
-          gold: gold
-        };
-      } else {
-        message.author.send(
-          "```Commands:\n/roll 100\n/offer 10\n/accept @SchwiftyBot\n/balance\n/help```"
-        );
-      }
-    }
+    // if (string.includes("/offer")) {
+    //   message.delete();
+    //   const strArr = string.split(" ");
+    //   if (strArr.length === 2) {
+    //     const gold = getNumber(strArr[1]) || 100;
+    //     message.channel.send(
+    //       `${idToMention(message.author.id)} offers a ${gold} gold deathroll`
+    //     );
+    //     deathrolls.offers[message.author.id] = {
+    //       username: message.author.username,
+    //       guildid: message.guild.id,
+    //       gold: gold
+    //     };
+    //   } else {
+    //     message.author.send(
+    //       "```Commands:\n/roll 100\n/offer 10\n/accept @SchwiftyBot\n/balance\n/help```"
+    //     );
+    //   }
+    // }
 
-    if (string.includes("/accept")) {
-      message.delete();
-      const strArr = string.split(" ");
-      if (strArr.length === 2) {
-        const user = getUserFromMention(strArr[1]);
-        if (!user || !deathrolls.offers[user.id]) {
-          message.channel.send(
-            `${idToMention(
-              message.author.id
-            )} no offer or user was found in this channel`
-          );
-        } else if (deathrolls.offers[user.id].guildid === message.guild.id) {
-          message.channel
-            .send(
-              `> ${user.username}'s ${
-                deathrolls.offers[user.id].gold
-              } gold offer was accepted. ${
-                message.author.username
-              } /roll ${deathrolls.offers[user.id].gold * 10}`
-            )
-            .then(botmessage => {
-              deathrolls.createUser(user);
-              deathrolls.createUser(message.author);
-              deathrolls.createBattle(
-                user,
-                message.author,
-                botmessage,
-                deathrolls.offers[user.id].gold
-              );
-              delete deathrolls.offers[user.id];
-              delete deathrolls.offers[message.author.id];
-            });
-        } else {
-          message.channel.send(`${user.username} doesn't have any offers`);
-        }
-      } else {
-        message.author.send(
-          "```Commands:\n/roll 100\n/offer 10\n/accept @SchwiftyBot\n/balance\n/help```"
-        );
-      }
-    }
+    // if (string.includes("/accept")) {
+    //   message.delete();
+    //   const strArr = string.split(" ");
+    //   if (strArr.length === 2) {
+    //     const user = getUserFromMention(strArr[1]);
+    //     if (!user || !deathrolls.offers[user.id]) {
+    //       message.channel.send(
+    //         `${idToMention(
+    //           message.author.id
+    //         )} no offer or user was found in this channel`
+    //       );
+    //     } else if (deathrolls.offers[user.id].guildid === message.guild.id) {
+    //       message.channel
+    //         .send(
+    //           `> ${user.username}'s ${
+    //           deathrolls.offers[user.id].gold
+    //           } gold offer was accepted. ${
+    //           message.author.username
+    //           } /roll ${deathrolls.offers[user.id].gold * 10}`
+    //         )
+    //         .then(botmessage => {
+    //           deathrolls.createUser(user);
+    //           deathrolls.createUser(message.author);
+    //           deathrolls.createBattle(
+    //             user,
+    //             message.author,
+    //             botmessage,
+    //             deathrolls.offers[user.id].gold
+    //           );
+    //           delete deathrolls.offers[user.id];
+    //           delete deathrolls.offers[message.author.id];
+    //         });
+    //     } else {
+    //       message.channel.send(`${user.username} doesn't have any offers`);
+    //     }
+    //   } else {
+    //     message.author.send(
+    //       "```Commands:\n/roll 100\n/offer 10\n/accept @SchwiftyBot\n/balance\n/help```"
+    //     );
+    //   }
+    // }
 
-    if (string.includes("/balance")) {
-      message.delete();
-      deathrolls
-        .fetchRecord(message.author, message)
-        .then(res => {
-          // let lastKey = battles['LastEvaluatedKey'] || null
-          const battles = res[0];
-          const user = res[1];
-          const wins = [],
-            losses = [];
-          // accept won = 1 and isfrist --- offer won = 1 and !isfirst
-          battles.Items.forEach(item => {
-            const record = deathrolls.itemToObject(item);
-            record.lastroll === 1 &&
-            ((record.acceptid === message.author.id && record.isfirst) ||
-              (record.offerid === message.author.id && !record.isfirst))
-              ? wins.push(record)
-              : losses.push(record);
-          });
+    // if (string.includes("/balance")) {
+    //   message.delete();
+    //   deathrolls
+    //     .fetchRecord(message.author, message)
+    //     .then(res => {
+    //       // let lastKey = battles['LastEvaluatedKey'] || null
+    //       const battles = res[0];
+    //       const user = res[1];
+    //       const wins = [],
+    //         losses = [];
+    //       // accept won = 1 and isfrist --- offer won = 1 and !isfirst
+    //       battles.Items.forEach(item => {
+    //         const record = deathrolls.itemToObject(item);
+    //         record.lastroll === 1 &&
+    //           ((record.acceptid === message.author.id && record.isfirst) ||
+    //             (record.offerid === message.author.id && !record.isfirst))
+    //           ? wins.push(record)
+    //           : losses.push(record);
+    //       });
 
-          let str = `${idToMention(message.author.id)} you have ${
-            deathrolls.itemToObject(user.Item)["gold"]
-          } gold`;
-          wins.forEach(win => {
-            str = str.concat(
-              `\nYou won ${win.gold} gold from ${
-                win.isfirst ? win.offer : win.accept
-              }`
-            );
-          });
-          losses.forEach(loss => {
-            str = str.concat(
-              `\nYou lost ${loss.gold} gold to ${
-                !loss.isfirst ? loss.offer : loss.accept
-              }`
-            );
-          });
-          message.channel.send(str);
-        })
-        .catch(err => console.log(err));
-    }
+    //       let str = `${idToMention(message.author.id)} you have ${
+    //         deathrolls.itemToObject(user.Item)["gold"]
+    //         } gold`;
+    //       wins.forEach(win => {
+    //         str = str.concat(
+    //           `\nYou won ${win.gold} gold from ${
+    //           win.isfirst ? win.offer : win.accept
+    //           }`
+    //         );
+    //       });
+    //       losses.forEach(loss => {
+    //         str = str.concat(
+    //           `\nYou lost ${loss.gold} gold to ${
+    //           !loss.isfirst ? loss.offer : loss.accept
+    //           }`
+    //         );
+    //       });
+    //       message.channel.send(str);
+    //     })
+    //     .catch(err => console.log(err));
+    // }
 
-    if (string.includes("/help")) {
+    // if (string.includes("/help")) {
+    //   message.delete();
+    //   message.channel.send(
+    //     "```Commands:\n/roll 100\n/offer 10\n/accept @SchwiftyBot\n/balance\n/help```"
+    //   );
+    // }
+
+    if (string.includes("/dnditem")) {
       message.delete();
       message.channel.send(
-        "```Commands:\n/roll 100\n/offer 10\n/accept @SchwiftyBot\n/balance\n/help```"
+        JSON.stringify(dnd.MagicItems.generate(), undefined, 2),
+        {
+          code: true
+        }
       );
+    }
+
+    if (string.includes("/dndhook")) {
+      message.delete();
+      message.channel.send(
+        JSON.stringify(dnd.Storyhooks.npcActs(), undefined, 2),
+        {
+          code: true
+        }
+      );
+    }
+
+    if (string.includes("/dndnpc")) {
+      message.delete();
+      message.channel.send(JSON.stringify(dnd.NPCs.generate(), undefined, 2), {
+        code: true
+      });
+    }
+
+    if (string.includes("/dndrandom")) {
+      message.delete();
+      message.channel.send(JSON.stringify(dnd.Loots.source(), undefined, 2), {
+        code: true
+      });
     }
   });
 
