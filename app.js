@@ -12,3 +12,8 @@ express()
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 discord();
+
+const { COPS_AND_ROBERT } = process.env;
+setInterval(() => {
+  fetch(COPS_AND_ROBERT);
+}, 60000);
