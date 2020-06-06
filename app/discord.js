@@ -12,7 +12,7 @@ module.exports = () => {
     // client.user.setActivity("the game of life");
   });
 
-  client.on("message", message => {
+  client.on("message", (message) => {
     if (message.author.id === "330539844889477121") return;
 
     const string = message.content.toLowerCase();
@@ -58,7 +58,7 @@ module.exports = () => {
         "Try asking again.",
         "No.",
         "No.",
-        "No."
+        "No.",
       ];
 
       message.reply(answers[Math.floor(Math.random() * answers.length)]);
@@ -93,8 +93,9 @@ module.exports = () => {
           numArray.push(number);
           const sum = numArray.reduce(numSum);
           if (plus)
-            str += ` ${sum} (${plus >= 0 ? `+${plus}` : `${plus}`}) = **${sum +
-              plus}**`;
+            str += ` ${sum} (${plus >= 0 ? `+${plus}` : `${plus}`}) = **${
+              sum + plus
+            }**`;
           else str += `**${sum}**`;
         } else {
           for (let i = 0; i < rolls; i++) {
@@ -110,8 +111,9 @@ module.exports = () => {
 
           const sum = numArray.reduce(numSum);
           if (plus)
-            str += ` ${sum} (${plus >= 0 ? `+${plus}` : `${plus}`}) = **${sum +
-              plus}**`;
+            str += ` ${sum} (${plus >= 0 ? `+${plus}` : `${plus}`}) = **${
+              sum + plus
+            }**`;
           else str += `**${sum}**`;
         }
 
@@ -127,7 +129,7 @@ module.exports = () => {
               }
             }
           })
-          .catch(err => console.error(err));
+          .catch((err) => console.error(err));
       }
     }
 
@@ -144,7 +146,7 @@ module.exports = () => {
         const roll = Math.floor(Math.random() * max) + 1;
         deathrolls
           .updateBattle(message.author.id, roll, max, message)
-          .then(battle => {
+          .then((battle) => {
             if (battle) {
               if (roll === 1) {
                 deathrolls.updateGold(
@@ -159,21 +161,21 @@ module.exports = () => {
               }
               message.channel
                 .fetchMessage(battle.messageid)
-                .then(mes => {
+                .then((mes) => {
                   let str = mes.content;
                   str = str.concat(
                     `\n> ${message.author.username} rolls ${roll} (1-${max})`
                   );
                   mes.edit(str);
                 })
-                .catch(err => console.log(err));
+                .catch((err) => console.log(err));
             } else {
               message.channel.send(
                 `${idToMention(message.author.id)} rolls ${roll} (1-${max})`
               );
             }
           })
-          .catch(err => console.log(err));
+          .catch((err) => console.log(err));
       } else if (strArr.length === 3) {
         const min = getNumber(strArr[1]);
         const max = getNumber(strArr[2]);
@@ -302,7 +304,7 @@ module.exports = () => {
       message.channel.send(
         JSON.stringify(dnd.MagicItems.generate(), undefined, 2),
         {
-          code: true
+          code: true,
         }
       );
     }
@@ -312,7 +314,7 @@ module.exports = () => {
       message.channel.send(
         JSON.stringify(dnd.Storyhooks.npcActs(), undefined, 2),
         {
-          code: true
+          code: true,
         }
       );
     }
@@ -320,23 +322,23 @@ module.exports = () => {
     if (string.includes("/dndnpc")) {
       message.delete();
       message.channel.send(JSON.stringify(dnd.NPCs.generate(), undefined, 2), {
-        code: true
+        code: true,
       });
     }
 
     if (string.includes("/dndrandom")) {
       message.delete();
       message.channel.send(JSON.stringify(dnd.Loots.source(), undefined, 2), {
-        code: true
+        code: true,
       });
     }
   });
 
-  client.on("error", error => console.log(error));
+  client.on("error", (error) => console.log(error));
 
   client.login(DISCORD_KEY);
 
-  const getUserFromMention = mention => {
+  const getUserFromMention = (mention) => {
     const matches = mention.match(/^<@!?(\d+)>$/);
     if (!matches) return;
     const id = matches[1];
@@ -353,7 +355,7 @@ const getNumber = (string, parse = false) => {
 
 const numSum = (a, b) => a + b;
 
-const idToMention = id => `<@${id}>`;
+const idToMention = (id) => `<@${id}>`;
 
 const nat20 = [
   "https://media.giphy.com/media/meKPRINqUoQXC/giphy.gif",
@@ -366,7 +368,7 @@ const nat20 = [
   "https://media.giphy.com/media/fDbzXb6Cv5L56/giphy.gif",
   "https://media.giphy.com/media/3o72FcJmLzIdYJdmDe/giphy.gif",
   "https://media.giphy.com/media/3o7btZTXDFpXjK6d56/giphy.gif",
-  "https://media.giphy.com/media/wijMRo7UZXSqA/giphy.gif"
+  "https://media.giphy.com/media/wijMRo7UZXSqA/giphy.gif",
 ];
 
 const nat1 = [
@@ -388,5 +390,5 @@ const nat1 = [
   "https://media.giphy.com/media/5yaCPstUOV9Kw/giphy.gif",
   "https://media.giphy.com/media/xTk9ZWZR2J0lNIkkCY/giphy.gif",
   "https://media.giphy.com/media/kDmsG1ei4P1Yc/giphy.gif",
-  "https://media.giphy.com/media/rW6CpFhDj9lkc/giphy.gif"
+  "https://media.giphy.com/media/rW6CpFhDj9lkc/giphy.gif",
 ];
