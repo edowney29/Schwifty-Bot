@@ -14,9 +14,8 @@ express()
 
 discord();
 
-const { COPS_AND_ROBERT } = process.env;
 setInterval(() => {
-  pingServer(COPS_AND_ROBERT);
+  pingServer("http://www.copsandrobert.com/");
 }, 60000);
 
 function pingServer(string) {
@@ -27,8 +26,10 @@ function pingServer(string) {
         data += chunk;
       });
       resp.on("end", () => {
+        // console.log(data)
       });
     })
     .on("error", (err) => {
+      // console.warn(err);
     });
 }
