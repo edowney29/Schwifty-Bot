@@ -1,0 +1,9 @@
+use code blocks to show rolls 
+- looks more like wow chat
+
+edit past messages for any battle
+- need message id?
+
+less warnings and a help
+
+allow multi battles
