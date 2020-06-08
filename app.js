@@ -12,10 +12,12 @@ express()
   .use((req, res) => res.sendFile(INDEX))
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
-discord();
+// discord();
 
 setInterval(() => {
   pingServer("http://www.copsandrobert.com/");
+  pingServer("http://www.ericdowney.com/");
+  pingServer("http://dankcellarstudio.com/")
 }, 60000);
 
 function pingServer(string) {
