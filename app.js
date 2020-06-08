@@ -28,10 +28,10 @@ function pingServer(string) {
         data += chunk;
       });
       resp.on("end", () => {
-        // console.log(data)
+        console.log(data)
       });
     })
     .on("error", (err) => {
-      // console.warn(err);
+      console.warn(err);
     });
 }
