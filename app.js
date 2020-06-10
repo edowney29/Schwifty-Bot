@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const path = require("path");
-const https = require("https");
+const http = require("http");
 
 const discord = require("./app/discord");
 
@@ -12,7 +12,7 @@ express()
   .use((req, res) => res.sendFile(INDEX))
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
-// discord();
+discord();
 
 setInterval(() => {
   pingServer("http://www.copsandrobert.com/");
@@ -21,14 +21,14 @@ setInterval(() => {
 }, 60000);
 
 function pingServer(string) {
-  https
+  http
     .get(string, (resp) => {
       let data = "";
       resp.on("data", (chunk) => {
         data += chunk;
       });
       resp.on("end", () => {
-        console.log(data);
+        // console.log(data);
       });
     })
     .on("error", (err) => {
