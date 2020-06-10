@@ -12,24 +12,26 @@ express()
   .use((req, res) => res.sendFile(INDEX))
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
-discord();
+// discord();
 
-// setInterval(() => {
-//   pingServer("http://www.copsandrobert.com/");
-// }, 60000);
+setInterval(() => {
+  pingServer("http://www.copsandrobert.com/");
+  pingServer("http://www.ericdowney.com/");
+  pingServer("http://dankcellarstudio.com/");
+}, 60000);
 
-// function pingServer(string) {
-//   https
-//     .get(string, (resp) => {
-//       let data = "";
-//       resp.on("data", (chunk) => {
-//         data += chunk;
-//       });
-//       resp.on("end", () => {
-//         console.log(data)
-//       });
-//     })
-//     .on("error", (err) => {
-//       console.warn(err);
-//     });
-// }
+function pingServer(string) {
+  https
+    .get(string, (resp) => {
+      let data = "";
+      resp.on("data", (chunk) => {
+        data += chunk;
+      });
+      resp.on("end", () => {
+        console.log(data);
+      });
+    })
+    .on("error", (err) => {
+      console.warn(err);
+    });
+}
