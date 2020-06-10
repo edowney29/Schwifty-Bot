@@ -17,7 +17,7 @@ discord();
 setInterval(() => {
   pingServer("http://www.copsandrobert.com/");
   pingServer("http://www.ericdowney.com/");
-  pingServer("http://dankcellarstudio.com/");
+  pingServer("http://www.dankcellarstudio.com/");
 }, 60000);
 
 function pingServer(string) {
