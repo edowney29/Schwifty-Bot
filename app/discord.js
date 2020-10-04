@@ -1,120 +1,112 @@
-const discord = require("discord.js");
-const dnd = require("fantasy-content-generator");
-const deathrolls = require("./deathrolls");
+const discord = require('discord.js')
+const dnd = require('fantasy-content-generator')
+const deathrolls = require('./deathrolls')
 
-const { DISCORD_KEY } = process.env;
+const { DISCORD_KEY } = process.env
 
 module.exports = () => {
-  const client = new discord.Client();
+  const client = new discord.Client()
 
-  client.on("ready", () => {
-    console.log("Ready!");
+  client.on('ready', () => {
+    console.log('Ready!')
     // client.user.setStatus("Mining bitcoin");
-  });
+  })
 
-  client.on("message", (message) => {
-    if (message.author.id === "330539844889477121") return;
+  client.on('message', (message) => {
+    if (message.author.id === '330539844889477121') return
 
-    const string = message.content.toLowerCase();
+    const string = message.content.toLowerCase()
     // console.log(
     //   `[${message.guild.name}] ${message.member.user.username}#${message.member.user.discriminator}: ${message.content}`
     // );
 
-    if (string.includes("magic conch")) {
+    if (string.includes('magic conch')) {
       const answers = [
-        "Maybe.",
-        "Certainly not.",
-        "Not in your wildest dreams.",
-        "Nah, fam.",
-        "There is a good chance.",
-        "Quite likely.",
-        "I hope not.",
-        "Without a doubt.",
-        "I hope so.",
-        "Never!",
-        "Fuhgeddaboudit.",
-        "Pfft.",
-        "Very doubtful.",
-        "Sorry, bucko.",
-        "Hell, yes.",
-        "Hell to the no.",
-        "The future is bleak.",
-        "The future is uncertain.",
-        "I would rather not say.",
-        "Who cares?",
-        "Possibly.",
-        "Never, ever, ever.",
-        "There is a small chance.",
-        "Yes!",
-        "Obviously.",
-        "42",
-        "Maybe someday.",
-        "Nothing.",
-        "Neither.",
-        "Follow the seahorse.",
+        'Maybe.',
+        'Certainly not.',
+        'Not in your wildest dreams.',
+        'Nah, fam.',
+        'There is a good chance.',
+        'Quite likely.',
+        'I hope not.',
+        'Without a doubt.',
+        'I hope so.',
+        'Never!',
+        'Fuhgeddaboudit.',
+        'Pfft.',
+        'Very doubtful.',
+        'Sorry, bucko.',
+        'Hell, yes.',
+        'Hell to the no.',
+        'The future is bleak.',
+        'The future is uncertain.',
+        'I would rather not say.',
+        'Who cares?',
+        'Possibly.',
+        'Never, ever, ever.',
+        'There is a small chance.',
+        'Yes!',
+        'Obviously.',
+        '42',
+        'Maybe someday.',
+        'Nothing.',
+        'Neither.',
+        'Follow the seahorse.',
         "I don't think so.",
-        "No.",
-        "Yes.",
-        "Try asking again.",
-        "No.",
-        "No.",
-        "No.",
-      ];
+        'No.',
+        'Yes.',
+        'Try asking again.',
+        'No.',
+        'No.',
+        'No.',
+      ]
 
-      message.reply(answers[Math.floor(Math.random() * answers.length)]);
+      message.reply(answers[Math.floor(Math.random() * answers.length)])
     }
 
     if (
-      (string.includes("d4") ||
-        string.includes("d6") ||
-        string.includes("d8") ||
-        string.includes("d10") ||
-        string.includes("d12") ||
-        string.includes("d20") ||
-        string.includes("d100")) &&
-      !string.includes(" ") &&
-      !string.includes(":")
+      (string.includes('d4') ||
+        string.includes('d6') ||
+        string.includes('d8') ||
+        string.includes('d10') ||
+        string.includes('d12') ||
+        string.includes('d20') ||
+        string.includes('d100')) &&
+      !string.includes(' ') &&
+      !string.includes(':')
     ) {
-      const strArray = string
-        .match(/(\d*)(D\d*)((?:[+*-](?:\d+|\([A-Z]*\)))*)(?:\+(D\d*))?/i)
-        .map(String);
+      const strArray = string.match(/(\d*)(D\d*)((?:[+*-](?:\d+|\([A-Z]*\)))*)(?:\+(D\d*))?/i).map(String)
 
-      let rolls = getNumber(strArray[1], false);
-      let dice = getNumber(strArray[2], true);
-      let plus = getNumber(strArray[3], false);
+      let rolls = getNumber(strArray[1], false)
+      let dice = getNumber(strArray[2], true)
+      let plus = getNumber(strArray[3], false)
       // let other = getNumber(strArray[4], true);
-      if (!rolls) rolls = 1;
+      if (!rolls) rolls = 1
 
-      const numArray = [];
+      const numArray = []
       if (rolls <= 100 && [4, 6, 8, 10, 12, 20, 100].includes(dice)) {
-        let str = `Rolled: `;
+        let str = `Rolled: `
         if (rolls === 1) {
-          const number = Math.floor(Math.random() * dice) + 1;
-          numArray.push(number);
-          const sum = numArray.reduce(numSum);
-          if (plus)
-            str += ` ${sum} (${plus >= 0 ? `+${plus}` : `${plus}`}) = **${
-              sum + plus
-            }**`;
-          else str += `**${sum}**`;
+          const number = Math.floor(Math.random() * dice) + 1
+          numArray.push(number)
+          const sum = numArray.reduce(numSum)
+          if (plus) str += ` ${sum} (${plus >= 0 ? `+${plus}` : `${plus}`}) = **${sum + plus}**`
+          else str += `**${sum}**`
         } else {
           for (let i = 0; i < rolls; i++) {
-            const number = Math.floor(Math.random() * dice) + 1;
-            numArray.push(number);
-            str += `${number} `;
+            const number = Math.floor(Math.random() * dice) + 1
+            numArray.push(number)
+            str += `${number} `
             if (i === rolls - 1) {
-              str += `--> `;
+              str += `--> `
             } else {
-              str += `- `;
+              str += `- `
             }
           }
 
-          const sum = numArray.reduce(numSum);
-          if (plus)
-            str += ` ${sum} (${plus >= 0 ? `+${plus}` : `${plus}`}) = **${
-              sum + plus
-            }**`;
-          else str += `**${sum}**`;
+          const sum = numArray.reduce(numSum)
+          if (plus) str += ` ${sum} (${plus >= 0 ? `+${plus}` : `${plus}`}) = **${sum + plus}**`
+          else str += `**${sum}**`
         }
 
         message
@@ -122,69 +114,55 @@ module.exports = () => {
           .then(() => {
             if (dice === 20 && rolls === 1) {
               if (numArray.includes(20)) {
-                message.reply(nat20[Math.floor(Math.random() * nat20.length)]);
+                message.reply(nat20[Math.floor(Math.random() * nat20.length)])
               }
               if (numArray.includes(1)) {
-                message.reply(nat1[Math.floor(Math.random() * nat1.length)]);
+                message.reply(nat1[Math.floor(Math.random() * nat1.length)])
               }
             }
           })
-          .catch((err) => console.error(err));
+          .catch((err) => console.error(err))
       }
     }
 
-    if (string.includes("/roll")) {
-      message.delete();
-      const strArr = string.split(" ");
+    if (string.includes('/roll')) {
+      message.delete()
+      const strArr = string.split(' ')
       if (strArr.length === 1) {
-        const roll = Math.floor(Math.random() * 100) + 1;
-        message.channel.send(
-          `${idToMention(message.author.id)} rolls ${roll} (1-100)`
-        );
+        const roll = Math.floor(Math.random() * 100) + 1
+        message.channel.send(`${idToMention(message.author.id)} rolls ${roll} (1-100)`)
       } else if (strArr.length === 2) {
-        const max = getNumber(strArr[1]);
-        const roll = Math.floor(Math.random() * max) + 1;
+        const max = getNumber(strArr[1])
+        const roll = Math.floor(Math.random() * max) + 1
         deathrolls
           .updateBattle(message.author.id, roll, max, message)
           .then((battle) => {
             if (battle) {
               if (roll === 1) {
-                deathrolls.updateGold(
-                  message.author.id,
-                  -Math.abs(battle.gold)
-                );
-                const otherid =
-                  message.author.id === battle.offerid
-                    ? battle.offerid
-                    : battle.acceptid;
-                deathrolls.updateGold(otherid, Math.abs(battle.gold));
+                deathrolls.updateGold(message.author.id, -Math.abs(battle.gold))
+                const otherid = message.author.id === battle.offerid ? battle.offerid : battle.acceptid
+                deathrolls.updateGold(otherid, Math.abs(battle.gold))
               }
               message.channel
                 .fetchMessage(battle.messageid)
                 .then((mes) => {
-                  let str = mes.content;
-                  str = str.concat(
-                    `\n> ${message.author.username} rolls ${roll} (1-${max})`
-                  );
-                  mes.edit(str);
+                  let str = mes.content
+                  str = str.concat(`\n> ${message.author.username} rolls ${roll} (1-${max})`)
+                  mes.edit(str)
                 })
-                .catch((err) => console.log(err));
+                .catch((err) => console.log(err))
             } else {
-              message.channel.send(
-                `${idToMention(message.author.id)} rolls ${roll} (1-${max})`
-              );
+              message.channel.send(`${idToMention(message.author.id)} rolls ${roll} (1-${max})`)
             }
           })
-          .catch((err) => console.log(err));
+          .catch((err) => console.log(err))
       } else if (strArr.length === 3) {
-        const min = getNumber(strArr[1]);
-        const max = getNumber(strArr[2]);
-        const roll = Math.floor(Math.random() * max) + min;
-        message.channel.send(
-          `${idToMention(message.author.id)} rolls ${roll} (${min}-${max})`
-        );
+        const min = getNumber(strArr[1])
+        const max = getNumber(strArr[2])
+        const roll = Math.floor(Math.random() * max) + min
+        message.channel.send(`${idToMention(message.author.id)} rolls ${roll} (${min}-${max})`)
       } else {
-        message.channel.send("oof try again");
+        message.channel.send('oof try again')
       }
     }
 
@@ -299,96 +277,90 @@ module.exports = () => {
     //   );
     // }
 
-    if (string.includes("/dnditem")) {
-      message.delete();
-      message.channel.send(
-        JSON.stringify(dnd.MagicItems.generate(), undefined, 2),
-        {
-          code: true,
-        }
-      );
+    if (string.includes('/dnditem')) {
+      message.delete()
+      message.channel.send(JSON.stringify(dnd.MagicItems.generate(), undefined, 2), {
+        code: true,
+      })
     }
 
-    if (string.includes("/dndhook")) {
-      message.delete();
-      message.channel.send(
-        JSON.stringify(dnd.Storyhooks.npcActs(), undefined, 2),
-        {
-          code: true,
-        }
-      );
+    if (string.includes('/dndhook')) {
+      message.delete()
+      message.channel.send(JSON.stringify(dnd.Storyhooks.npcActs(), undefined, 2), {
+        code: true,
+      })
     }
 
-    if (string.includes("/dndnpc")) {
-      message.delete();
+    if (string.includes('/dndnpc')) {
+      message.delete()
       message.channel.send(JSON.stringify(dnd.NPCs.generate(), undefined, 2), {
         code: true,
-      });
+      })
     }
 
-    if (string.includes("/dndrandom")) {
-      message.delete();
+    if (string.includes('/dndrandom')) {
+      message.delete()
       message.channel.send(JSON.stringify(dnd.Loots.source(), undefined, 2), {
         code: true,
-      });
+      })
     }
-  });
+  })
 
-  client.on("error", (error) => console.log(error));
+  client.on('error', (error) => console.log(error))
 
-  client.login(DISCORD_KEY);
+  client.login(DISCORD_KEY)
 
   const getUserFromMention = (mention) => {
-    const matches = mention.match(/^<@!?(\d+)>$/);
-    if (!matches) return;
-    const id = matches[1];
-    return client.users.get(id);
-  };
-};
+    const matches = mention.match(/^<@!?(\d+)>$/)
+    if (!matches) return
+    const id = matches[1]
+    return client.users.get(id)
+  }
+}
 
 const getNumber = (string, parse = false) => {
-  let number = null;
-  if (parse) number = parseInt(string.match(/(|-?\d+)$/));
-  else number = parseInt(string);
-  return isNaN(number) ? null : number;
-};
+  let number = null
+  if (parse) number = parseInt(string.match(/(|-?\d+)$/))
+  else number = parseInt(string)
+  return isNaN(number) ? null : number
+}
 
-const numSum = (a, b) => a + b;
+const numSum = (a, b) => a + b
 
-const idToMention = (id) => `<@${id}>`;
+const idToMention = (id) => `<@${id}>`
 
 const nat20 = [
-  "https://media.giphy.com/media/meKPRINqUoQXC/giphy.gif",
-  "https://media.giphy.com/media/Zw3oBUuOlDJ3W/giphy.gif",
-  "https://media.giphy.com/media/b09xElu8in7Lq/giphy.gif",
-  "https://media.giphy.com/media/Na33dsU2umStO/giphy.gif",
-  "https://media.giphy.com/media/90F8aUepslB84/giphy.gif",
-  "https://media.giphy.com/media/rmi45iyhIPuRG/giphy.gif",
-  "https://media.giphy.com/media/XreQmk7ETCak0/giphy.gif",
-  "https://media.giphy.com/media/fDbzXb6Cv5L56/giphy.gif",
-  "https://media.giphy.com/media/3o72FcJmLzIdYJdmDe/giphy.gif",
-  "https://media.giphy.com/media/3o7btZTXDFpXjK6d56/giphy.gif",
-  "https://media.giphy.com/media/wijMRo7UZXSqA/giphy.gif",
-];
+  'https://media.giphy.com/media/meKPRINqUoQXC/giphy.gif',
+  'https://media.giphy.com/media/Zw3oBUuOlDJ3W/giphy.gif',
+  'https://media.giphy.com/media/b09xElu8in7Lq/giphy.gif',
+  'https://media.giphy.com/media/Na33dsU2umStO/giphy.gif',
+  'https://media.giphy.com/media/90F8aUepslB84/giphy.gif',
+  'https://media.giphy.com/media/rmi45iyhIPuRG/giphy.gif',
+  'https://media.giphy.com/media/XreQmk7ETCak0/giphy.gif',
+  'https://media.giphy.com/media/fDbzXb6Cv5L56/giphy.gif',
+  'https://media.giphy.com/media/3o72FcJmLzIdYJdmDe/giphy.gif',
+  'https://media.giphy.com/media/3o7btZTXDFpXjK6d56/giphy.gif',
+  'https://media.giphy.com/media/wijMRo7UZXSqA/giphy.gif',
+]
 
 const nat1 = [
-  "https://media.giphy.com/media/EXHHMS9caoxAA/giphy.gif",
-  "https://media.giphy.com/media/QwZ4DVuJpkJZS/giphy.gif",
-  "https://media.giphy.com/media/aGc9XBGiP9QqY/giphy.gif",
-  "https://media.giphy.com/media/zraj11LOUptNsNDfTv/giphy.gif",
-  "https://media.giphy.com/media/duexIlfr9yYwYE23UA/giphy.gif",
-  "https://media.giphy.com/media/3ePb1CHEjfSRhn6r3c/giphy.gif",
-  "https://media.giphy.com/media/dJEMs13SrsiuA/giphy.gif",
-  "https://media.giphy.com/media/i4gLlAUz2IVIk/giphy.gif",
-  "https://media.giphy.com/media/EFXGvbDPhLoWs/giphy.gif",
-  "https://media.giphy.com/media/ONDEDdacIoNjy/giphy.gif",
-  "https://media.giphy.com/media/UEkEipSYMWhoY/giphy.gif",
-  "https://media.giphy.com/media/DsNFJLcZGuEAo/giphy.gif",
-  "https://media.giphy.com/media/I4fvDjTDt7OWQ/giphy.gif",
-  "https://media.giphy.com/media/HlTG1x1rzbTos/giphy.gif",
-  "https://media.giphy.com/media/rGrxMSVaKvo2Y/giphy.gif",
-  "https://media.giphy.com/media/5yaCPstUOV9Kw/giphy.gif",
-  "https://media.giphy.com/media/xTk9ZWZR2J0lNIkkCY/giphy.gif",
-  "https://media.giphy.com/media/kDmsG1ei4P1Yc/giphy.gif",
-  "https://media.giphy.com/media/rW6CpFhDj9lkc/giphy.gif",
-];
+  'https://media.giphy.com/media/EXHHMS9caoxAA/giphy.gif',
+  'https://media.giphy.com/media/QwZ4DVuJpkJZS/giphy.gif',
+  'https://media.giphy.com/media/aGc9XBGiP9QqY/giphy.gif',
+  'https://media.giphy.com/media/zraj11LOUptNsNDfTv/giphy.gif',
+  'https://media.giphy.com/media/duexIlfr9yYwYE23UA/giphy.gif',
+  'https://media.giphy.com/media/3ePb1CHEjfSRhn6r3c/giphy.gif',
+  'https://media.giphy.com/media/dJEMs13SrsiuA/giphy.gif',
+  'https://media.giphy.com/media/i4gLlAUz2IVIk/giphy.gif',
+  'https://media.giphy.com/media/EFXGvbDPhLoWs/giphy.gif',
+  'https://media.giphy.com/media/ONDEDdacIoNjy/giphy.gif',
+  'https://media.giphy.com/media/UEkEipSYMWhoY/giphy.gif',
+  'https://media.giphy.com/media/DsNFJLcZGuEAo/giphy.gif',
+  'https://media.giphy.com/media/I4fvDjTDt7OWQ/giphy.gif',
+  'https://media.giphy.com/media/HlTG1x1rzbTos/giphy.gif',
+  'https://media.giphy.com/media/rGrxMSVaKvo2Y/giphy.gif',
+  'https://media.giphy.com/media/5yaCPstUOV9Kw/giphy.gif',
+  'https://media.giphy.com/media/xTk9ZWZR2J0lNIkkCY/giphy.gif',
+  'https://media.giphy.com/media/kDmsG1ei4P1Yc/giphy.gif',
+  'https://media.giphy.com/media/rW6CpFhDj9lkc/giphy.gif',
+]
